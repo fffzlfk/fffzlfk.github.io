@@ -1,0 +1,83 @@
+---
+layout:     post
+title:      约瑟夫环问题
+subtitle:   用循环链表解决约瑟夫环问题
+date:       2019-11-05
+author:     fffzlfk
+header-img: img/trip.png
+catalog: true
+tags:
+    - C
+    - 数据结构
+    - 链表
+---
+
+### 问题描述
+编号为1, 2, 3,...,n的n个人围成一圈，每个人持有一个密码（正整数），从初始m为上限从1开始报数，报到m为止，报m的出列，将他的密码作为下一个m值，如此下去，求出出列顺序。
+
+### 解决思路
+很容易想到用循环链表来解决该问题
+
+### 代码实现
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+	int data;
+	int id;
+	Node *next;
+} * LinkList;
+
+void Create(LinkList &L, int n) {
+	Node *node, *end;
+	end = L;
+	for (int i = 0; i < n; i++) {
+		node = (Node*)malloc(sizeof(Node));
+		scanf("%d", &node->data);
+		node->id = i + 1;
+		end->next = node;
+		end = node;
+	}
+	end->next = L->next;
+}
+
+void show(LinkList L, int n) {
+	for (int i = 0; i < 2 * n; i++) {
+		L = L->next;
+		printf("%d\n", L->data);
+	}
+}
+
+int solve(LinkList &L, int m) {
+	if (m < 1)
+		return -1;
+	int t = m;
+	Node *last = L->next;
+	Node *cur = L->next;
+	while (cur->next != cur) {
+		int i = 0;
+		while (i < t - 1) {
+			last = cur;
+			cur = cur->next;
+			i++;
+		}
+		Node *p = cur;
+		t = cur->data;
+		printf("%d\n", cur->id);
+		last->next = cur->next;
+		cur = last->next;
+		free(p);
+	}
+	return cur->id;
+}
+
+int main(int argc, char const *argv[]) {
+	LinkList L;
+	int n, m;
+	scanf("%d%d", &n, &m);
+	Create(L, n);
+	printf("%d\n",solve(L, m));
+	return 0;
+}
+```
