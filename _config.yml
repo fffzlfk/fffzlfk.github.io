@@ -106,3 +106,20 @@ friends: [
         href: "https://developer.apple.com/"
     }
 ]
+live2d:
+  enable: true
+  scriptFrom: local
+  pluginRootPath: live2dw/
+  pluginJsPath: lib/
+  pluginModelPath: assets/
+  tagMode: false
+  debug: false
+  model:
+    use: live2d-widget-model-hijiki
+  display:
+    position: left
+    width: 100
+    height: 200
+  mobile:
+    show: false
+
