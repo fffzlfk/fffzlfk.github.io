@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>一个用Vue实现的简单计算器</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
     <style>
@@ -114,6 +114,9 @@
             },
 
             append(character) {
+              if (this.equation.length > 9) {
+                return;
+              }
                 if (this.equation === "0" && !this.isOperator(character)) {
                     if (character === ".") {
                         this.equation += "" + character;
@@ -180,5 +183,3 @@
 </script>
 </body>
 </html>
-
-
