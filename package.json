@@ -26,6 +26,7 @@
     "cafe": "git co gitcafe-pages; git merge master; git push gitcafe gitcafe-pages:gitcafe-pages --tag; git co master;"
   },
   "dependencies": {
-    "hexo-helper-live2d": "^3.1.1"
+    "hexo-helper-live2d": "^3.1.1",
+    "simple-jekyll-search": "^1.7.7"
   }
 }
