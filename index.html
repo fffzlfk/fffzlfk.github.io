@@ -9,15 +9,14 @@
 <meta name=description content="Thinking will not overcome fear but action will.">
 <meta name=author content="fffzlfk">
 <link rel=canonical href=https://fffzlfk.github.io/>
-<meta name=google-site-verification content="XYZabc">
-<meta name=yandex-verification content="XYZabc">
-<meta name=msvalidate.01 content="XYZabc">
-<link crossorigin=anonymous href=/assets/css/stylesheet.min.1e44d58192cbf6d7a4eb649bc43dbc3d4cc432677e5d8adc69b08c34cbe461ac.css integrity="sha256-HkTVgZLL9tek62SbxD28PUzEMmd+XYrcabCMNMvkYaw=" rel="preload stylesheet" as=style>
-<link rel=icon href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
-<link rel=icon type=image/png sizes=16x16 href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
-<link rel=icon type=image/png sizes=32x32 href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
-<link rel=apple-touch-icon href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
-<link rel=mask-icon href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
+<meta name=google-site-verification content="G-YMYDYG1JEZ">
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.c88963fe2d79462000fd0fb1b3737783c32855d340583e4523343f8735c787f0.css integrity="sha256-yIlj/i15RiAA/Q+xs3N3g8MoVdNAWD5FIzQ/hzXHh/A=" rel="preload stylesheet" as=style>
+<link rel=preload href=/android-chrome-512x512.png as=image>
+<link rel=icon href=https://fffzlfk.github.io/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://fffzlfk.github.io/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://fffzlfk.github.io/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://fffzlfk.github.io/apple_touch_icon.png>
+<link rel=mask-icon href=https://fffzlfk.github.io/favicon.ico>
 <meta name=theme-color content="#2e2e33">
 <meta name=msapplication-TileColor content="#2e2e33">
 <link rel=alternate type=application/rss+xml href=https://fffzlfk.github.io/index.xml>
@@ -38,14 +37,15 @@
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="fffzlfk's Blog">
 <meta name=twitter:description content="Thinking will not overcome fear but action will.">
-<script type=application/ld+json>{"@context":"https://schema.org","@type":"Organization","name":"fffzlfk's Blog","url":"https://fffzlfk.github.io","description":"Thinking will not overcome fear but action will.","thumbnailUrl":"https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E","sameAs":["https://github.com/fffzlfk"]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"Organization","name":"fffzlfk's Blog","url":"https://fffzlfk.github.io","description":"Thinking will not overcome fear but action will.","thumbnailUrl":"https://fffzlfk.github.io/favicon.ico","sameAs":["https://github.com/fffzlfk"]}</script>
 </head>
 <body class=list id=top>
 <script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
 <header class=header>
 <nav class=nav>
 <div class=logo>
-<a href=https://fffzlfk.github.io accesskey=h title="Home (Alt + H)">Home</a>
+<a href=https://fffzlfk.github.io accesskey=h title="fffzlfk's Blog (Alt + H)">
+<img src=https://fffzlfk.github.io/android-chrome-512x512.png alt=logo aria-label=logo height=35>fffzlfk's Blog</a>
 <span class=logo-switches>
 <button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
 </button>
@@ -92,12 +92,13 @@
 </header>
 <section class=entry-content>
 <p>为什么要有完美转发 下面是一个类工厂函数：
-1 2 3 4 template &lt;typename T, typename Arg> std::shared_ptr&lt;T> factory(Arg arg) { return std::shared_ptr&lt;T>( new T(arg)); } 参数对象arg在上面的例子中是传值方式传递，这带来了生成额外临时对象1的代价，所以我们改成引用传递：
-1 2 3 4 template &lt;typename T, typename Arg> std::shared_ptr&lt;T> factory(Arg &arg) { return std::shared_ptr&lt;T>( new T(arg)); } 但这种实现的问题是不能绑定右值实参。如factory&lt;X>(42)将编译报错，进一步的，我们按常量引用来传递：
-1 2 3 4 template &lt;typename T, typename Arg> std::shared_ptr&lt;T> factory(const Arg &arg) { return std::shared_ptr&lt;T>( new T(arg)); } 这种实现的问题是不能支持移动语义，形参使用右值引用可以解决完美转发问题。
-引用折叠 在C++11之前，我们不能对一个引用类型继续引用，但C++由于右值引用的出现而放宽2了这一做法，从而产生了引用折叠规则，允许我们对引用进行引用，既能左引用，又能右引用。但是却遵循如下规则：...</p>
+template &lt;typename T, typename Arg> std::shared_ptr&lt;T> factory(Arg arg) { return std::shared_ptr&lt;T>( new T(arg)); } 参数对象arg在上面的例子中是传值方式传递，这带来了生成额外临时对象1的代价，所以我们改成引用传递：
+template &lt;typename T, typename Arg> std::shared_ptr&lt;T> factory(Arg &arg) { return std::shared_ptr&lt;T>( new T(arg)); } 但这种实现的问题是不能绑定右值实参。如factory&lt;X>(42)将编译报错，进一步的，我们按常量引用来传递：
+template &lt;typename T, typename Arg> std::shared_ptr&lt;T> factory(const Arg &arg) { return std::shared_ptr&lt;T>( new T(arg)); } 这种实现的问题是不能支持移动语义，形参使用右值引用可以解决完美转发问题。
+引用折叠 在C++11之前，我们不能对一个引用类型继续引用，但C++由于右值引用的出现而放宽2了这一做法，从而产生了引用折叠规则，允许我们对引用进行引用，既能左引用，又能右引用。但是却遵循如下规则：
+函数形参类型 实参类型 推导后函数形参类型 T& 左引用 T& T& 右引用 T& T&& 左引用 T& T&& 右引用 T&& 模板参数类型推导 对函数模板template&lt;typename T>void foo(T&&);，应用上述引用折叠规则，可总结出以下结论：...</p>
 </section>
-<footer class=entry-footer><span title="2022-02-05 14:10:47 +0800 +0800">February 5, 2022</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;fffzlfk</footer>
+<footer class=entry-footer><span title="2022-02-05 14:10:47 +0800 +0800">February 5, 2022</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;fffzlfk</footer>
 <a class=entry-link aria-label="post link to C++ 完美转发" href=https://fffzlfk.github.io/posts/c++_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/></a>
 </article>
 <article class=post-entry>
@@ -109,7 +110,9 @@
 <p>Kernels CUDA C++对C++进行了扩展，允许程序员定义C++函数，称为内核，当被调用时，由 $N$ 个不同的CUDA线程并行执行 $N$ 次，而不是像普通C++函数那样只执行一次。
 kernel是使用__global__声明定义的，对于特定的内核调用，执行该内核的CUDA线程数量是使用&lt;&lt;&lt;...>>>执行配置语法指定的（C++语言扩展）。每个执行内核的线程都有一个唯一的线程ID，可以在内核内通过内置变量访问。
 作为说明，下面的示例代码，使用内置变量threadIdx，将两个大小为 $N$ 的向量 $A$ 和 $B$ 相加，并将结果存入向量 $C$ 。
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 // Kernel definition __global__ void VecAdd(float* A, float* B, float* C) { int i = threadIdx.x; C[i] = A[i] + B[i]; } int main() { ... // Kernel invocation with N threads VecAdd&lt;&lt;&lt;1, N>>>(A, B, C); ... } 在这里，执行VecAdd()的 $N$ 个线程中的每一个都执行了一次加法。...</p>
+// Kernel definition __global__ void VecAdd(float* A, float* B, float* C) { int i = threadIdx.x; C[i] = A[i] + B[i]; } int main() { ... // Kernel invocation with N threads VecAdd&lt;&lt;&lt;1, N>>>(A, B, C); ... } 在这里，执行VecAdd()的 $N$ 个线程中的每一个都执行了一次加法。
+线程体系 为方便起见，threadIdx是一个 $3$ 分量的向量，因此可以用一维、二维或三维的线程索引来识别线程，形成一个一维、二维或三维的线程块，称为线程块。这提供了一种自然的方式来调用域中的元素进行计算，如矢量、矩阵或体积。
+一个例子，下面的代码将两个大小为 $N\times N$ 的矩阵 $A$ 和 $B$ 相加，并将结果存入矩阵 $C$ 。...</p>
 </section>
 <footer class=entry-footer><span title="2022-01-19 12:55:19 +0800 +0800">January 19, 2022</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;fffzlfk</footer>
 <a class=entry-link aria-label="post link to Cuda 编程模型" href=https://fffzlfk.github.io/posts/cuda_%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/></a>
@@ -158,7 +161,7 @@ kernel是使用__global__声明定义的，对于特定的内核调用，执行�
 <section class=entry-content>
 <p>理论 在之前的教程中，我们学习了如何使用Sobel算子。它是基于这样一个事实，即在边缘区域，像素强度显示了一个 “跳跃"或强度的高变化。得到强度的一阶导数，我们观察到边缘的特征是一个最大值，如图所示： 那么，如果我们取二阶导数会怎样？ 你可以观察到，边缘二阶导数是零! 因此，我们也可以用这个标准来尝试检测图像的边缘。然而，请注意，零值不仅会出现在边缘（它们实际上可以出现在其他无意义的位置）；这可以通过在需要时使用过滤来解决。
 拉普拉斯算子 从上面的解释中，我们可以推断出，二阶导数可以用来检测边缘。由于图像是二维的，我们需要在两个维度上取导数。这里，拉普拉斯算子就派上用场了。 拉普拉斯算子的定义是： $$ Laplace(f) = \frac{\partial^2f}{\partial x^2}+\frac{\partial^2f}{\partial y^2} $$ 拉普拉斯算子在OpenCV中是由函数Laplacian()实现的。事实上，由于拉普拉斯算子使用图像的梯度，它在内部调用索贝尔算子来进行计算的。 Code 代码链接
-Explanation 变量声明 1 2 3 4 5 6 7 // Declare the variables we are going to use Mat src, src_gray, dst; int kernel_size = 3; int scale = 1; int delta = 0; int ddepth = CV_16S; const char* window_name = "Laplace Demo"; 加载图像 1 2 3 4 5 6 7 8 const char* imageName = argc >=2 ?...</p>
+Explanation 变量声明 // Declare the variables we are going to use Mat src, src_gray, dst; int kernel_size = 3; int scale = 1; int delta = 0; int ddepth = CV_16S; const char* window_name = "Laplace Demo"; 加载图像 const char* imageName = argc >=2 ?...</p>
 </section>
 <footer class=entry-footer><span title="2022-01-17 08:22:11 +0800 +0800">January 17, 2022</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;fffzlfk</footer>
 <a class=entry-link aria-label="post link to OpenCV Laplace Operator" href=https://fffzlfk.github.io/posts/opencv_laplace_operator/></a>
