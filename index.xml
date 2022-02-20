@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>fffzlfk&#39;s Blog</title>
+    <link>https://fffzlfk.github.io/</link>
+    <description>Recent content on fffzlfk&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 05 Feb 2022 14:10:47 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C&#43;&#43; 完美转发</title>
+      <link>https://fffzlfk.github.io/posts/c&#43;&#43;_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</link>
+      <pubDate>Sat, 05 Feb 2022 14:10:47 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/c&#43;&#43;_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</guid>
+      <description>为什么要有完美转发 下面是一个类工厂函数：
+1 2 3 4  template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); }   参数对象arg在上面的例子中是传值方式传递，这带来了生成额外临时对象1的代价，所以我们改成引用传递：
+1 2 3 4  template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg &amp;amp;arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); }   但这种实现的问题是不能绑定右值实参。如factory&amp;lt;X&amp;gt;(42)将编译报错，进一步的，我们按常量引用来传递：
+1 2 3 4  template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(const Arg &amp;amp;arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); }   这种实现的问题是不能支持移动语义，形参使用右值引用可以解决完美转发问题。
+引用折叠 在C++11之前，我们不能对一个引用类型继续引用，但C++由于右值引用的出现而放宽2了这一做法，从而产生了引用折叠规则，允许我们对引用进行引用，既能左引用，又能右引用。但是却遵循如下规则：</description>
+    </item>
+    
+    <item>
+      <title>Cuda 编程模型</title>
+      <link>https://fffzlfk.github.io/posts/cuda_%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Wed, 19 Jan 2022 12:55:19 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/cuda_%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/</guid>
+      <description>Kernels CUDA C++对C++进行了扩展，允许程序员定义C++函数，称为内核，当被调用时，由 $N$ 个不同的CUDA线程并行执行 $N$ 次，而不是像普通C++函数那样只执行一次。
+kernel是使用__global__声明定义的，对于特定的内核调用，执行该内核的CUDA线程数量是使用&amp;lt;&amp;lt;&amp;lt;...&amp;gt;&amp;gt;&amp;gt;执行配置语法指定的（C++语言扩展）。每个执行内核的线程都有一个唯一的线程ID，可以在内核内通过内置变量访问。
+作为说明，下面的示例代码，使用内置变量threadIdx，将两个大小为 $N$ 的向量 $A$ 和 $B$ 相加，并将结果存入向量 $C$ 。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14  // Kernel definition __global__ void VecAdd(float* A, float* B, float* C) { int i = threadIdx.x; C[i] = A[i] + B[i]; } int main() { ... // Kernel invocation with N threads  VecAdd&amp;lt;&amp;lt;&amp;lt;1, N&amp;gt;&amp;gt;&amp;gt;(A, B, C); ... }   在这里，执行VecAdd()的 $N$ 个线程中的每一个都执行了一次加法。</description>
+    </item>
+    
+    <item>
+      <title>Cuda 硬件实现</title>
+      <link>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Tue, 18 Jan 2022 15:31:10 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</guid>
+      <description>一组带有 on-chip 共享内存的 SIMD 多处理器 设备可以被看作一组多处理器，如图所示。每个多处理器使用单指令多数据(SIMD)架构：在任何给定的时钟周期内，多处理器的每个处理器执行同一指令，但操作不同的数据。
+每个多处理器使用四个以下类型的on-chip内存：
+ 每个处理器一组 $32$ 位寄存器 并行数据缓存或共享内存，被所有处理器共享实现内存空间共享 通过设备内存的一个只读区域，一个只读常量缓存器被所有处理器共享 通过设备内存的一个只读区域，一个只读纹理缓存器被所有处理器共享  本地和全局内存空间作为设备内存的读写区域，而不被缓冲。 每个多处理器通过纹理单元访问纹理缓冲器，它执行各种各样的寻址模式和数据过滤。
+执行模式 一个线程块网格是通过多处理器规划执行的。每个多处理器一个接一个的处理块批处理。一个块只被一个多处理器处理，因此可以对驻留在on-chip共享内存的共享内存空间形成非常快速的访问。
+一个批处理中每个多处理器可以处理多少个块，取决于每个线程中分配了多少个寄存器和已知内核中每个时钟需要多少的共享内存，因为多处理器的寄存器和内存在所有的线程中是分开的。如果在至少一个块中，每个多处理器没有足够高的寄存器或共享内存用，那么内核将无法启动。
+线程块在一个批处理中被一个多处理器执行，被称为active，每个active块被划分成SIMD线程组，被称为warps；每一条这样的warp包含数量相同的线程，叫做warp大小，并且在SIMD的方式下通过多处理器执行，执行调度程序周期性地从一条warp切换到另一条warp，以达到多处理器计算资源使用的最大化。
+块被划分成warp的方式总是相同的；每条warp包含连续的线程，线程索引从第一个warp包含着的线程 0 开始递增。
+一个多处理器可以并发地处理几个块，通过划分在它们之中的寄存器和共享内存。更准确地说，每条线程可使用的寄存器数量，等于每个多处理器寄存器总数除以并发的线程数量，并发线程的数量等于并发块的数量乘以每块线程的数量。
+在一个线程块网格内的块次序是未定义的，并且在块之间不存在同步机制，因此来自同一个网格的两个不同块的线程不能通过全局内存彼此安全地通讯。
+计算兼容性 设备的兼容性由两个参数定义，主要版本号和次要版本号。设备拥有的主要版本号代表相同的核心架构。
+次要版本号代表一些改进的核心架构。比如新的特性。
+多设备 为一个应用程序使用多GPU作为CUDA设备，必须保证这些CPU是一样的类型。如果系统工作在SLI 模式下，那么只有一个GPU可以作为CUDA设备，由于所有的GPU在驱动堆栈中被底层的融合了。SLI 模式需要在控制面板中关闭,这样才能使多个GPU作为CUDA设备</description>
+    </item>
+    
+    <item>
+      <title>OpenCV Canny Detector</title>
+      <link>https://fffzlfk.github.io/posts/opencv_canny_detector/</link>
+      <pubDate>Mon, 17 Jan 2022 11:35:18 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/opencv_canny_detector/</guid>
+      <description>理论 Canny边缘检测是由John F. Canny在1986年开发的。许多人也将其称为最佳检测器，Canny算法旨在满足三个主要标准。
+ 好的检测：算法能够尽可能多地标识出图像中的实际边缘。 好的定位：标识出的边缘要与实际图像中的实际边缘尽可能接近。 最小响应：图像中的边缘只能标识一次，并且可能存在的图像雜訊不应标识为边缘。  步骤   降噪：使用高斯滤波来达到，下面是一个大小为 $5$ 的高斯核的例子： $$ K = \frac{1}{159}\begin{bmatrix} 2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2\ 4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\ 5 &amp;amp; 12 &amp;amp; 15 &amp;amp; 12 &amp;amp; 5\ 4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\ 2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2 \end{bmatrix} $$
+  找到图像的亮度梯度：为此，我们遵循一个类似于Sobel的程序：
+ 应用一对卷积masks（在 $x$ 和 $y$ 方向上）： $$ G_x = \begin{bmatrix} -1 &amp;amp; 0 &amp;amp; +1\ -2 &amp;amp; 0 &amp;amp; +2\ -1 &amp;amp; 0 &amp;amp; +1 \end{bmatrix}, G_y=\begin{bmatrix} -1 &amp;amp; -2 &amp;amp; -1\ 0 &amp;amp; 0 &amp;amp; 0\ +1 &amp;amp; +2 &amp;amp; +1 \end{bmatrix} $$ 寻找梯度强度和方向： $$ G=\sqrt{G_x^2+G_y^2}\ \theta = \arctan(\frac{G_y}{G_x}) $$ 方向被四舍五入为四个可能的角度之一（即 $0\degree$ 、 $45\degree$ 、 $90\degree$ 或 $135\degree$ ）。    过滤非最大值：在高斯滤波过程中，边缘有可能被放大了。这个步骤使用一个规则来过滤不是边缘的点，使边缘的宽度尽可能为1个像素点：如果一个像素点属于边缘，那么这个像素点在梯度方向上的梯度值是最大的。否则不是边缘，将灰度值设为 $0$ 。 $$ M_T(m, n) = \begin{cases} M(m, n)&amp;amp; \text{if } M(m, n) \lt T\ 0 &amp;amp; \text{otherwise} \end{cases} $$</description>
+    </item>
+    
+    <item>
+      <title>OpenCV Laplace Operator</title>
+      <link>https://fffzlfk.github.io/posts/opencv_laplace_operator/</link>
+      <pubDate>Mon, 17 Jan 2022 08:22:11 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/opencv_laplace_operator/</guid>
+      <description>理论   在之前的教程中，我们学习了如何使用Sobel算子。它是基于这样一个事实，即在边缘区域，像素强度显示了一个 &amp;ldquo;跳跃&amp;quot;或强度的高变化。得到强度的一阶导数，我们观察到边缘的特征是一个最大值，如图所示：   那么，如果我们取二阶导数会怎样？ 你可以观察到，边缘二阶导数是零! 因此，我们也可以用这个标准来尝试检测图像的边缘。然而，请注意，零值不仅会出现在边缘（它们实际上可以出现在其他无意义的位置）；这可以通过在需要时使用过滤来解决。
+  拉普拉斯算子  从上面的解释中，我们可以推断出，二阶导数可以用来检测边缘。由于图像是二维的，我们需要在两个维度上取导数。这里，拉普拉斯算子就派上用场了。 拉普拉斯算子的定义是： $$ Laplace(f) = \frac{\partial^2f}{\partial x^2}+\frac{\partial^2f}{\partial y^2} $$ 拉普拉斯算子在OpenCV中是由函数Laplacian()实现的。事实上，由于拉普拉斯算子使用图像的梯度，它在内部调用索贝尔算子来进行计算的。  Code 代码链接
+Explanation 变量声明 1 2 3 4 5 6 7  // Declare the variables we are going to use Mat src, src_gray, dst; int kernel_size = 3; int scale = 1; int delta = 0; int ddepth = CV_16S; const char* window_name = &amp;#34;Laplace Demo&amp;#34;;   加载图像 1 2 3 4 5 6 7 8  const char* imageName = argc &amp;gt;=2 ?</description>
+    </item>
+    
+    <item>
+      <title>OpenCV Sobel Derivatives</title>
+      <link>https://fffzlfk.github.io/posts/opencv_sobel_derivatives/</link>
+      <pubDate>Sun, 16 Jan 2022 12:18:12 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/opencv_sobel_derivatives/</guid>
+      <description>理论   在之前的两个教程中，我们已经看到了卷积的应用实例。最重要的卷积之一是计算图像中的导数（或对它们的近似值）
+  为什么图像中的导数计算可能是重要的？让我们设想一下，我们要检测图像中存在的边缘。比如说： 你可以很容易地注意到，在一个边缘，像素强度的变化是很明显的。一个表达变化的好方法是使用导数。梯度的高变化表示图像中的一个重大变化。
+  为了更加形象，让我们假设我们有一个一维图像。在下面的图中，一个边缘由强度的 &amp;ldquo;跳跃 &amp;ldquo;来表示：   如果我们取第一个导数，可以更容易地看到边缘的 &amp;ldquo;跳跃&amp;rdquo;（实际上，这里出现的是一个最大值）：   因此，从上面的解释中，我们可以推断出，检测图像中的边缘的方法可以通过定位梯度高于其邻居的像素位置（或者概括地说，高于一个阈值）来进行。
+  更详细的解释，请参考Bradski和Kaehler的《Learning OpenCV》。
+  Sobel 算子  Sobel算子是一个离散的微分算子，它计算图像强度函数的梯度的近似值。 Sobel算子结合了Gaussian smoothing和微分。  Formulation 假设要操作的图像为 $I$:
+ 我们计算两个导数：  水平变化：这是通过用奇数大小的内核 $G_x$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_x$ 将被计算为： $$ G_x=\begin{bmatrix} -1 &amp;amp; 0 &amp;amp; +1\ -2 &amp;amp; 0 &amp;amp; +2\ -1 &amp;amp; 0 &amp;amp; +1 \end{bmatrix} * I $$ 垂直变化：这是通过用奇数大小的内核 $G_y$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_y$ 将被计算为： $$ G_y = \begin{bmatrix} -1 &amp;amp; -2 &amp;amp; -1\ 0 &amp;amp; 0 &amp;amp; 0\ +1 &amp;amp; +2 &amp;amp; + 1 \end{bmatrix} * I $$   在图像的每一点上，我们通过结合上述两个结果计算出该点的梯度近似值： $$ G = \sqrt{G_{x}^{2}+G_{y}^{2}} $$ 有时会使用以下更简单的方程式： $$ G = |G_x|+|G_y| $$   当核的大小为 $3$ 时，上面显示的 Sobel核可能会产生明显的不准确（毕竟， Sobel 只是一个导数的近似值）。OpenCV通过使用 Scharr() 函数来解决这种大小为 $3$ 的核的不精确性。这和标准的 Sobel 函数一样快，但比它更准确。它可以实现以下内核 $$ G_x=\begin{bmatrix} -3 &amp;amp; 0 &amp;amp; +3\ -10 &amp;amp; 0 &amp;amp; +10\ -3 &amp;amp; 0 &amp;amp; +3 \end{bmatrix}, G_y=\begin{bmatrix} -3 &amp;amp; -10 &amp;amp; -3\ 0 &amp;amp; 0 &amp;amp; 0\ +3 &amp;amp; +10 &amp;amp; +3 \end{bmatrix} $$</description>
+    </item>
+    
+    <item>
+      <title>OpenCV Erosion Dilatation</title>
+      <link>https://fffzlfk.github.io/posts/opencv_erosion_dilatation/</link>
+      <pubDate>Sun, 09 Jan 2022 12:25:24 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/opencv_erosion_dilatation/</guid>
+      <description>形态学操作  简而言之：一套基于形状处理图像的操作。形态学操作将一个结构化元素应用于输入图像，并生成一个输出图像。 最基本的形态学操作是。腐蚀和膨胀。它们有广泛的用途，即  去除噪音 隔离单个元素和连接图像中不同的元素 寻找图像中的强度凹凸点或洞   我们将以下面的图像为例，简要地解释膨胀和侵蚀。   Dilation（膨胀）  这种操作包括将图像A与一些kernel B进行卷积，内核可以有任何形状或大小，通常是一个正方形或圆形。 kernel B有一个定义的锚点(anchor point)，通常是核的中心。 当kernel B在图像上扫描时，我们计算出被B重叠的最大像素值，并用该最大值替换锚点位置的图像像素。正如你可以推断的那样，这种最大化的操作会使图像中的明亮区域 &amp;ldquo;增长&amp;rdquo;（因此被称为膨胀）。 膨胀操作： $dst(x, y)=max(x^{&#39;}, y^{&#39;})_{:element(x^{&#39;}, y^{&#39;}) \ne 0} src(x+x^{&#39;}, y+y^{&#39;})$ 以上面的图像为例。应用膨胀的方法，我们可以得到   腐蚀  它在给定内核的区域内计算局部最小值。当内核B在图像上被扫描时，我们计算出被B重叠的最小像素值，并用该最小值替换锚点下的图像像素。 腐蚀操作为：$dst(x, y)=min(x^{&#39;}, y^{&#39;})_{:element(x^{&#39;}, y^{&#39;}) \ne 0} src(x+x^{&#39;}, y+y^{&#39;})$ 与膨胀的例子类似，我们可以对原始图像应用腐蚀算子（如上图）。你可以在下面的结果中看到，图像的亮区变薄了，而暗区变大了。   Code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72  #include &amp;#34;basic/erosion_dilatation.</description>
+    </item>
+    
+    <item>
+      <title>OpenCV Blurring</title>
+      <link>https://fffzlfk.github.io/posts/opencv_blurring/</link>
+      <pubDate>Sun, 09 Jan 2022 07:37:09 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/opencv_blurring/</guid>
+      <description>理论   Smoothing也叫blurring（模糊化），是一个简单而常用的图像处理操作。
+  Smoothing有很多原因。在本教程中，我们将重点讨论平滑操作，以减少噪音。
+  为了进行平滑操作，我们将对我们的图像应用一个filter。最常见的filter是线性的，其中输出像素的值（即 $g(i,j)$ ）为输入像素值的加权和（即 $f(i+k,j+l)$ ）。
+  $$ g(i, j) = \sum_{k, l}{f(i+k, j+l)h(k, l)} $$
+  $h(k,l)$ 被称为kernel，它只不过是filter的系数。这有助于把滤波器想象成一个在图像上滑动的系数窗口。
+  滤波器有很多种类，这里我们将提到最常用的几种。
+  Normalized Box Filter（归一化块滤波器）  这个滤波器是最简单的，每个输出像素都是其内核邻居的平均值（所有的像素都有相同的权重）。  $$ K = \frac{1}{K_{width} \cdot k_{height}} \begin{bmatrix} 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\ 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\ . &amp;amp; . &amp;amp; . &amp;amp; &amp;hellip;&amp;amp; 1\ 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1 \end{bmatrix} $$</description>
+    </item>
+    
+    <item>
+      <title>Cuda软件架构</title>
+      <link>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</link>
+      <pubDate>Sat, 08 Jan 2022 06:27:04 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</guid>
+      <description>硬件   SP(Streaming Processor)：流处理器，是GPU最基本的处理单元，在fermi架构开始被叫做CUDA core。
+  SM(Streaming MultiProcessor)：一个SM由多个CUDA core组成。
+  比如说，如果一个GPU有 $4$ 个SM，并且每个SM有 $768$ 个SP(Aka CUDA core)；那么在某一时刻，真正并行运行的线程数不会超过 $4 \times 768$ 个。
+软件 threads被组织成blocks。一个block的线程可以用1Dimension(x), 2Dimensions(x, y)或者3Dim indexs(x, y, z) 索引，
+显然，如果你需要 $4 \times 768$ 个以上的threads的话你需要 $4$ 个以上的blocks。blocks也可以使用1D, 2D或3D索引，这些blocks被放在等待队列上进入GPU执行。
+Wrap 当一个kernel被执行时，grid中的线程块被分配到SM上。一个CUDA core可以执行一个thread，一个SM的CUDA core会分成几个wrap，由wrap scheduler负责调度。
+一个wrap中的线程在同一个block中，如果block所含线程数不是wrap的大小的整数倍，那么多出来的那些thread所在的wrap中，会剩余一些inactive的thread。
+一个简单的case 处理一张 $512 \times 512$ 的图片。
+假设我们希望一个线程处理一个像素pixel(i, j)。
+我们可以使用每 $64$ 个线程的区块。所以我们需要 $\frac{512 \times 512 }{64} = 4096$ 个区块（为了拥有 $512 \times 512 $ 个线程 ）。</description>
+    </item>
+    
+    <item>
+      <title>CodeForces 762</title>
+      <link>https://fffzlfk.github.io/posts/codeforces-762/</link>
+      <pubDate>Sun, 26 Dec 2021 17:18:09 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/codeforces-762/</guid>
+      <description>Codeforces Round #762 (Div. 3)</description>
+    </item>
+    
+    <item>
+      <title>从模板元编程到constexpr(C&#43;&#43;)</title>
+      <link>https://fffzlfk.github.io/posts/%E4%BB%8E%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E5%88%B0constexprc&#43;&#43;/</link>
+      <pubDate>Sun, 28 Nov 2021 19:43:10 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E4%BB%8E%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E5%88%B0constexprc&#43;&#43;/</guid>
+      <description>C++元编程</description>
+    </item>
+    
+    <item>
+      <title>Go设计模式</title>
+      <link>https://fffzlfk.github.io/posts/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Sun, 18 Jul 2021 22:52:35 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</guid>
+      <description>Go Design Scheme</description>
+    </item>
+    
+    <item>
+      <title>MapReduce_in_Go</title>
+      <link>https://fffzlfk.github.io/posts/mapreduce_in_go/</link>
+      <pubDate>Sat, 24 Apr 2021 21:19:14 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/mapreduce_in_go/</guid>
+      <description>Map-Reduce</description>
+    </item>
+    
+    <item>
+      <title>网络应用程序设计</title>
+      <link>https://fffzlfk.github.io/posts/%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</link>
+      <pubDate>Wed, 07 Apr 2021 20:48:12 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</guid>
+      <description>Network Program Design for Application</description>
+    </item>
+    
+    <item>
+      <title>分布式计算</title>
+      <link>https://fffzlfk.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/</link>
+      <pubDate>Sat, 13 Mar 2021 13:57:34 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/</guid>
+      <description>Distributed Computing</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://fffzlfk.github.io/posts/about/</link>
+      <pubDate>Thu, 11 Mar 2021 05:35:07 +0000</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/about/</guid>
+      <description>Code is like humor. When you have to explain it, it&#39;s bad.
+Hey，我是fffzlfk一名西电CS在读本科生 学习之余，我还是一个喜欢折腾的人
+你可以在下面找到我  GitHub Email  </description>
+    </item>
+    
+    <item>
+      <title>编译原理</title>
+      <link>https://fffzlfk.github.io/posts/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Thu, 11 Mar 2021 10:51:32 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/</guid>
+      <description>Compiler Principles</description>
+    </item>
+    
+    <item>
+      <title>牛顿法求平方根</title>
+      <link>https://fffzlfk.github.io/posts/%E7%89%9B%E9%A1%BF%E6%B3%95%E6%B1%82%E5%B9%B3%E6%96%B9%E6%A0%B9/</link>
+      <pubDate>Tue, 23 Feb 2021 17:18:19 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E7%89%9B%E9%A1%BF%E6%B3%95%E6%B1%82%E5%B9%B3%E6%96%B9%E6%A0%B9/</guid>
+      <description>Newton&amp;rsquo;s method for the square root</description>
+    </item>
+    
+    <item>
+      <title>子数组和问题</title>
+      <link>https://fffzlfk.github.io/posts/%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Sun, 21 Feb 2021 22:46:48 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C%E9%97%AE%E9%A2%98/</guid>
+      <description>the Sum of Subsequence</description>
+    </item>
+    
+    <item>
+      <title>Python装饰器</title>
+      <link>https://fffzlfk.github.io/posts/python%E8%A3%85%E9%A5%B0%E5%99%A8/</link>
+      <pubDate>Tue, 02 Feb 2021 14:23:44 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/python%E8%A3%85%E9%A5%B0%E5%99%A8/</guid>
+      <description>Python decorator</description>
+    </item>
+    
+    <item>
+      <title>每日一题</title>
+      <link>https://fffzlfk.github.io/posts/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</link>
+      <pubDate>Sun, 10 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</guid>
+      <description>Algorithms Problems</description>
+    </item>
+    
+    <item>
+      <title>SQL</title>
+      <link>https://fffzlfk.github.io/posts/sql/</link>
+      <pubDate>Sat, 24 Oct 2020 20:22:42 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/sql/</guid>
+      <description>SQL 语句</description>
+    </item>
+    
+    <item>
+      <title>微机原理</title>
+      <link>https://fffzlfk.github.io/posts/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Sat, 17 Oct 2020 21:07:26 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86/</guid>
+      <description>西电微机原理</description>
+    </item>
+    
+    <item>
+      <title>C&#43;&#43;(临时对象的分析)</title>
+      <link>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/</link>
+      <pubDate>Sat, 10 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/</guid>
+      <description>关闭编译器优化</description>
+    </item>
+    
+    <item>
+      <title>算法（第四版）</title>
+      <link>https://fffzlfk.github.io/posts/algorithm4th/</link>
+      <pubDate>Fri, 09 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/algorithm4th/</guid>
+      <description>The solution of algs4&amp;rsquo;s exercise</description>
+    </item>
+    
+    <item>
+      <title>OOP(C&#43;&#43;)</title>
+      <link>https://fffzlfk.github.io/posts/oopc&#43;&#43;/</link>
+      <pubDate>Tue, 06 Oct 2020 12:25:11 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/oopc&#43;&#43;/</guid>
+      <description>Object-Oriented Programming</description>
+    </item>
+    
+    <item>
+      <title>泰勒公式总结</title>
+      <link>https://fffzlfk.github.io/posts/%E6%B3%B0%E5%8B%92%E5%85%AC%E5%BC%8F%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Fri, 31 Jul 2020 22:41:12 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E6%B3%B0%E5%8B%92%E5%85%AC%E5%BC%8F%E6%80%BB%E7%BB%93/</guid>
+      <description>Taylor formula</description>
+    </item>
+    
+    
+    
+  </channel>
+</rss>

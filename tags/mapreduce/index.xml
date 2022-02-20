@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>MapReduce on fffzlfk&#39;s Blog</title>
+    <link>https://fffzlfk.github.io/tags/mapreduce/</link>
+    <description>Recent content in MapReduce on fffzlfk&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 24 Apr 2021 21:19:14 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/mapreduce/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MapReduce_in_Go</title>
+      <link>https://fffzlfk.github.io/posts/mapreduce_in_go/</link>
+      <pubDate>Sat, 24 Apr 2021 21:19:14 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/mapreduce_in_go/</guid>
+      <description>Map-Reduce</description>
+    </item>
+    
+  </channel>
+</rss>

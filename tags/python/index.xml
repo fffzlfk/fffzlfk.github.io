@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Python on fffzlfk&#39;s Blog</title>
+    <link>https://fffzlfk.github.io/tags/python/</link>
+    <description>Recent content in Python on fffzlfk&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Tue, 02 Feb 2021 14:23:44 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python装饰器</title>
+      <link>https://fffzlfk.github.io/posts/python%E8%A3%85%E9%A5%B0%E5%99%A8/</link>
+      <pubDate>Tue, 02 Feb 2021 14:23:44 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/python%E8%A3%85%E9%A5%B0%E5%99%A8/</guid>
+      <description>Python decorator</description>
+    </item>
+    
+  </channel>
+</rss>

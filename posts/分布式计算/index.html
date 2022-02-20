@@ -1,0 +1,629 @@
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>分布式计算 | fffzlfk's Blog</title>
+<meta name=keywords content="Academic">
+<meta name=description content="Distributed Computing">
+<meta name=author content="fffzlfk">
+<link rel=canonical href=https://fffzlfk.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/>
+<meta name=google-site-verification content="XYZabc">
+<meta name=yandex-verification content="XYZabc">
+<meta name=msvalidate.01 content="XYZabc">
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.1e44d58192cbf6d7a4eb649bc43dbc3d4cc432677e5d8adc69b08c34cbe461ac.css integrity="sha256-HkTVgZLL9tek62SbxD28PUzEMmd+XYrcabCMNMvkYaw=" rel="preload stylesheet" as=style>
+<link rel=icon href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
+<link rel=icon type=image/png sizes=16x16 href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
+<link rel=icon type=image/png sizes=32x32 href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
+<link rel=apple-touch-icon href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
+<link rel=mask-icon href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},svg:{fontCache:'global'}}</script>
+<script type=text/javascript id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YMYDYG1JEZ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-YMYDYG1JEZ')</script>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-123-45','auto'),ga('send','pageview'))</script><meta property="og:title" content="分布式计算">
+<meta property="og:description" content="Distributed Computing">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://fffzlfk.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-03-13T13:57:34+08:00">
+<meta property="article:modified_time" content="2021-03-13T13:57:34+08:00"><meta property="og:site_name" content="fffzlfk's Blog">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="分布式计算">
+<meta name=twitter:description content="Distributed Computing">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"https://fffzlfk.github.io/posts/"},{"@type":"ListItem","position":3,"name":"分布式计算","item":"https://fffzlfk.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"分布式计算","name":"分布式计算","description":"Distributed Computing","keywords":["Academic"],"articleBody":"概述 分布式系统定义 分布式计算：多个通过网络互联的计算节点通过相互协作共同完成计算任务。\n理解分布式系统定义的几个要点  多个计算节点：计算节点抽象为有限状态机（图灵机） 网络互联 独立自治 相互协作共同完成目标 消息传递模型   与并行计算的关系 不同层次的并行计算：\n 指令级并行：多指令并行；单指多数并行（向量指令） CPU多核并行：多线程编程 多CPU并行（一致性内存访问）：多线程编程 多CPU并行（非一致性内存访问）：超级计算机 基于GPU的并行：单指多数并行；CUDA、OpenCL 多机并行：就业消息传递的分布式计算（share nothing）  构建分布式系统的目的  提高计算能力 提高存储能力 提高网络吞吐能力（并发访问能力） 提高可靠性（解决局部失效问题） 提高安全性（解决被局部攻击问题） 提高可扩展性（解决瓶颈问题） 实现资源共享 实现跨越时空的协同服务（发挥不同节点的优势）  衡量分布式系统优劣的特性  可扩展性/可伸缩性（Scalability）  垂直可扩展性（Vertical Scalablility） 水平可扩展性（Horizontal Scalability）   容错性（Fault Tolerance/Reliability）  可用性（Availability） 可恢复性（Recoverability）   透明性（Transparency） 开放性（Openness） 安全性（Security） 可维护性（Maintainability）  设计分布式系统的挑战  异构性 自治 局部视图 开放性 可扩展性 故障处理 安全性 透明性 服务质量保证  关于分布式一致性 几类分布式系统框架模式   客户端-服务器（Client-Server）模式  客户端发出服务请求，服务端根据客户端请求参数完成实际运算，并将运算结果返回给客户端 客户端运算任务轻、服务端运算任务重 客户端生命周期短、服务端生命周期长 服务端一般要应对并发问题 客户端一般负责和用户进行交互 瘦客户端/胖服务端    Client—Cluster模式\n 是Client-Server模式的变种 服务端由多个服务器构成，共同承担计算任务 在宏观逻辑上，多个服务器构成的集群可以视为单一的功能强大的计算节点。客户端感觉不到服务端的实际构成。    主从（Master-Slave）模式\n 主节点（Master）负责将总任务分解为多个自任务分发给各个从节点（Slave，也叫Worker节点） 主节点监视各个从节点的任务执行情况，将执行失败的任务调度给其他的从节点完成 主节点在分配任务时会参考各个节点的当前负载情况    总线模式\n 不同节点通过虚拟总线相连 消息发送者不必知道接收者是谁，接收者也不知道发送者是谁 发送者和接收者之间用异步方式通信 一种松耦合结构 不同节点完成不同功能，分工协作    对等（Peer-to-Peer）模式\n 系统中每个计算节点在任务分工上是完全对等的 完全相同软件在不同的计算机上运行，只是初始化参数不同 结构化P2P：不同节点之间的交互模式遵循固定规律 非结构化P2P：不同节点之间的交互模式没有固定规律    混合模式\n  常用的负载均衡策略  随机 轮询 固定权重值 IP哈希（基于一致性随机散列函数） 最少TCP连接数 最小响应时间 基于各服务器实际负载的动态负载均衡算法  中间件的基本概念 中间件的作用  为开发者提供高层的编程抽象，屏蔽分布式系统的底层的异构型复杂性 提高互操作性和可移植性 提供分布式系统的基础设施服务  常用的中间件  远程过程调用中间件 分布式对象中间件 分布式组件中间件 消息队列中间件 Web服务中间件 P2P中间件  中间件的表现形式  作为独立的后台进程存在 作为运行时的函数库/类库存在（LIB静态库、DLL动态库、Jar包等） 作为源代码级的函数库/类库存在 作为高级语言解释器的一部分存在 作为辅助编译工具存在 作为高级语言编译器的一部分存在  抽象理论模型  交互模式  同步模型 异步模型   信息故障模式 节点故障模式  失效停止模式（Fail—Stop） 失效停止恢复模式 拜占庭模式 发送者验证拜占庭模式 理性拜占庭模式    分布式节点之间的通信技术 TCP/IP网络体系介绍  TCP/IP先于OSI模型，不完全符合OSI标准  TCP/IP四层模型（也可分为五层，将网络接口分为两层）   Socket 什么是Socket 网络层和传输层提供给应用层的标准化编程接口（或称为编程接口） 套接字分类-Socket类型   流式套接字\n  数据报套接字\n  原始套接字\n  如何标识一个Socket   五元组：\n 本地IP地址 本地端口号（通常临时分配：1024~5000） 远程IP地址 远程端口号（通常使用保留端口号1~1023） 协议类型（注意TCP 53和UDP 53是不同的）    TCP套接字编程典型模型   UDP套接字编程典型模型   并发服务技术  基于多线程的并发服务技术 基于线程池的并发服务技术  示例程序  基于TCP协议的Client-Server通信程序示例  Server Client    第一次作业   将基于UDP协议的Client-Server通信程序示例的服务器端程序改造成多线程版。\n  将基于TCP协议的Client-Server通信程序示例的服务器端程序改造成线程池版。\n代码实现\n  远程调用RPC和RMI 远程调用RPC 远程过程调用（Remote Procedure Call，RPC）：使应用程序可以像调用本地节点上的过程那样去调用一个远程节点上的子程序。\n远程方法调用RMI 远程方法调用（Remote Method Invocation， RMI）：将面向对象的编程模型扩展到了分布式环境。\nRPC/RMI中间件的作用  定义并利用Socket服务接口实现了一套调用者和被调用者之间的通信协议——远程调用协议 实现了过程参数以及运算结果的序列化和反序列化 通信过程中的错误处理 过程服务进程（或远程对象）的集中注册与发现——目录服务 远程对象的统一标识和生命周期管理 在服务端支持并发访问（多采用多线程技术）  注册中心  用于服务端注册远程服务以及客户端发现服务 可以实现负载均衡  RPC/RMI中间件的实现原理  在调用者进程中注入stu/proxy模块 在被调用者进程中注入skeleton模块 stub和skeleton之间利用Socket进行通信 skeleton相当于服务器端  gRPC中间件  通信协议基于HTTP协议标准，对象序列化基于**ProtoBuf(Protocol Buffers)**序列化协议 Protocol Buffers(简称Protobuf) 是Google设计的序列化标准协议和序列化中间件。  程序中应用Protobuf的方法  在.proto文件中定义要序列化的对象（使用独立于具体编程语言的标准格式Protocol Buffers） 利用代码自动生成工具（eg：Windows下protoc.exe）生成所有要序列化对象的工厂类 将生成的工厂类源码添加到应用工程中 需要创建一个可序列化对象时，用工厂对象创建 调用可序列化对象的writeTo方法将对象序列化成字节流并存入外部存储介质 调用工厂对象的parseFrom方法可以实现反序列化，并根据反序列化结果生成一个新的对象  程序中应用gRPC的方法  将RPC服务接口定义为标准.proto文件 用Protobuf提供的代码自动生成工具根据.proto文件生成RPC服务中所有要序列化对象的工厂类 利用gRPC提供的代码自动生成工具根据.proto文件生成RPC服务的stub类和skeleton类 将工具自动生成的序列化对象工厂相关源程序、RPC服务的stub类和skeleton类相关源程序加入的RPC服务端工程中 RPC服务端工程基于skeleton类中相关基类实现RPC服务功能的核心逻辑和监听服务器 将工具自动生成的序列化对象工厂相关源程序、RPC服务的stub类和skeleton类相关源程序加入的RPC客户端工程中 RPC客户端工程基于stub类实现调用RPC服务的相关逻辑  第二次作业 利用RPC技术实现一个书籍信息管理系统，具体要求：\n 客户端实现用户交互，服务器端实现书籍信息存储和管理。客户端与服务器端利用RPC机制进行通信。可以选择Java RMI、gRPC、Dubbo等任意RPC中间件。 服务器端至少暴露如下RPC接口：  bool add(Book b) 添加一个书籍对象。（注意Book对象序列化问题） Book queryByID(int bookID) 查询指定ID号的书籍对象。 BookList queryByName(String name) 按书名查询书籍对象列表。 bool delete((int bookID) 删除指定ID号的书籍对象。    实现\n微服务 各个模块独立（大多采用容器技术（如Docker）），模块之间使用RPC通信。\n基于消息中间件的通信技术 点到点通信技术的缺点  关系复杂，耦合度高 可扩展性差：增加生产者或消费者对多个节点产生影响 容错性差：节点失效或生产者和消费者速度不匹配会丢失数据  解决方案——增减中介节点  降低了耦合性 提高了容错性：中介节点具有数据缓存功能 提高了可扩展性：增加生产者或消费者对其他节点无影响  面向消息中间件（Message Oriented Middleware，MOM） 使分布式应用程序可以通过发送和接收消息来进行异步通信和交换数据。\nMOM两种通信模式   消息队列模式\n 消息队列中的消息一旦被某个消费者取走，该消息就从队列中删除 可以实现负载均衡    主题订阅模式（类似微信公众号订阅）\n 多个订阅同一主题的消费者可以同时接收发布到该消息主题的消息 可以实现广播     三种接收方式  阻塞接收（同步） 轮询接收 回调接收（异步）  第三次作业 利用MOM消息队列技术实现一个分布式随机信号分析系统，具体要求：\n 随机信号产生器每隔10毫秒左右就产生一个正态分布的随机数字，并作为一个消发布 多个随机信号分析模块订阅并接收该随机数字，然后对信号进行分析并实时显示分结果。至少包含如下分析模块：  计算随机信号的均值； 计算过去N个随机信号的方差（N为常量，可设置） 实现基于正态分布的异常点检测 实时绘制过去一段时间内随机信号的折线图（选作）    基于NSQ的Golang实现\n分布式存储 分布式存储要达到的目标  提高存储容量：多个存储节点容量的聚合（水平可扩展） 提高数据吞吐量 提高可靠性/可用性：部分存储节点发生故障时数据不丢失，部分节点失效时用户依然可以访问（容错性） 低时延：就近的服务器上（CDN）  基本手段：复制（replica）  用途  如果一些节点不可用，剩余的节点仍然可以提供服务 提高吞吐率   带来的问题  硬件成本 多数据副本之间的一致性问题    基本手段：分区（Partitioning) 将一个大型数据库文件（或数据库）拆分成较小的子集（称为分区partition或切片shard）派分给不同的节点\n 带来的问题  跨区处理（分布式索引问题） 合理、动态分区问题（大数据如何拆分） 负载均衡 分布式事务处理    基于领导者的复制（主从复制）  客户端要向数据存储系统写入数据时，它必须将请求发送给领导者；领导者将新数据写入本地存储，同时也会将数据变更发送给所有的追随者。 当客户想要从数据存储系统读取数据时，它可以向领导者或追随者查询。 适合于读多写少的应用场景。  同步复制和异步复制  同步  异步   多副本分布式存储中的一致性问题  强一致性  一个客户端写入成功，其他客户端后续都可以读出新版本的值 每个读操作一定不会读出比上一次更旧的版本   顺序一致性 因果一致性 最终一致性  CAP定理 Consistensy（一致性）、Partition Tolerance（切割容忍性）、Availability（可用性）三者只能取其二，不可兼得三者。\n很多时候只能取CP或AP，因为一般无法保证网络每时每刻畅通\nBASE定理 对CAP中的一致性和可用性权衡的结果：基本可用（Basically Available）、软件态（Soft State）、最终一致性（Eventually Consistency）\n数据分区的基本方法 根据主键范围进行分区 一般都是非均匀分布的，所以需要建立全局索引\n根据主键的哈希值进行分区 哈希函数  输入：长度不定的01串 输出：长度固定的01串 值域空间：$[0, 2^{n}-1]$ 特性  确定性 ”随机性“ 无碰撞性：任何两个输入，它们输出值相等的概率为$2^{-n}$    主要思想 $$ hash(key)\\mod N $$\n优点  一定程度上避免了偏斜和热点问题 无须全局索引  缺点 当节点数量变动时，需要大量的数据迁移。\n基于一致性哈希算法的分区——哈希环 当新增节点后，仅仅需要迁移少量数据。\n缺点：只能在节点之间新增新节点，这样会导致负载分配不均衡。\n使用虚拟节点改进的一致性哈希 每个物理节点有若干个虚拟节点，这样一个物理节点可以通过虚拟节点的方式均匀分散在哈希环的各个部分，解决了数据倾斜问题。\nHDFS分布式文件系统 NameNode维护的两张表  文件名——数据块对应表：每个文件被切片之后对应若干个有唯一标识号的数据块 数据块——物理节点对应表：每个数据块在不同DataNode存储3份（3备份策略）  写流程  Client向NameNode请求增加数据块（维护文件名——数据块对应表） NameNode返回数据块号及分配的3个DataNode IP地址（3备份策略） Client与NameNode流水线方式写入数据块（完成后维护数据块——物理节点对应表）  读流程  客户端向请求NameNode，传送参数：文件名、偏移量、长度 NameNode查找文件名——数据块对应表和数据块——物理节点对应表，将对应DataNode的IP地址返回给CLient Client向最近的DataNode建立连接完成读取  MapReduce模型和分布式计算框架 MapReduce并行计算模型 单词计数的例子 Hadoop MapReduce计算模型  Client类  设置工作参数 设置Map Reduce Job对象 设置要上传给Hadoop平台的Jar包或Class 指定Mapper类 指定Combiner类（可选） 指定Reducer类 设定输出数据的格式 设定输入、输出文件路径 启动该Job直到运行结束   Mapper类：实现Map接口(K1, V1)-(K2, V2) Combiner类：实现Reduce接口(K2, list(V2))-list(K3, V3) Reducer类：实现Reduce接口(K3, list(V3))-list(K4, V4)  Spark平台和基于RDD-DAG的计算模型 Spark简介 Spark是一个快速、通用、可扩展的分布式计算平台。\nSpark平台体系结构 分布式弹性数据集RDDs RDDs全称Resilient Distributed Datasets是Spark最基本的数据抽象，它是只读的、分区存储的、分布式的数据集合。\n可以将RDDs看作一个分布式存储的“大数组”，应用程序只需关心如何由一个RDDs转换为另一个RDDs，不用关心RDD在底层是如何分区、如何分布到多个节点上、如何在内存中缓存、内存缓存丢失后如何重新生成。\n容错性 如果RDDs的某个分区失效，Spark会根据DAG往回查看并重新恢复数据。\n将计算任务抽象为有向无环图 ","wordCount":"381","inLanguage":"en","datePublished":"2021-03-13T13:57:34+08:00","dateModified":"2021-03-13T13:57:34+08:00","author":{"@type":"Person","name":"fffzlfk"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://fffzlfk.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/"},"publisher":{"@type":"Organization","name":"fffzlfk's Blog","logo":{"@type":"ImageObject","url":"https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E"}}}</script>
+</head>
+<body id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
+<header class=header>
+<nav class=nav>
+<div class=logo>
+<a href=https://fffzlfk.github.io accesskey=h title="Home (Alt + H)">Home</a>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
+</div>
+<ul id=menu>
+<li>
+<a href=https://fffzlfk.github.io/archives title=Archive>
+<span>Archive</span>
+</a>
+</li>
+<li>
+<a href=https://fffzlfk.github.io/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
+<li>
+<a href=https://fffzlfk.github.io/tags/ title=Tags>
+<span>Tags</span>
+</a>
+</li>
+</ul>
+</nav>
+</header>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<div class=breadcrumbs><a href=https://fffzlfk.github.io>Home</a>&nbsp;»&nbsp;<a href=https://fffzlfk.github.io/posts/>Posts</a></div>
+<h1 class=post-title>
+分布式计算
+</h1>
+<div class=post-meta><span title="2021-03-13 13:57:34 +0800 +0800">March 13, 2021</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;fffzlfk&nbsp;|&nbsp;<a href=https://github.com/fffzlfk/fffzlfk.github.io/blob/master/content/posts/%e5%88%86%e5%b8%83%e5%bc%8f%e8%ae%a1%e7%ae%97.md rel="noopener noreferrer" target=_blank>Suggest Changes</a>
+</div>
+</header>
+<div class=post-content><h2 id=概述>概述<a hidden class=anchor aria-hidden=true href=#概述>#</a></h2>
+<h3 id=分布式系统定义>分布式系统定义<a hidden class=anchor aria-hidden=true href=#分布式系统定义>#</a></h3>
+<p><strong>分布式计算</strong>：多个通过网络互联的计算节点通过相互协作共同完成计算任务。</p>
+<h4 id=理解分布式系统定义的几个要点>理解分布式系统定义的几个要点<a hidden class=anchor aria-hidden=true href=#理解分布式系统定义的几个要点>#</a></h4>
+<ol>
+<li>多个计算节点：计算节点抽象为有限状态机（图灵机）</li>
+<li>网络互联</li>
+<li>独立自治</li>
+<li>相互协作共同完成目标</li>
+<li>消息传递模型
+</li>
+</ol>
+<h3 id=与并行计算的关系>与并行计算的关系<a hidden class=anchor aria-hidden=true href=#与并行计算的关系>#</a></h3>
+<p>不同层次的并行计算：</p>
+<ul>
+<li>指令级并行：多指令并行；单指多数并行（向量指令）</li>
+<li>CPU多核并行：多线程编程</li>
+<li>多CPU并行（一致性内存访问）：多线程编程</li>
+<li>多CPU并行（非一致性内存访问）：超级计算机</li>
+<li>基于GPU的并行：单指多数并行；CUDA、OpenCL</li>
+<li>多机并行：就业消息传递的分布式计算（share nothing）</li>
+</ul>
+<h3 id=构建分布式系统的目的>构建分布式系统的目的<a hidden class=anchor aria-hidden=true href=#构建分布式系统的目的>#</a></h3>
+<ul>
+<li>提高计算能力</li>
+<li>提高存储能力</li>
+<li>提高网络吞吐能力（并发访问能力）</li>
+<li>提高可靠性（解决局部失效问题）</li>
+<li>提高安全性（解决被局部攻击问题）</li>
+<li>提高可扩展性（解决瓶颈问题）</li>
+<li>实现资源共享</li>
+<li>实现跨越时空的协同服务（发挥不同节点的优势）</li>
+</ul>
+<h3 id=衡量分布式系统优劣的特性>衡量分布式系统优劣的特性<a hidden class=anchor aria-hidden=true href=#衡量分布式系统优劣的特性>#</a></h3>
+<ul>
+<li>可扩展性/可伸缩性（Scalability）
+<ul>
+<li>垂直可扩展性（Vertical Scalablility）</li>
+<li>水平可扩展性（Horizontal Scalability）</li>
+</ul>
+</li>
+<li>容错性（Fault Tolerance/Reliability）
+<ul>
+<li>可用性（Availability）</li>
+<li>可恢复性（Recoverability）</li>
+</ul>
+</li>
+<li>透明性（Transparency）</li>
+<li>开放性（Openness）</li>
+<li>安全性（Security）</li>
+<li>可维护性（Maintainability）</li>
+</ul>
+<h3 id=设计分布式系统的挑战>设计分布式系统的挑战<a hidden class=anchor aria-hidden=true href=#设计分布式系统的挑战>#</a></h3>
+<ul>
+<li>异构性</li>
+<li>自治</li>
+<li>局部视图</li>
+<li>开放性</li>
+<li>可扩展性</li>
+<li>故障处理</li>
+<li>安全性</li>
+<li>透明性</li>
+<li>服务质量保证</li>
+</ul>
+<h3 id=关于分布式一致性>关于分布式一致性<a hidden class=anchor aria-hidden=true href=#关于分布式一致性>#</a></h3>
+<h3 id=几类分布式系统框架模式>几类分布式系统框架模式<a hidden class=anchor aria-hidden=true href=#几类分布式系统框架模式>#</a></h3>
+<ul>
+<li>
+<p><strong>客户端-服务器</strong>（Client-Server）模式
+</p>
+<ul>
+<li>客户端发出服务请求，服务端根据客户端请求参数完成实际运算，并将运算结果返回给客户端</li>
+<li>客户端运算任务轻、服务端运算任务重</li>
+<li>客户端生命周期短、服务端生命周期长</li>
+<li>服务端一般要应对并发问题</li>
+<li>客户端一般负责和用户进行交互</li>
+<li>瘦客户端/胖服务端</li>
+</ul>
+</li>
+<li>
+<p>Client—Cluster模式</p>
+<ul>
+<li>是Client-Server模式的变种</li>
+<li>服务端由多个服务器构成，共同承担计算任务</li>
+<li>在宏观逻辑上，多个服务器构成的集群可以视为单一的功能强大的计算节点。客户端感觉不到服务端的实际构成。</li>
+</ul>
+</li>
+<li>
+<p><strong>主从</strong>（Master-Slave）模式<br>
+</p>
+<ul>
+<li>主节点（Master）负责将总任务分解为多个自任务分发给各个从节点（Slave，也叫Worker节点）</li>
+<li>主节点监视各个从节点的任务执行情况，将执行失败的任务调度给其他的从节点完成</li>
+<li>主节点在分配任务时会参考各个节点的当前负载情况</li>
+</ul>
+</li>
+<li>
+<p><strong>总线</strong>模式<br>
+</p>
+<ul>
+<li>不同节点通过虚拟总线相连</li>
+<li>消息发送者不必知道接收者是谁，接收者也不知道发送者是谁</li>
+<li>发送者和接收者之间用异步方式通信</li>
+<li>一种松耦合结构</li>
+<li>不同节点完成不同功能，分工协作</li>
+</ul>
+</li>
+<li>
+<p><strong>对等</strong>（Peer-to-Peer）模式</p>
+<ul>
+<li>系统中每个计算节点在任务分工上是完全对等的</li>
+<li>完全相同软件在不同的计算机上运行，只是初始化参数不同</li>
+<li>结构化P2P：不同节点之间的交互模式遵循固定规律</li>
+<li>非结构化P2P：不同节点之间的交互模式没有固定规律</li>
+</ul>
+</li>
+<li>
+<p>混合模式</p>
+</li>
+</ul>
+<h3 id=常用的负载均衡策略>常用的负载均衡策略<a hidden class=anchor aria-hidden=true href=#常用的负载均衡策略>#</a></h3>
+<ul>
+<li>随机</li>
+<li>轮询</li>
+<li>固定权重值</li>
+<li>IP哈希（基于一致性随机散列函数）</li>
+<li>最少TCP连接数</li>
+<li>最小响应时间</li>
+<li>基于各服务器实际负载的动态负载均衡算法</li>
+</ul>
+<h3 id=中间件的基本概念>中间件的基本概念<a hidden class=anchor aria-hidden=true href=#中间件的基本概念>#</a></h3>
+<h4 id=中间件的作用>中间件的作用<a hidden class=anchor aria-hidden=true href=#中间件的作用>#</a></h4>
+<ul>
+<li>为开发者提供高层的编程抽象，屏蔽分布式系统的底层的异构型复杂性</li>
+<li>提高互操作性和可移植性</li>
+<li>提供分布式系统的基础设施服务</li>
+</ul>
+<h4 id=常用的中间件>常用的中间件<a hidden class=anchor aria-hidden=true href=#常用的中间件>#</a></h4>
+<ul>
+<li>远程过程调用中间件</li>
+<li>分布式对象中间件</li>
+<li>分布式组件中间件</li>
+<li>消息队列中间件</li>
+<li>Web服务中间件</li>
+<li>P2P中间件</li>
+</ul>
+<h4 id=中间件的表现形式>中间件的表现形式<a hidden class=anchor aria-hidden=true href=#中间件的表现形式>#</a></h4>
+<ul>
+<li>作为独立的后台进程存在</li>
+<li>作为运行时的函数库/类库存在（LIB静态库、DLL动态库、Jar包等）</li>
+<li>作为源代码级的函数库/类库存在</li>
+<li>作为高级语言解释器的一部分存在</li>
+<li>作为辅助编译工具存在</li>
+<li>作为高级语言编译器的一部分存在</li>
+</ul>
+<h3 id=抽象理论模型>抽象理论模型<a hidden class=anchor aria-hidden=true href=#抽象理论模型>#</a></h3>
+<ul>
+<li>交互模式
+<ul>
+<li>同步模型</li>
+<li>异步模型</li>
+</ul>
+</li>
+<li>信息故障模式</li>
+<li>节点故障模式
+<ul>
+<li>失效停止模式（Fail—Stop）</li>
+<li>失效停止恢复模式</li>
+<li>拜占庭模式</li>
+<li>发送者验证拜占庭模式</li>
+<li>理性拜占庭模式</li>
+</ul>
+</li>
+</ul>
+<h2 id=分布式节点之间的通信技术>分布式节点之间的通信技术<a hidden class=anchor aria-hidden=true href=#分布式节点之间的通信技术>#</a></h2>
+<h3 id=tcpip网络体系介绍>TCP/IP网络体系介绍<a hidden class=anchor aria-hidden=true href=#tcpip网络体系介绍>#</a></h3>
+<ul>
+<li>TCP/IP先于OSI模型，不完全符合OSI标准
+</li>
+<li>TCP/IP四层模型（也可分为五层，将网络接口分为两层）
+</li>
+</ul>
+<h3 id=socket>Socket<a hidden class=anchor aria-hidden=true href=#socket>#</a></h3>
+<h4 id=什么是socket>什么是Socket<a hidden class=anchor aria-hidden=true href=#什么是socket>#</a></h4>
+<p><strong>网络层和传输层</strong>提供给<strong>应用层</strong>的标准化编程接口（或称为编程接口）
+</p>
+<h4 id=套接字分类-socket类型>套接字分类-Socket类型<a hidden class=anchor aria-hidden=true href=#套接字分类-socket类型>#</a></h4>
+<ul>
+<li>
+<p>流式套接字</p>
+</li>
+<li>
+<p>数据报套接字</p>
+</li>
+<li>
+<p>原始套接字</p>
+</li>
+</ul>
+<h4 id=如何标识一个socket>如何标识一个Socket<a hidden class=anchor aria-hidden=true href=#如何标识一个socket>#</a></h4>
+<ul>
+<li>
+<p>五元组：<code>&lt;SIP, sPort, dIP, dPort, 协议></code></p>
+<ul>
+<li>本地IP地址</li>
+<li>本地端口号（通常临时分配：1024~5000）</li>
+<li>远程IP地址</li>
+<li>远程端口号（通常使用保留端口号1~1023）</li>
+<li>协议类型（注意TCP 53和UDP 53是不同的）</li>
+</ul>
+</li>
+<li>
+<p>TCP套接字编程典型模型
+</p>
+</li>
+<li>
+<p>UDP套接字编程典型模型
+</p>
+</li>
+</ul>
+<h3 id=并发服务技术>并发服务技术<a hidden class=anchor aria-hidden=true href=#并发服务技术>#</a></h3>
+<ul>
+<li>基于多线程的并发服务技术</li>
+<li>基于线程池的并发服务技术</li>
+</ul>
+<h4 id=示例程序>示例程序<a hidden class=anchor aria-hidden=true href=#示例程序>#</a></h4>
+<ul>
+<li>基于TCP协议的Client-Server通信程序示例
+<ul>
+<li><a href="https://paste.blinking.fun/?id=6051765e7ffeba41c07bdd36">Server</a></li>
+<li><a href="https://paste.blinking.fun/?id=605175c87ea6546cf3e0a7e9">Client</a></li>
+</ul>
+</li>
+</ul>
+<h3 id=第一次作业>第一次作业<a hidden class=anchor aria-hidden=true href=#第一次作业>#</a></h3>
+<ol>
+<li>
+<p>将基于UDP协议的Client-Server通信程序示例的服务器端程序改造成多线程版。</p>
+</li>
+<li>
+<p>将基于TCP协议的Client-Server通信程序示例的服务器端程序改造成线程池版。</p>
+<p><a href=https://github.com/fffzlfk/DistributedComputing/tree/master/SocketTest/connection/homework/src/main/java><strong>代码实现</strong></a></p>
+</li>
+</ol>
+<h3 id=远程调用rpc和rmi>远程调用RPC和RMI<a hidden class=anchor aria-hidden=true href=#远程调用rpc和rmi>#</a></h3>
+<h4 id=远程调用rpc>远程调用RPC<a hidden class=anchor aria-hidden=true href=#远程调用rpc>#</a></h4>
+<p><strong>远程过程调用（Remote Procedure Call，RPC）</strong>：使应用程序可以像调用本地节点上的<strong>过程</strong>那样去调用一个远程节点上的子程序。</p>
+<h4 id=远程方法调用rmi>远程方法调用RMI<a hidden class=anchor aria-hidden=true href=#远程方法调用rmi>#</a></h4>
+<p><strong>远程方法调用（Remote Method Invocation， RMI）</strong>：将面向对象的编程模型扩展到了分布式环境。</p>
+<h4 id=rpcrmi中间件的作用>RPC/RMI中间件的作用<a hidden class=anchor aria-hidden=true href=#rpcrmi中间件的作用>#</a></h4>
+<ol>
+<li>定义并利用Socket服务接口实现了一套调用者和被调用者之间的通信协议——<strong>远程调用协议</strong></li>
+<li>实现了过程参数以及运算结果的<strong>序列化和反序列化</strong></li>
+<li>通信过程中的<strong>错误处理</strong></li>
+<li>过程服务进程（或远程对象）的<strong>集中注册与发现——目录服务</strong></li>
+<li>远程对象的统一标识和生命周期管理</li>
+<li>在服务端支持并发访问（多采用多线程技术）</li>
+</ol>
+<h4 id=注册中心>注册中心<a hidden class=anchor aria-hidden=true href=#注册中心>#</a></h4>
+<ul>
+<li>用于服务端注册远程服务以及客户端发现服务</li>
+<li>可以实现负载均衡</li>
+</ul>
+<h4 id=rpcrmi中间件的实现原理>RPC/RMI中间件的实现原理<a hidden class=anchor aria-hidden=true href=#rpcrmi中间件的实现原理>#</a></h4>
+<ul>
+<li>在调用者进程中注入<code>stu/proxy</code>模块</li>
+<li>在被调用者进程中注入<code>skeleton</code>模块</li>
+<li><code>stub</code>和<code>skeleton</code>之间利用Socket进行通信</li>
+<li><code>skeleton</code>相当于服务器端</li>
+</ul>
+<h4 id=grpc中间件>gRPC中间件<a hidden class=anchor aria-hidden=true href=#grpc中间件>#</a></h4>
+<ul>
+<li>通信协议基于HTTP协议标准，对象序列化基于**ProtoBuf(Protocol Buffers)**序列化协议</li>
+<li><strong>Protocol Buffers(简称Protobuf)</strong> 是Google设计的序列化标准协议和序列化中间件。</li>
+</ul>
+<h5 id=程序中应用protobuf的方法>程序中应用Protobuf的方法<a hidden class=anchor aria-hidden=true href=#程序中应用protobuf的方法>#</a></h5>
+<ol>
+<li>在<code>.proto</code>文件中定义要序列化的对象（使用独立于具体编程语言的标准格式<a href=https://developers.google.com/protocol-buffers>Protocol Buffers</a>）</li>
+<li>利用代码自动生成工具（eg：Windows下<code>protoc.exe</code>）生成所有要序列化对象的工厂类</li>
+<li>将生成的工厂类源码添加到应用工程中</li>
+<li>需要创建一个可序列化对象时，用工厂对象创建</li>
+<li>调用可序列化对象的<code>writeTo</code>方法将对象序列化成字节流并存入外部存储介质</li>
+<li>调用工厂对象的<code>parseFrom</code>方法可以实现反序列化，并根据反序列化结果生成一个新的对象</li>
+</ol>
+<h5 id=程序中应用grpc的方法>程序中应用gRPC的方法<a hidden class=anchor aria-hidden=true href=#程序中应用grpc的方法>#</a></h5>
+<ol>
+<li>将RPC服务接口定义为标准<code>.proto</code>文件</li>
+<li>用Protobuf提供的代码自动生成工具根据<code>.proto</code>文件生成RPC服务中所有要序列化对象的工厂类</li>
+<li>利用gRPC提供的代码自动生成工具根据<code>.proto</code>文件生成RPC服务的<code>stub</code>类和<code>skeleton</code>类</li>
+<li>将工具自动生成的序列化对象工厂相关源程序、RPC服务的<code>stub</code>类和<code>skeleton</code>类相关源程序加入的RPC服务端工程中</li>
+<li>RPC服务端工程基于<code>skeleton</code>类中相关基类实现RPC服务功能的核心逻辑和监听服务器</li>
+<li>将工具自动生成的序列化对象工厂相关源程序、RPC服务的<code>stub</code>类和<code>skeleton</code>类相关源程序加入的RPC客户端工程中</li>
+<li>RPC客户端工程基于<code>stub</code>类实现调用RPC服务的相关逻辑</li>
+</ol>
+<h3 id=第二次作业>第二次作业<a hidden class=anchor aria-hidden=true href=#第二次作业>#</a></h3>
+<p>利用RPC技术实现一个书籍信息管理系统，具体要求：</p>
+<ol>
+<li>客户端实现用户交互，服务器端实现书籍信息存储和管理。客户端与服务器端利用RPC机制进行通信。可以选择Java RMI、gRPC、Dubbo等任意RPC中间件。</li>
+<li>服务器端至少暴露如下RPC接口：
+<ul>
+<li><code>bool add(Book b)</code> 添加一个书籍对象。（注意Book对象序列化问题）</li>
+<li><code>Book queryByID(int bookID)</code> 查询指定ID号的书籍对象。</li>
+<li><code>BookList queryByName(String name)</code> 按书名查询书籍对象列表。</li>
+<li><code>bool delete((int bookID)</code> 删除指定ID号的书籍对象。</li>
+</ul>
+</li>
+</ol>
+<p><a href=https://github.com/fffzlfk/DistributedComputing/tree/master/homework/task2>实现</a></p>
+<h3 id=微服务>微服务<a hidden class=anchor aria-hidden=true href=#微服务>#</a></h3>
+<p>各个模块独立（大多采用容器技术（如Docker）），模块之间使用RPC通信。</p>
+<h3 id=基于消息中间件的通信技术>基于消息中间件的通信技术<a hidden class=anchor aria-hidden=true href=#基于消息中间件的通信技术>#</a></h3>
+<h4 id=点到点通信技术的缺点>点到点通信技术的缺点<a hidden class=anchor aria-hidden=true href=#点到点通信技术的缺点>#</a></h4>
+<ul>
+<li>关系复杂，耦合度高</li>
+<li>可扩展性差：增加生产者或消费者对多个节点产生影响</li>
+<li>容错性差：节点失效或生产者和消费者速度不匹配会丢失数据</li>
+</ul>
+<h4 id=解决方案增减中介节点>解决方案——增减中介节点<a hidden class=anchor aria-hidden=true href=#解决方案增减中介节点>#</a></h4>
+<ul>
+<li>降低了耦合性</li>
+<li>提高了容错性：中介节点具有数据缓存功能</li>
+<li>提高了可扩展性：增加生产者或消费者对其他节点无影响</li>
+</ul>
+<h4 id=面向消息中间件message-oriented-middlewaremom>面向消息中间件（Message Oriented Middleware，MOM）<a hidden class=anchor aria-hidden=true href=#面向消息中间件message-oriented-middlewaremom>#</a></h4>
+<p>使分布式应用程序可以通过发送和接收消息来进行<strong>异步</strong>通信和交换数据。</p>
+<h4 id=mom两种通信模式>MOM两种通信模式<a hidden class=anchor aria-hidden=true href=#mom两种通信模式>#</a></h4>
+<ul>
+<li>
+<p>消息队列模式</p>
+<ul>
+<li>消息队列中的消息一旦被某个消费者取走，该消息就从队列中删除</li>
+<li>可以实现负载均衡</li>
+</ul>
+</li>
+<li>
+<p>主题订阅模式（类似微信公众号订阅）</p>
+<ul>
+<li>多个订阅同一主题的消费者可以同时接收发布到该消息主题的消息</li>
+<li>可以实现广播
+</li>
+</ul>
+</li>
+</ul>
+<h4 id=三种接收方式>三种接收方式<a hidden class=anchor aria-hidden=true href=#三种接收方式>#</a></h4>
+<ul>
+<li>阻塞接收（同步）</li>
+<li>轮询接收</li>
+<li>回调接收（异步）</li>
+</ul>
+<h3 id=第三次作业>第三次作业<a hidden class=anchor aria-hidden=true href=#第三次作业>#</a></h3>
+<p>利用MOM消息队列技术实现一个分布式随机信号分析系统，具体要求：</p>
+<ul>
+<li>随机信号产生器每隔10毫秒左右就产生一个正态分布的随机数字，并作为一个消发布</li>
+<li>多个随机信号分析模块订阅并接收该随机数字，然后对信号进行分析并实时显示分结果。至少包含如下分析模块：
+<ol>
+<li>计算随机信号的均值；</li>
+<li>计算过去N个随机信号的方差（N为常量，可设置）</li>
+<li>实现基于正态分布的异常点检测</li>
+<li>实时绘制过去一段时间内随机信号的折线图（选作）</li>
+</ol>
+</li>
+</ul>
+<p><a href=https://github.com/fffzlfk/DistributedComputing/tree/master/homework/task3>基于NSQ的Golang实现</a></p>
+<h2 id=分布式存储>分布式存储<a hidden class=anchor aria-hidden=true href=#分布式存储>#</a></h2>
+<h3 id=分布式存储要达到的目标>分布式存储要达到的目标<a hidden class=anchor aria-hidden=true href=#分布式存储要达到的目标>#</a></h3>
+<ul>
+<li>提高存储容量：多个存储节点容量的聚合（水平可扩展）</li>
+<li>提高数据吞吐量</li>
+<li>提高可靠性/可用性：部分存储节点发生故障时数据不丢失，部分节点失效时用户依然可以访问（容错性）</li>
+<li>低时延：就近的服务器上（CDN）</li>
+</ul>
+<h3 id=基本手段复制replica>基本手段：复制（replica）<a hidden class=anchor aria-hidden=true href=#基本手段复制replica>#</a></h3>
+<ul>
+<li>用途
+<ul>
+<li>如果一些节点不可用，剩余的节点仍然可以提供服务</li>
+<li>提高吞吐率</li>
+</ul>
+</li>
+<li>带来的问题
+<ul>
+<li>硬件成本</li>
+<li>多数据副本之间的一致性问题</li>
+</ul>
+</li>
+</ul>
+<h3 id=基本手段分区partitioning>基本手段：分区（Partitioning)<a hidden class=anchor aria-hidden=true href=#基本手段分区partitioning>#</a></h3>
+<p>将一个大型数据库文件（或数据库）拆分成较小的子集（称为分区partition或切片shard）派分给不同的节点</p>
+<ul>
+<li>带来的问题
+<ul>
+<li>跨区处理（分布式索引问题）</li>
+<li>合理、动态分区问题（大数据如何拆分）</li>
+<li>负载均衡</li>
+<li>分布式事务处理</li>
+</ul>
+</li>
+</ul>
+<h3 id=基于领导者的复制主从复制>基于领导者的复制（主从复制）<a hidden class=anchor aria-hidden=true href=#基于领导者的复制主从复制>#</a></h3>
+<ol>
+<li>客户端要向数据存储系统写入数据时，它必须将请求发送给领导者；领导者将新数据写入本地存储，同时也会将数据变更发送给所有的追随者。</li>
+<li>当客户想要从数据存储系统读取数据时，它可以向领导者或追随者查询。</li>
+<li>适合于读多写少的应用场景。</li>
+</ol>
+<h4 id=同步复制和异步复制>同步复制和异步复制<a hidden class=anchor aria-hidden=true href=#同步复制和异步复制>#</a></h4>
+<ul>
+<li>同步
+</li>
+<li>异步
+</li>
+</ul>
+<h4 id=多副本分布式存储中的一致性问题>多副本分布式存储中的一致性问题<a hidden class=anchor aria-hidden=true href=#多副本分布式存储中的一致性问题>#</a></h4>
+<ul>
+<li>强一致性
+<ul>
+<li>一个客户端写入成功，其他客户端后续都可以读出新版本的值</li>
+<li>每个读操作一定不会读出比上一次更旧的版本</li>
+</ul>
+</li>
+<li>顺序一致性</li>
+<li>因果一致性</li>
+<li>最终一致性</li>
+</ul>
+<h4 id=cap定理>CAP定理<a hidden class=anchor aria-hidden=true href=#cap定理>#</a></h4>
+<p>Consistensy（一致性）、Partition Tolerance（切割容忍性）、Availability（可用性）三者只能取其二，不可兼得三者。</p>
+<p>很多时候只能取CP或AP，因为一般无法保证网络每时每刻畅通</p>
+<h4 id=base定理>BASE定理<a hidden class=anchor aria-hidden=true href=#base定理>#</a></h4>
+<p>对CAP中的一致性和可用性权衡的结果：基本可用（Basically Available）、软件态（Soft State）、最终一致性（Eventually Consistency）</p>
+<h3 id=数据分区的基本方法>数据分区的基本方法<a hidden class=anchor aria-hidden=true href=#数据分区的基本方法>#</a></h3>
+<h4 id=根据主键范围进行分区>根据主键范围进行分区<a hidden class=anchor aria-hidden=true href=#根据主键范围进行分区>#</a></h4>
+<p>一般都是<strong>非均匀分布</strong>的，所以需要建立<strong>全局索引</strong></p>
+<h4 id=根据主键的哈希值进行分区>根据主键的哈希值进行分区<a hidden class=anchor aria-hidden=true href=#根据主键的哈希值进行分区>#</a></h4>
+<h5 id=哈希函数>哈希函数<a hidden class=anchor aria-hidden=true href=#哈希函数>#</a></h5>
+<ul>
+<li>输入：长度不定的<code>01</code>串</li>
+<li>输出：长度固定的<code>01</code>串</li>
+<li>值域空间：$[0, 2^{n}-1]$</li>
+<li>特性
+<ul>
+<li>确定性</li>
+<li>”随机性“</li>
+<li>无碰撞性：任何两个输入，它们输出值相等的概率为$2^{-n}$</li>
+</ul>
+</li>
+</ul>
+<h5 id=主要思想>主要思想<a hidden class=anchor aria-hidden=true href=#主要思想>#</a></h5>
+<p>$$ hash(key)\mod N $$</p>
+<h5 id=优点>优点<a hidden class=anchor aria-hidden=true href=#优点>#</a></h5>
+<ul>
+<li>一定程度上避免了偏斜和热点问题</li>
+<li>无须全局索引</li>
+</ul>
+<h5 id=缺点>缺点<a hidden class=anchor aria-hidden=true href=#缺点>#</a></h5>
+<p>当节点数量变动时，需要大量的数据迁移。</p>
+<h4 id=基于一致性哈希算法的分区哈希环>基于一致性哈希算法的分区——哈希环<a hidden class=anchor aria-hidden=true href=#基于一致性哈希算法的分区哈希环>#</a></h4>
+<p>当新增节点后，仅仅需要迁移少量数据。</p>
+<p>缺点：只能在节点之间新增新节点，这样会导致负载分配不均衡。</p>
+<h4 id=使用虚拟节点改进的一致性哈希>使用虚拟节点改进的一致性哈希<a hidden class=anchor aria-hidden=true href=#使用虚拟节点改进的一致性哈希>#</a></h4>
+<p>每个物理节点有若干个虚拟节点，这样一个物理节点可以通过虚拟节点的方式均匀分散在哈希环的各个部分，解决了数据倾斜问题。</p>
+<h3 id=hdfs分布式文件系统>HDFS分布式文件系统<a hidden class=anchor aria-hidden=true href=#hdfs分布式文件系统>#</a></h3>
+<h4 id=namenode维护的两张表>NameNode维护的两张表<a hidden class=anchor aria-hidden=true href=#namenode维护的两张表>#</a></h4>
+<ol>
+<li>文件名——数据块对应表：每个文件被切片之后对应若干个有唯一标识号的数据块</li>
+<li>数据块——物理节点对应表：每个数据块在不同DataNode存储3份（3备份策略）</li>
+</ol>
+<h4 id=写流程>写流程<a hidden class=anchor aria-hidden=true href=#写流程>#</a></h4>
+<ol>
+<li>Client向NameNode请求增加数据块（维护文件名——数据块对应表）</li>
+<li>NameNode返回数据块号及分配的3个DataNode IP地址（3备份策略）</li>
+<li>Client与NameNode流水线方式写入数据块（完成后维护数据块——物理节点对应表）</li>
+</ol>
+<h4 id=读流程>读流程<a hidden class=anchor aria-hidden=true href=#读流程>#</a></h4>
+<ol>
+<li>客户端向请求NameNode，传送参数：文件名、偏移量、长度</li>
+<li>NameNode查找文件名——数据块对应表和数据块——物理节点对应表，将对应DataNode的IP地址返回给CLient</li>
+<li>Client向最近的DataNode建立连接完成读取</li>
+</ol>
+<h2 id=mapreduce模型和分布式计算框架>MapReduce模型和分布式计算框架<a hidden class=anchor aria-hidden=true href=#mapreduce模型和分布式计算框架>#</a></h2>
+<h3 id=mapreduce并行计算模型>MapReduce并行计算模型<a hidden class=anchor aria-hidden=true href=#mapreduce并行计算模型>#</a></h3>
+<h4 id=单词计数的例子>单词计数的例子<a hidden class=anchor aria-hidden=true href=#单词计数的例子>#</a></h4>
+<h4 id=hadoop-mapreduce计算模型>Hadoop MapReduce计算模型<a hidden class=anchor aria-hidden=true href=#hadoop-mapreduce计算模型>#</a></h4>
+<ul>
+<li>Client类
+<ol>
+<li>设置工作参数</li>
+<li>设置Map Reduce Job对象</li>
+<li>设置要上传给Hadoop平台的Jar包或Class</li>
+<li>指定Mapper类</li>
+<li>指定Combiner类（可选）</li>
+<li>指定Reducer类</li>
+<li>设定输出数据的格式</li>
+<li>设定输入、输出文件路径</li>
+<li>启动该Job直到运行结束</li>
+</ol>
+</li>
+<li>Mapper类：实现Map接口<code>(K1, V1)->(K2, V2)</code></li>
+<li>Combiner类：实现Reduce接口<code>(K2, list(V2))->list(K3, V3)</code></li>
+<li>Reducer类：实现Reduce接口<code>(K3, list(V3))->list(K4, V4)</code></li>
+</ul>
+<h2 id=spark平台和基于rdd-dag的计算模型>Spark平台和基于RDD-DAG的计算模型<a hidden class=anchor aria-hidden=true href=#spark平台和基于rdd-dag的计算模型>#</a></h2>
+<h3 id=spark简介>Spark简介<a hidden class=anchor aria-hidden=true href=#spark简介>#</a></h3>
+<p>Spark是一个快速、通用、可扩展的分布式计算平台。</p>
+<h3 id=spark平台体系结构>Spark平台体系结构<a hidden class=anchor aria-hidden=true href=#spark平台体系结构>#</a></h3>
+<h3 id=分布式弹性数据集rdds>分布式弹性数据集RDDs<a hidden class=anchor aria-hidden=true href=#分布式弹性数据集rdds>#</a></h3>
+<p>RDDs全称Resilient Distributed Datasets是Spark最基本的数据抽象，它是只读的、分区存储的、分布式的数据集合。</p>
+<p>可以将RDDs看作一个分布式存储的“大数组”，应用程序只需关心如何由一个RDDs转换为另一个RDDs，不用关心RDD在底层是如何分区、如何分布到多个节点上、如何在内存中缓存、内存缓存丢失后如何重新生成。</p>
+<h4 id=容错性>容错性<a hidden class=anchor aria-hidden=true href=#容错性>#</a></h4>
+<p>如果RDDs的某个分区失效，Spark会根据DAG往回查看并重新恢复数据。</p>
+<h3 id=将计算任务抽象为有向无环图>将计算任务抽象为有向无环图<a hidden class=anchor aria-hidden=true href=#将计算任务抽象为有向无环图>#</a></h3>
+</div>
+<footer class=post-footer>
+<ul class=post-tags>
+<li><a href=https://fffzlfk.github.io/tags/academic/>Academic</a></li>
+</ul>
+<nav class=paginav>
+<a class=prev href=https://fffzlfk.github.io/posts/%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/>
+<span class=title>« Prev Page</span>
+<br>
+<span>网络应用程序设计</span>
+</a>
+<a class=next href=https://fffzlfk.github.io/posts/about/>
+<span class=title>Next Page »</span>
+<br>
+<span>About</span>
+</a>
+</nav>
+</footer>
+<div class="container giscus my-4">
+<script src=https://giscus.app/client.js data-repo=fffzlfk/fffzlfk.github.io data-repo-id=R_kgDOG4ERGw data-category=General data-category-id=DIC_kwDOG4ERG84CBP5s data-mapping=pathname data-reactions-enabled=0 data-emit-metadata=0 data-theme=auto data-lang=zh-CN data-input-position=bottom crossorigin=anonymous async></script>
+</div>
+</article>
+</main>
+<footer class=footer>
+<span>&copy; 2022 <a href=https://fffzlfk.github.io>fffzlfk's Blog</a></span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
+<script>document.querySelectorAll('pre > code').forEach(b=>{const c=b.parentNode.parentNode,a=document.createElement('button');a.classList.add('copy-code'),a.innerText='copy';function d(){a.innerText='copied!',setTimeout(()=>{a.innerText='copy'},2e3)}a.addEventListener('click',e=>{if('clipboard'in navigator){navigator.clipboard.writeText(b.textContent),d();return}const a=document.createRange();a.selectNodeContents(b);const c=window.getSelection();c.removeAllRanges(),c.addRange(a);try{document.execCommand('copy'),d()}catch(a){}c.removeRange(a)}),c.classList.contains("highlight")?c.appendChild(a):c.parentNode.firstChild==c||(b.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?b.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(a):b.parentNode.appendChild(a))})</script>
+</body>
+</html>

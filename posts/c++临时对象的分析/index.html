@@ -1,0 +1,317 @@
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>C++(临时对象的分析) | fffzlfk's Blog</title>
+<meta name=keywords content="C++">
+<meta name=description content="关闭编译器优化">
+<meta name=author content="fffzlfk">
+<link rel=canonical href=https://fffzlfk.github.io/posts/c++%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/>
+<meta name=google-site-verification content="XYZabc">
+<meta name=yandex-verification content="XYZabc">
+<meta name=msvalidate.01 content="XYZabc">
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.1e44d58192cbf6d7a4eb649bc43dbc3d4cc432677e5d8adc69b08c34cbe461ac.css integrity="sha256-HkTVgZLL9tek62SbxD28PUzEMmd+XYrcabCMNMvkYaw=" rel="preload stylesheet" as=style>
+<link rel=icon href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
+<link rel=icon type=image/png sizes=16x16 href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
+<link rel=icon type=image/png sizes=32x32 href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
+<link rel=apple-touch-icon href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
+<link rel=mask-icon href=https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},svg:{fontCache:'global'}}</script>
+<script type=text/javascript id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YMYDYG1JEZ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-YMYDYG1JEZ')</script>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-123-45','auto'),ga('send','pageview'))</script><meta property="og:title" content="C++(临时对象的分析)">
+<meta property="og:description" content="关闭编译器优化">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://fffzlfk.github.io/posts/c++%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2020-10-10T00:00:00+00:00">
+<meta property="article:modified_time" content="2020-10-10T00:00:00+00:00"><meta property="og:site_name" content="fffzlfk's Blog">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="C++(临时对象的分析)">
+<meta name=twitter:description content="关闭编译器优化">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"https://fffzlfk.github.io/posts/"},{"@type":"ListItem","position":3,"name":"C++(临时对象的分析)","item":"https://fffzlfk.github.io/posts/c++%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"C++(临时对象的分析)","name":"C\u002b\u002b(临时对象的分析)","description":"关闭编译器优化","keywords":["C++"],"articleBody":"复制构造函数 :laptop:笔者在学习OOP时，看到一个讲C++复制构造函数在什么情况下会执行的代码片段，如下：\n1 2 3 4 5 6 7 8 9 10 11 12  class Student { public: Student(){}; Student returnS(Student s) { return s; } Student(const Student \u0026e) { cout  \"Copy Constructure\\n\"; } ~Student() { cout  \"Destructure\\n\"; } }; int main() { Student stu1; stu1.returnS(stu1); return 0; }   于是乎，笔者在电脑上敲了一边，确实按照预期复制构造函数执行了两次，第一次在构造形参对象时执行，第二次在返回值复制到主函数产生临时对象时执行。\n接着笔者将主函数修改为\n1 2 3 4 5  int main() { Student stu1; Student stu2 = stu1.returnS(stu1); return 0; }   心想：不出意外在构造stu2时，会再执行一次复制构造函数，然而当笔者看到运行结果后，发现并非如此，复制构造函数还是执行了两次，于是笔者陷入了大思考。\n想到可能是聪明的编译器是不是帮我优化掉了临时对象，直接复制构造了stu2。导致了上面的代码经过优化之后和这样写其实是一样的：\n1 2 3 4 5  int main() { Student stu1; Student \u0026\u0026stu2 = stu1.returnS(stu1); return 0; }   右值引用\nC++中，引用（reference）是指绑定到内存中的相应对象上。左值引用是绑定到左值对象上；右值引用是绑定到临时对象上。这里的左值对象是指可以通过取地址\u0026运算符得到该对象的内存地址；而临时对象是不能用取地址\u0026运算符获取到对象的内存地址。\n于是经过几番搜索，找到了这个东西：\n-fno-elide-constructors\nThe C++ standard allows an implementation to omit creating a temporary that is only used to initialize another object of the same type. Specifying this option disables that optimization, and forces G++ to call the copy constructor in all cases.\n果然不出所料，当笔者加上这个参数之后\n1  g++ test_ref.cpp -o test -fno-elide-constructors   一切都对劲了起来:smile:！\n移动构造函数 使用移动构造函数可以提高内存资源的利用效率，从而改进程序的执行性能。\n示例程序\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36  #include using namespace std; class A { public: int *i; A(int _i) : i(new int(_i)) { cout  \"A(int) \"  i  '\\n'; } ~A() { cout  \"delete pointer: \"  i  '\\n'; delete i; } // 复制构造函数  A(const A \u0026a) : i(new int(*a.i)) { cout  \"A(const A\u0026) \"  i  '\\n'; } // 移动构造函数  A(A \u0026\u0026a) : i(new int(*a.i)) { cout  \"A(const A\u0026\u0026) \"  i  '\\n'; a.i = nullptr; } }; A getA(A para) { A tmp(2); cout  hex  tmp.i  '\\n'; return tmp; } int main() { A a(1); A b = getA(a); cout  a.i  '\\n'; return 0; }   运行结果\n1 2 3 4 5 6 7 8 9 10 11 12  A(int) 0x8016eb0 构造a对象 A(const A\u0026) 0x80172e0 参数复制构造para A(int) 0x8017300 构造tmp对象 0x8017300 A(const A\u0026\u0026) 0x8017320 调用移动构造函数(临时对象构造返回值) delete pointer: 0 析构临时对象 A(const A\u0026\u0026) 0x8017340 调用移动构造函数(返回值移动到b对象) delete pointer: 0 析构临时对象(指返回值) delete pointer: 0x80172e0 析构函数para 0x8016eb0 delete pointer: 0x8017340 析构b对象 delete pointer: 0x8016eb0 析构a对象   ","wordCount":"346","inLanguage":"en","datePublished":"2020-10-10T00:00:00Z","dateModified":"2020-10-10T00:00:00Z","author":{"@type":"Person","name":"fffzlfk"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://fffzlfk.github.io/posts/c++%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/"},"publisher":{"@type":"Organization","name":"fffzlfk's Blog","logo":{"@type":"ImageObject","url":"https://fffzlfk.github.io/%3Clink%20/%20abs%20url%3E"}}}</script>
+</head>
+<body id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
+<header class=header>
+<nav class=nav>
+<div class=logo>
+<a href=https://fffzlfk.github.io accesskey=h title="Home (Alt + H)">Home</a>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
+</div>
+<ul id=menu>
+<li>
+<a href=https://fffzlfk.github.io/archives title=Archive>
+<span>Archive</span>
+</a>
+</li>
+<li>
+<a href=https://fffzlfk.github.io/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
+<li>
+<a href=https://fffzlfk.github.io/tags/ title=Tags>
+<span>Tags</span>
+</a>
+</li>
+</ul>
+</nav>
+</header>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<div class=breadcrumbs><a href=https://fffzlfk.github.io>Home</a>&nbsp;»&nbsp;<a href=https://fffzlfk.github.io/posts/>Posts</a></div>
+<h1 class=post-title>
+C++(临时对象的分析)
+</h1>
+<div class=post-meta><span title="2020-10-10 00:00:00 +0000 UTC">October 10, 2020</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;fffzlfk&nbsp;|&nbsp;<a href=https://github.com/fffzlfk/fffzlfk.github.io/blob/master/content/posts/C++%e4%b8%b4%e6%97%b6%e5%af%b9%e8%b1%a1%e7%9a%84%e5%88%86%e6%9e%90.md rel="noopener noreferrer" target=_blank>Suggest Changes</a>
+</div>
+</header>
+<div class=post-content><h2 id=复制构造函数>复制构造函数<a hidden class=anchor aria-hidden=true href=#复制构造函数>#</a></h2>
+<p>:laptop:笔者在学习OOP时，看到一个讲C++复制构造函数在什么情况下会执行的代码片段，如下：</p>
+<div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Student</span> {
+   <span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+    Student(){};
+    Student <span style=color:#a6e22e>returnS</span>(Student s) { <span style=color:#66d9ef>return</span> s; }
+    Student(<span style=color:#66d9ef>const</span> Student <span style=color:#f92672>&amp;</span>e) { cout <span style=color:#f92672>&lt;&lt;</span> <span style=color:#e6db74>&#34;Copy Constructure</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#34;</span>; }
+    <span style=color:#f92672>~</span>Student() { cout <span style=color:#f92672>&lt;&lt;</span> <span style=color:#e6db74>&#34;Destructure</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#34;</span>; }
+};
+<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>main</span>() {
+    Student stu1;
+    stu1.returnS(stu1);
+    <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>于是乎，笔者在电脑上敲了一边，确实按照预期复制构造函数执行了两次，第一次在构造形参对象时执行，第二次在返回值复制到主函数产生临时对象时执行。</p>
+<p>接着笔者将主函数修改为</p>
+<div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#66d9ef>int</span> <span style=color:#a6e22e>main</span>() {
+    Student stu1;
+    Student stu2 <span style=color:#f92672>=</span> stu1.returnS(stu1);
+    <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>心想：不出意外在构造stu2时，会再执行一次复制构造函数，然而当笔者看到运行结果后，发现并非如此，复制构造函数还是执行了两次，于是笔者陷入了大思考。<br>
+想到可能是聪明的编译器是不是帮我优化掉了临时对象，直接复制构造了stu2。导致了上面的代码经过优化之后和这样写其实是一样的：</p>
+<div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#66d9ef>int</span> <span style=color:#a6e22e>main</span>() {
+    Student stu1;
+    Student <span style=color:#f92672>&amp;&amp;</span>stu2 <span style=color:#f92672>=</span> stu1.returnS(stu1);
+    <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p><a href=https://zh.wikipedia.org/wiki/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8><strong>右值引用</strong></a><br>
+C++中，引用（reference）是指绑定到内存中的相应对象上。左值引用是绑定到左值对象上；右值引用是绑定到临时对象上。这里的左值对象是指可以通过取地址&运算符得到该对象的内存地址；而临时对象是不能用取地址&运算符获取到对象的内存地址。</p>
+<p>于是经过几番搜索，找到了这个东西：</p>
+<p><strong>-fno-elide-constructors</strong></p>
+<p>The C++ standard allows an implementation to omit creating a temporary that is only used to initialize another object of the same type. Specifying this option disables that optimization, and forces G++ to call the copy constructor in all cases.</p>
+<p>果然不出所料，当笔者加上这个参数之后</p>
+<div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>g++ test_ref.cpp -o test -fno-elide-constructors
+</code></pre></td></tr></table>
+</div>
+</div><p>一切都对劲了起来:smile:！</p>
+<h2 id=移动构造函数>移动构造函数<a hidden class=anchor aria-hidden=true href=#移动构造函数>#</a></h2>
+<p>使用<a href=https://en.cppreference.com/w/cpp/language/move_constructor>移动构造函数</a>可以提高内存资源的利用效率，从而改进程序的执行性能。</p>
+<p>示例程序</p>
+<div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;bits/stdc++.h&gt;</span><span style=color:#75715e>
+</span><span style=color:#75715e></span><span style=color:#66d9ef>using</span> <span style=color:#66d9ef>namespace</span> std;
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>A</span> {
+<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+    <span style=color:#66d9ef>int</span> <span style=color:#f92672>*</span>i;
+    A(<span style=color:#66d9ef>int</span> _i) <span style=color:#f92672>:</span> i(<span style=color:#66d9ef>new</span> <span style=color:#66d9ef>int</span>(_i)) {
+        cout <span style=color:#f92672>&lt;&lt;</span> <span style=color:#e6db74>&#34;A(int) &#34;</span> <span style=color:#f92672>&lt;&lt;</span> i <span style=color:#f92672>&lt;&lt;</span> <span style=color:#e6db74>&#39;\n&#39;</span>;
+    }
+    <span style=color:#f92672>~</span>A() {
+        cout <span style=color:#f92672>&lt;&lt;</span> <span style=color:#e6db74>&#34;delete pointer: &#34;</span> <span style=color:#f92672>&lt;&lt;</span> i <span style=color:#f92672>&lt;&lt;</span> <span style=color:#e6db74>&#39;\n&#39;</span>;
+        <span style=color:#66d9ef>delete</span> i;
+    }
+    <span style=color:#75715e>// 复制构造函数
+</span><span style=color:#75715e></span>    A(<span style=color:#66d9ef>const</span> A <span style=color:#f92672>&amp;</span>a) <span style=color:#f92672>:</span> i(<span style=color:#66d9ef>new</span> <span style=color:#66d9ef>int</span>(<span style=color:#f92672>*</span>a.i)) {
+        cout <span style=color:#f92672>&lt;&lt;</span> <span style=color:#e6db74>&#34;A(const A&amp;) &#34;</span> <span style=color:#f92672>&lt;&lt;</span> i <span style=color:#f92672>&lt;&lt;</span> <span style=color:#e6db74>&#39;\n&#39;</span>;
+    }
+    <span style=color:#75715e>// 移动构造函数
+</span><span style=color:#75715e></span>    A(A <span style=color:#f92672>&amp;&amp;</span>a) <span style=color:#f92672>:</span> i(<span style=color:#66d9ef>new</span> <span style=color:#66d9ef>int</span>(<span style=color:#f92672>*</span>a.i)) {
+        cout <span style=color:#f92672>&lt;&lt;</span> <span style=color:#e6db74>&#34;A(const A&amp;&amp;) &#34;</span> <span style=color:#f92672>&lt;&lt;</span> i <span style=color:#f92672>&lt;&lt;</span> <span style=color:#e6db74>&#39;\n&#39;</span>;
+        a.i <span style=color:#f92672>=</span> <span style=color:#66d9ef>nullptr</span>;
+    }
+};
+
+A <span style=color:#a6e22e>getA</span>(A para) {
+    A tmp(<span style=color:#ae81ff>2</span>);
+    cout <span style=color:#f92672>&lt;&lt;</span> hex <span style=color:#f92672>&lt;&lt;</span> tmp.i <span style=color:#f92672>&lt;&lt;</span> <span style=color:#e6db74>&#39;\n&#39;</span>;
+    <span style=color:#66d9ef>return</span> tmp;
+}
+
+<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>main</span>() {
+    A a(<span style=color:#ae81ff>1</span>);
+    A b <span style=color:#f92672>=</span> getA(a);
+    cout <span style=color:#f92672>&lt;&lt;</span> a.i <span style=color:#f92672>&lt;&lt;</span> <span style=color:#e6db74>&#39;\n&#39;</span>;
+    <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>运行结果</p>
+<div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>A(int) 0x8016eb0            构造a对象
+A(const A&amp;) 0x80172e0       参数复制构造para
+A(int) 0x8017300            构造tmp对象
+0x8017300
+A(const A&amp;&amp;) 0x8017320      调用移动构造函数(临时对象构造返回值)
+delete pointer: 0           析构临时对象
+A(const A&amp;&amp;) 0x8017340      调用移动构造函数(返回值移动到b对象)
+delete pointer: 0           析构临时对象(指返回值)
+delete pointer: 0x80172e0   析构函数para
+0x8016eb0               
+delete pointer: 0x8017340   析构b对象
+delete pointer: 0x8016eb0   析构a对象
+</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<footer class=post-footer>
+<ul class=post-tags>
+<li><a href=https://fffzlfk.github.io/tags/c++/>C++</a></li>
+</ul>
+<nav class=paginav>
+<a class=prev href=https://fffzlfk.github.io/posts/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86/>
+<span class=title>« Prev Page</span>
+<br>
+<span>微机原理</span>
+</a>
+<a class=next href=https://fffzlfk.github.io/posts/algorithm4th/>
+<span class=title>Next Page »</span>
+<br>
+<span>算法（第四版）</span>
+</a>
+</nav>
+</footer>
+<div class="container giscus my-4">
+<script src=https://giscus.app/client.js data-repo=fffzlfk/fffzlfk.github.io data-repo-id=R_kgDOG4ERGw data-category=General data-category-id=DIC_kwDOG4ERG84CBP5s data-mapping=pathname data-reactions-enabled=0 data-emit-metadata=0 data-theme=auto data-lang=zh-CN data-input-position=bottom crossorigin=anonymous async></script>
+</div>
+</article>
+</main>
+<footer class=footer>
+<span>&copy; 2022 <a href=https://fffzlfk.github.io>fffzlfk's Blog</a></span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
+<script>document.querySelectorAll('pre > code').forEach(b=>{const c=b.parentNode.parentNode,a=document.createElement('button');a.classList.add('copy-code'),a.innerText='copy';function d(){a.innerText='copied!',setTimeout(()=>{a.innerText='copy'},2e3)}a.addEventListener('click',e=>{if('clipboard'in navigator){navigator.clipboard.writeText(b.textContent),d();return}const a=document.createRange();a.selectNodeContents(b);const c=window.getSelection();c.removeAllRanges(),c.addRange(a);try{document.execCommand('copy'),d()}catch(a){}c.removeRange(a)}),c.classList.contains("highlight")?c.appendChild(a):c.parentNode.firstChild==c||(b.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?b.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(a):b.parentNode.appendChild(a))})</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Academic on fffzlfk&#39;s Blog</title>
+    <link>https://fffzlfk.github.io/tags/academic/</link>
+    <description>Recent content in Academic on fffzlfk&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Wed, 07 Apr 2021 20:48:12 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/academic/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>网络应用程序设计</title>
+      <link>https://fffzlfk.github.io/posts/%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</link>
+      <pubDate>Wed, 07 Apr 2021 20:48:12 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</guid>
+      <description>Network Program Design for Application</description>
+    </item>
+    
+    <item>
+      <title>分布式计算</title>
+      <link>https://fffzlfk.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/</link>
+      <pubDate>Sat, 13 Mar 2021 13:57:34 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/</guid>
+      <description>Distributed Computing</description>
+    </item>
+    
+    <item>
+      <title>编译原理</title>
+      <link>https://fffzlfk.github.io/posts/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Thu, 11 Mar 2021 10:51:32 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/</guid>
+      <description>Compiler Principles</description>
+    </item>
+    
+    <item>
+      <title>SQL</title>
+      <link>https://fffzlfk.github.io/posts/sql/</link>
+      <pubDate>Sat, 24 Oct 2020 20:22:42 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/sql/</guid>
+      <description>SQL 语句</description>
+    </item>
+    
+    <item>
+      <title>微机原理</title>
+      <link>https://fffzlfk.github.io/posts/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Sat, 17 Oct 2020 21:07:26 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86/</guid>
+      <description>西电微机原理</description>
+    </item>
+    
+    <item>
+      <title>算法（第四版）</title>
+      <link>https://fffzlfk.github.io/posts/algorithm4th/</link>
+      <pubDate>Fri, 09 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/algorithm4th/</guid>
+      <description>The solution of algs4&amp;rsquo;s exercise</description>
+    </item>
+    
+    <item>
+      <title>OOP(C&#43;&#43;)</title>
+      <link>https://fffzlfk.github.io/posts/oopc&#43;&#43;/</link>
+      <pubDate>Tue, 06 Oct 2020 12:25:11 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/oopc&#43;&#43;/</guid>
+      <description>Object-Oriented Programming</description>
+    </item>
+    
+  </channel>
+</rss>
