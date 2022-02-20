@@ -1,6 +1,0 @@
-[submodule "themes/hugo-notice"]
-	path = themes/hugo-notice
-	url = https://github.com/martignoni/hugo-notice.git
-[submodule "themes/PaperMod"]
-	path = themes/PaperMod
-	url = git@github.com:fffzlfk/hugo-PaperMod.git
