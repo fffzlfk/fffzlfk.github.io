@@ -403,7 +403,6 @@ int main() {
   int Box::volume() { return height * width * length; }
 
   int main() {
-      // Box a[2]{{10, 12, 15}, {15, 18, 20; C++11标准
       Box a[2]{Box(10, 12, 15),
               Box(15, 18, 20)};  // Box a[2] = {Box(10, 12, 15), Box(15, 18,
                                   // 20)}; 加不加等号都可
