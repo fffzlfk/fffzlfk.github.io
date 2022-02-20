@@ -1,4 +1,4 @@
-baseURL: "https://examplesite.com/"
+baseURL: "https://fffzlfk.github.io"
 title: fffzlfk's Blog
 paginate: 5
 theme: ["hugo-notice", "PaperMod"]
@@ -16,12 +16,11 @@ minify:
 
 params:
   env: production # to enable google analytics, opengraph, twitter-cards and schema.
-  title: ExampleSite
-  description: "ExampleSite description"
+  title: fffzlfk's Blog
+  description: "Thinking will not overcome fear but action will."
   keywords: [Blog, Portfolio, PaperMod]
-  author: Me
+  author: fffzlfk
   # author: ["Me", "You"] # multiple authors
-  images: ["<link or path of image for opengraph, twitter-cards>"]
   DateFormat: "January 2, 2006"
   defaultTheme: auto # dark, light
   disableThemeToggle: false
@@ -30,10 +29,10 @@ params:
   ShowShareButtons: false
   ShowPostNavLinks: true
   ShowBreadCrumbs: true
-  ShowCodeCopyButtons: false
+  ShowCodeCopyButtons: true
   disableSpecial1stPost: false
   disableScrollToTop: false
-  comments: false
+  comments: true
   hidemeta: false
   hideSummary: false
   showtoc: false
@@ -91,7 +90,7 @@ params:
     hiddenInSingle: true # hide on single page
 
   editPost:
-    URL: "https://github.com/fffzlfk/fffzlfk.github.io/content"
+    URL: "https://github.com/fffzlfk/fffzlfk.github.io/blob/master/content"
     Text: "Suggest Changes" # edit text
     appendFilePath: true # to append file path to Edit link
 
@@ -105,6 +104,17 @@ params:
     threshold: 0.4
     minMatchCharLength: 0
     keys: ["title", "permalink", "summary", "content"]
+
+  giscus:
+    repo: "fffzlfk/fffzlfk.github.io"
+    repo_id: "R_kgDOG4ERGw"
+    category: "General"
+    category_id: "DIC_kwDOG4ERG84CBP5s"
+    mapping: "pathname"
+    reactions-enabled: "1"
+    emit-metadata: "0"
+    lang: "zh-CN"
+
 menu:
   main:
     - name: Archive
