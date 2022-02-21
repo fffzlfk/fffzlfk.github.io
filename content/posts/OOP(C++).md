@@ -12,8 +12,6 @@ summary: "Object-Oriented Programming"
 showInMenu: false
 ---
 
-## Table of contents
-
 ## C++基础
 
 ### C++对C的扩充
@@ -70,7 +68,7 @@ ns2::inflag=-3;
 #### 引用与函数
 
 - 函数的返回值为引用类型
-  <img src="https://i.postimg.cc/P5PdH4VS/1.jpg" position="center" style="zoom: 45% ;">
+  ![](https://i.postimg.cc/P5PdH4VS/1.jpg)
 
 #### 内联函数
 
@@ -827,7 +825,7 @@ class <派生类名>：<继承方式> <基类名1>，…，<继承方式> <基�
     }
   ```
 - 编译错误
-<img src="https://s1.ax1x.com/2020/11/10/BL72ZT.jpg" position="center" style="border-radius: 5px; box-shadow: inset 2px 2px 5px black, 2px 2px 5px black;">
+![](https://s1.ax1x.com/2020/11/10/BL72ZT.jpg)
 
 #### 两个基类和派生类三者都有同名成员
 
@@ -870,7 +868,7 @@ class <派生类名>：<继承方式> <基类名1>，…，<继承方式> <基�
 - 引进虚基类后，派生类对象中只存在一个虚基类成员的副本
 - 为了保证虚基类在派生类中只继承一次，应当在该基类的所有直接派生类中声明为虚基类，否则仍然会出现对基类的多次继承。
 
-<img src="https://s1.ax1x.com/2020/11/10/BLOP3Q.jpg" position="center" style="width: 60% ;border-radius: 5px; box-shadow: inset 2px 2px 5px black, 2px 2px 5px black;">
+![](https://s1.ax1x.com/2020/11/10/BLOP3Q.jpg)
 
 #### 构造函数的调用顺序
 
@@ -1224,7 +1222,7 @@ num = 2001
             return 0;
         }
         ```
-        <img src="https://s3.ax1x.com/2020/11/18/DeW6O0.png" position="center" style="width: 120% ;border-radius: 5px; box-shadow: inset 2px 2px 5px black,2px 2px 5px black;">
+        ![](https://s3.ax1x.com/2020/11/18/DeW6O0.png)
       - 如果在派生类中没有重新定义虚函数，则不实现动态联编，派生类的对象将使用基类虚函数的代码
       - 一个类中的虚函数说明只对派生类中重定义的函数有影响，对它的基类中的函数并没有影响
         ```cpp
@@ -1425,7 +1423,7 @@ num = 2001
   - 输出流类ostream
   - 文件流类基类fstreambase
   - 字符串流类基类strstreambase
-<img src="https://i.postimg.cc/YSF0JJhX/1.jpg" position="left" style="width: 80%">
+![](https://i.postimg.cc/YSF0JJhX/1.jpg)
 
 ### I/O流类库的头文件
 

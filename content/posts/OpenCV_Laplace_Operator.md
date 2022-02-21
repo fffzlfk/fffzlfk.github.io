@@ -1,6 +1,8 @@
 ---
 title: "OpenCV Laplace Operator"
 date: "2022-01-17T08:22:11+08:00"
+tags:
+    - OpenCV
 ---
 
 ## 理论

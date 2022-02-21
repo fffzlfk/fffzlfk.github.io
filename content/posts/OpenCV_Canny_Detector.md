@@ -1,6 +1,8 @@
 ---
 title: "OpenCV Canny Detector"
 date: "2022-01-17T11:35:18+08:00"
+tags:
+    - OpenCV
 ---
 
 ## 理论

@@ -1,6 +1,8 @@
 ---
 title: "OpenCV Sobel Derivatives"
 date: "2022-01-16T12:18:12+08:00"
+tags:
+    - OpenCV
 ---
 
 ## 理论

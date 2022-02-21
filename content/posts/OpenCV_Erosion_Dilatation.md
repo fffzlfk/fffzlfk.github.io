@@ -1,6 +1,8 @@
 ---
 title: "OpenCV Erosion Dilatation"
 date: "2022-01-09T12:25:24+08:00"
+tags:
+    - OpenCV
 ---
 
 ## 形态学操作

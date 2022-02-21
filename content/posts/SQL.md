@@ -32,11 +32,11 @@ tags:
 
 ### SQL的数据定义语句
 
-<img src="https://i.postimg.cc/3JJJHQR6/1.png" position=center style="border-radius: 8px; width: 75% ;">
+![](https://i.postimg.cc/3JJJHQR6/1.png)
 
 ### SQL中的数据类型
 
-<img src="https://i.postimg.cc/BbdCGB3Q/2.png" position=center style="border-radius: 8px; width: 75% ;">
+![](https://i.postimg.cc/BbdCGB3Q/2.png)
 
 ### 基本表的定义
 
@@ -56,7 +56,7 @@ CREATE TABLE <表名>
   - 参照完整性约束：**FOREIGN KEY (<列名>) REFERENCES  <表名>(<列名>)**
   - 一般性约束：**CHECK(<谓词>)**
 
-<img src="https://i.postimg.cc/k5M65Y7Y/3.png"  style="border-radius: 8px; width: 75% ;">
+![](https://i.postimg.cc/k5M65Y7Y/3.png)
 
 #### 删除基本表
 
@@ -291,7 +291,7 @@ CREATE [UNIQUE] | [CLUSTER] INDEX <索引名>
 
 #### 带有ANY(SOME)或ALL谓词的查询
 
-  <img src="https://s1.ax1x.com/2020/11/05/BWeMzd.jpg" position=center style="border-radius: 8px; width: 75% ;">
+  ![](https://s1.ax1x.com/2020/11/05/BWeMzd.jpg)
 
 #### 带有EXISTS谓词的子查询
 
@@ -301,11 +301,11 @@ CREATE [UNIQUE] | [CLUSTER] INDEX <索引名>
     - 若内层查询结果非空，则返回真值
     - 若内层查询结果为空，则返回假值
   - 由EXISTS引出的子查询，其目标列表达式通常都用*：因为带EXISTS的子查询只返回真值或假值，给出列名无实际意义
-  <img src="https://s1.ax1x.com/2020/11/05/BWm9Tf.jpg" position="center" style="broder-radius: 8px; width: 75%;">
+  ![](https://s1.ax1x.com/2020/11/05/BWm9Tf.jpg)
   
-  <img src="https://s1.ax1x.com/2020/11/05/BWnpv9.jpg" position="center" style="broder-radius: 8px; width: 75%;">
+  ![](https://s1.ax1x.com/2020/11/05/BWnpv9.jpg)
 
-  <img src="https://s1.ax1x.com/2020/11/05/BWnnvd.jpg" position="center" style="broder-radius: 8px; width: 75%;">
+  ![](https://s1.ax1x.com/2020/11/05/BWnnvd.jpg)
 
 #### 嵌套查询小结
 
@@ -339,7 +339,7 @@ UNION [ALL] | INTERSECT | EXCEPT
 <查询块> ;
 ```
 
-<img src="https://s1.ax1x.com/2020/11/05/BWuPzQ.jpg" position="center" style="broder-radius: 8px; width: 75%;">
+![](https://s1.ax1x.com/2020/11/05/BWuPzQ.jpg)
 
 ## 数据更新
 
@@ -347,7 +347,7 @@ UNION [ALL] | INTERSECT | EXCEPT
 
 #### 插入单个元组
 
-<img src="https://s3.ax1x.com/2020/11/12/Bz4Ald.jpg" position="center" style="width: 70% ;border-radius: 5px; box-shadow: inset 2px 2px 5px black, 2px 2px 5px black;">
+![](https://s3.ax1x.com/2020/11/12/Bz4Ald.jpg)
 
 #### 插入子查询结果
 
@@ -359,7 +359,7 @@ INTO <表名>  [(<属性列1> [, <属性列2>…  )]
 
 ### 修改数据
 
-<img src="https://s3.ax1x.com/2020/11/12/Bz5PH0.jpg" position="center" style="width: 70% ;border-radius: 5px; box-shadow: inset 2px 2px 5px black, 2px 2px 5px black;">
+![](https://s3.ax1x.com/2020/11/12/Bz5PH0.jpg)
 
 ### 删除数据
 

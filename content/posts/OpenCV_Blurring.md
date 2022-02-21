@@ -1,6 +1,8 @@
 ---
 title: "OpenCV Blurring"
 date: "2022-01-09T07:37:09+08:00"
+tags:
+    - OpenCV
 ---
 
 ## 理论

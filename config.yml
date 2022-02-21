@@ -35,7 +35,7 @@ params:
   comments: true
   hidemeta: false
   hideSummary: false
-  showtoc: false
+  showtoc: true
   tocopen: false
 
   assets:
@@ -126,10 +126,16 @@ menu:
       weight: 10
     - name: Tags
       url: /tags/
-      weight: 20
+      weight: 5
     - name: Search
       url: search/
-      weight: 10 
+      weight: 30
+    - name: About
+      url: about/
+      weight: 20
+    - name: GitHub
+      url: https://github.com/fffzlfk
+      weight: 5
 # Read: https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#using-hugos-syntax-highlighter-chroma
 # pygmentsUseClasses: true
 markup:
