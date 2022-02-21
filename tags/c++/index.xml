@@ -5,7 +5,21 @@
     <link>https://fffzlfk.github.io/tags/c&#43;&#43;/</link>
     <description>Recent content in C&#43;&#43; on fffzlfk&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 28 Nov 2021 19:43:10 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/c++/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 05 Feb 2022 14:10:47 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/c++/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C&#43;&#43; 完美转发</title>
+      <link>https://fffzlfk.github.io/posts/c&#43;&#43;_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</link>
+      <pubDate>Sat, 05 Feb 2022 14:10:47 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/c&#43;&#43;_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</guid>
+      <description>为什么要有完美转发 下面是一个类工厂函数：
+template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 参数对象arg在上面的例子中是传值方式传递，这带来了生成额外临时对象1的代价，所以我们改成引用传递：
+template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg &amp;amp;arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 但这种实现的问题是不能绑定右值实参。如factory&amp;lt;X&amp;gt;(42)将编译报错，进一步的，我们按常量引用来传递：
+template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(const Arg &amp;amp;arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 这种实现的问题是不能支持移动语义，形参使用右值引用可以解决完美转发问题。
+引用折叠 在C++11之前，我们不能对一个引用类型继续引用，但C++由于右值引用的出现而放宽2了这一做法，从而产生了引用折叠规则，允许我们对引用进行引用，既能左引用，又能右引用。但是却遵循如下规则：
+   函数形参类型 实参类型 推导后函数形参类型     T&amp;amp; 左引用 T&amp;amp;   T&amp;amp; 右引用 T&amp;amp;   T&amp;amp;&amp;amp; 左引用 T&amp;amp;   T&amp;amp;&amp;amp; 右引用 T&amp;amp;&amp;amp;    模板参数类型推导 对函数模板template&amp;lt;typename T&amp;gt;void foo(T&amp;amp;&amp;amp;);，应用上述引用折叠规则，可总结出以下结论：</description>
+    </item>
+    
     <item>
       <title>从模板元编程到constexpr(C&#43;&#43;)</title>
       <link>https://fffzlfk.github.io/posts/%E4%BB%8E%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E5%88%B0constexprc&#43;&#43;/</link>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Cuda on fffzlfk&#39;s Blog</title>
+    <link>https://fffzlfk.github.io/tags/cuda/</link>
+    <description>Recent content in Cuda on fffzlfk&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Wed, 19 Jan 2022 12:55:19 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/cuda/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cuda 编程模型</title>
+      <link>https://fffzlfk.github.io/posts/cuda_%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Wed, 19 Jan 2022 12:55:19 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/cuda_%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/</guid>
+      <description>Kernels CUDA C++对C++进行了扩展，允许程序员定义C++函数，称为内核，当被调用时，由 $N$ 个不同的CUDA线程并行执行 $N$ 次，而不是像普通C++函数那样只执行一次。
+kernel是使用__global__声明定义的，对于特定的内核调用，执行该内核的CUDA线程数量是使用&amp;lt;&amp;lt;&amp;lt;...&amp;gt;&amp;gt;&amp;gt;执行配置语法指定的（C++语言扩展）。每个执行内核的线程都有一个唯一的线程ID，可以在内核内通过内置变量访问。
+作为说明，下面的示例代码，使用内置变量threadIdx，将两个大小为 $N$ 的向量 $A$ 和 $B$ 相加，并将结果存入向量 $C$ 。
+// Kernel definition __global__ void VecAdd(float* A, float* B, float* C) { int i = threadIdx.x; C[i] = A[i] + B[i]; } int main() { ... // Kernel invocation with N threads  VecAdd&amp;lt;&amp;lt;&amp;lt;1, N&amp;gt;&amp;gt;&amp;gt;(A, B, C); ... } 在这里，执行VecAdd()的 $N$ 个线程中的每一个都执行了一次加法。
+线程体系 为方便起见，threadIdx是一个 $3$ 分量的向量，因此可以用一维、二维或三维的线程索引来识别线程，形成一个一维、二维或三维的线程块，称为线程块。这提供了一种自然的方式来调用域中的元素进行计算，如矢量、矩阵或体积。
+一个例子，下面的代码将两个大小为 $N\times N$ 的矩阵 $A$ 和 $B$ 相加，并将结果存入矩阵 $C$ 。</description>
+    </item>
+    
+    <item>
+      <title>Cuda 硬件实现</title>
+      <link>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Tue, 18 Jan 2022 15:31:10 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</guid>
+      <description>一组带有 on-chip 共享内存的 SIMD 多处理器 设备可以被看作一组多处理器，如图所示。每个多处理器使用单指令多数据(SIMD)架构：在任何给定的时钟周期内，多处理器的每个处理器执行同一指令，但操作不同的数据。
+每个多处理器使用四个以下类型的on-chip内存：
+ 每个处理器一组 $32$ 位寄存器 并行数据缓存或共享内存，被所有处理器共享实现内存空间共享 通过设备内存的一个只读区域，一个只读常量缓存器被所有处理器共享 通过设备内存的一个只读区域，一个只读纹理缓存器被所有处理器共享  本地和全局内存空间作为设备内存的读写区域，而不被缓冲。 每个多处理器通过纹理单元访问纹理缓冲器，它执行各种各样的寻址模式和数据过滤。
+执行模式 一个线程块网格是通过多处理器规划执行的。每个多处理器一个接一个的处理块批处理。一个块只被一个多处理器处理，因此可以对驻留在on-chip共享内存的共享内存空间形成非常快速的访问。
+一个批处理中每个多处理器可以处理多少个块，取决于每个线程中分配了多少个寄存器和已知内核中每个时钟需要多少的共享内存，因为多处理器的寄存器和内存在所有的线程中是分开的。如果在至少一个块中，每个多处理器没有足够高的寄存器或共享内存用，那么内核将无法启动。
+线程块在一个批处理中被一个多处理器执行，被称为active，每个active块被划分成SIMD线程组，被称为warps；每一条这样的warp包含数量相同的线程，叫做warp大小，并且在SIMD的方式下通过多处理器执行，执行调度程序周期性地从一条warp切换到另一条warp，以达到多处理器计算资源使用的最大化。
+块被划分成warp的方式总是相同的；每条warp包含连续的线程，线程索引从第一个warp包含着的线程 0 开始递增。
+一个多处理器可以并发地处理几个块，通过划分在它们之中的寄存器和共享内存。更准确地说，每条线程可使用的寄存器数量，等于每个多处理器寄存器总数除以并发的线程数量，并发线程的数量等于并发块的数量乘以每块线程的数量。
+在一个线程块网格内的块次序是未定义的，并且在块之间不存在同步机制，因此来自同一个网格的两个不同块的线程不能通过全局内存彼此安全地通讯。
+计算兼容性 设备的兼容性由两个参数定义，主要版本号和次要版本号。设备拥有的主要版本号代表相同的核心架构。
+次要版本号代表一些改进的核心架构。比如新的特性。
+多设备 为一个应用程序使用多GPU作为CUDA设备，必须保证这些CPU是一样的类型。如果系统工作在SLI 模式下，那么只有一个GPU可以作为CUDA设备，由于所有的GPU在驱动堆栈中被底层的融合了。SLI 模式需要在控制面板中关闭,这样才能使多个GPU作为CUDA设备</description>
+    </item>
+    
+    <item>
+      <title>Cuda软件架构</title>
+      <link>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</link>
+      <pubDate>Sat, 08 Jan 2022 06:27:04 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</guid>
+      <description>硬件   SP(Streaming Processor)：流处理器，是GPU最基本的处理单元，在fermi架构开始被叫做CUDA core。
+  SM(Streaming MultiProcessor)：一个SM由多个CUDA core组成。
+  比如说，如果一个GPU有 $4$ 个SM，并且每个SM有 $768$ 个SP(Aka CUDA core)；那么在某一时刻，真正并行运行的线程数不会超过 $4 \times 768$ 个。
+软件 threads被组织成blocks。一个block的线程可以用1Dimension(x), 2Dimensions(x, y)或者3Dim indexs(x, y, z) 索引，
+显然，如果你需要 $4 \times 768$ 个以上的threads的话你需要 $4$ 个以上的blocks。blocks也可以使用1D, 2D或3D索引，这些blocks被放在等待队列上进入GPU执行。
+Wrap 当一个kernel被执行时，grid中的线程块被分配到SM上。一个CUDA core可以执行一个thread，一个SM的CUDA core会分成几个wrap，由wrap scheduler负责调度。
+一个wrap中的线程在同一个block中，如果block所含线程数不是wrap的大小的整数倍，那么多出来的那些thread所在的wrap中，会剩余一些inactive的thread。
+一个简单的case 处理一张 $512 \times 512$ 的图片。
+假设我们希望一个线程处理一个像素pixel(i, j)。
+我们可以使用每 $64$ 个线程的区块。所以我们需要 $\frac{512 \times 512 }{64} = 4096$ 个区块（为了拥有 $512 \times 512 $ 个线程 ）。</description>
+    </item>
+    
+  </channel>
+</rss>

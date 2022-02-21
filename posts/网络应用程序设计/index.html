@@ -52,13 +52,8 @@
 </div>
 <ul id=menu>
 <li>
-<a href=https://fffzlfk.github.io/archives title=Archive>
-<span>Archive</span>
-</a>
-</li>
-<li>
-<a href=https://fffzlfk.github.io/search/ title="Search (Alt + /)" accesskey=/>
-<span>Search</span>
+<a href=https://github.com/fffzlfk title=GitHub>
+<span>GitHub</span>
 </a>
 </li>
 <li>
@@ -66,14 +61,24 @@
 <span>Tags</span>
 </a>
 </li>
-</ul>
-<div class=social-icons>
-<a href=https://github.com/fffzlfk target=_blank rel="noopener noreferrer me" title=Github><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+<li>
+<a href=https://fffzlfk.github.io/archives title=Archive>
+<span>Archive</span>
 </a>
-</div>
+</li>
+<li>
+<a href=https://fffzlfk.github.io/about/ title=About>
+<span>About</span>
+</a>
+</li>
+<li>
+<a href=https://fffzlfk.github.io/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
+</ul>
 </nav>
-</header>
-<main class=main>
+</header><main class=main>
 <article class=post-single>
 <header class=post-header>
 <div class=breadcrumbs><a href=https://fffzlfk.github.io>Home</a>&nbsp;»&nbsp;<a href=https://fffzlfk.github.io/posts/>Posts</a></div>
@@ -525,11 +530,15 @@ setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, <span style=color:#f92672>&amp;</sp
 <li>人工分配</li>
 </ul>
 <h4 id=dhcp过程>DHCP过程<a hidden class=anchor aria-hidden=true href=#dhcp过程>#</a></h4>
+<p><img loading=lazy src=https://files.catbox.moe/exth7w.png alt>
+</p>
 <h3 id=域名访问>域名访问<a hidden class=anchor aria-hidden=true href=#域名访问>#</a></h3>
 <h4 id=域名系统dns>域名系统——DNS<a hidden class=anchor aria-hidden=true href=#域名系统dns>#</a></h4>
 <ul>
 <li>域名查找过程</li>
 </ul>
+<p><img loading=lazy src=https://files.catbox.moe/9rdt4n.png alt>
+</p>
 <h4 id=域名到ip的转换函数>域名到IP的转换函数<a hidden class=anchor aria-hidden=true href=#域名到ip的转换函数>#</a></h4>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#66d9ef>struct</span> hostent<span style=color:#f92672>*</span> <span style=color:#a6e22e>gethostbyname</span>(<span style=color:#66d9ef>const</span> <span style=color:#66d9ef>char</span> <span style=color:#f92672>*</span>name)
 
@@ -639,6 +648,8 @@ setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, <span style=color:#f92672>&amp;</sp
 </ul>
 <h2 id=udp与原始socket编程>UDP与原始Socket编程<a hidden class=anchor aria-hidden=true href=#udp与原始socket编程>#</a></h2>
 <h3 id=udp-socket编程>UDP Socket编程<a hidden class=anchor aria-hidden=true href=#udp-socket编程>#</a></h3>
+<p><img loading=lazy src=https://files.catbox.moe/k0q0ar.png alt>
+</p>
 <h4 id=recvfrom接受udp数据包><code>recvfrom</code>：接受UDP数据包<a hidden class=anchor aria-hidden=true href=#recvfrom接受udp数据包>#</a></h4>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#66d9ef>int</span> <span style=color:#a6e22e>recvfrom</span>(<span style=color:#66d9ef>int</span> sockfd, <span style=color:#66d9ef>void</span> <span style=color:#f92672>*</span>buf, <span style=color:#66d9ef>int</span> len, <span style=color:#66d9ef>unsigned</span> <span style=color:#66d9ef>char</span> flags,
              <span style=color:#66d9ef>struct</span> socketaddr <span style=color:#f92672>*</span>from, socklen_t <span style=color:#f92672>*</span>addrlen);
@@ -921,6 +932,7 @@ setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, <span style=color:#f92672>&amp;</sp
 <li>系统创建新进程，并为该进程准备数据段、堆栈段和代码段</li>
 <li>代码段使用和父进程相同的代码段</li>
 <li>父进程的数据段和堆栈段被复制（<a href=https://zh.wikipedia.org/wiki/%E5%AF%AB%E5%85%A5%E6%99%82%E8%A4%87%E8%A3%BD>copy on write, 写入时复制</a>）给子进程
+<img loading=lazy src=https://files.catbox.moe/6yhyeq.png alt>
 </li>
 </ul>
 </li>
@@ -1509,15 +1521,22 @@ ioctl(sockfd,FIONBIO,<span style=color:#f92672>&amp;</span>on);
 </ul>
 <h3 id=循环服务器模型>循环服务器模型<a hidden class=anchor aria-hidden=true href=#循环服务器模型>#</a></h3>
 <h4 id=udp循环服务器模型>UDP循环服务器模型<a hidden class=anchor aria-hidden=true href=#udp循环服务器模型>#</a></h4>
+<p><img loading=lazy src=https://ftp.bmp.ovh/imgs/2021/05/006763a9f8b52346.png alt>
+</p>
 <h4 id=tcp循环服务器模型>TCP循环服务器模型<a hidden class=anchor aria-hidden=true href=#tcp循环服务器模型>#</a></h4>
+<p><img loading=lazy src=https://ftp.bmp.ovh/imgs/2021/05/0ef562a30cd8c6b8.png alt>
+</p>
 <h3 id=并发服务器模型>并发服务器模型<a hidden class=anchor aria-hidden=true href=#并发服务器模型>#</a></h3>
 <h4 id=ucp并发服务器模型>UCP并发服务器模型<a hidden class=anchor aria-hidden=true href=#ucp并发服务器模型>#</a></h4>
+<p><img loading=lazy src=https://ftp.bmp.ovh/imgs/2021/05/034f12814488cd5f.png alt>
+</p>
 <h4 id=tcp并发服务器模型>TCP并发服务器模型<a hidden class=anchor aria-hidden=true href=#tcp并发服务器模型>#</a></h4>
 <ul>
 <li>一个子进程对应一个客户端
 <ul>
 <li>创建子进程开销大，适合长时间客户请求（如FTP）</li>
 <li>客户端数量大、请求时间短会大大降低效率（如HTTP）
+<img loading=lazy src=https://ftp.bmp.ovh/imgs/2021/05/05f64327a35f8e4d.png alt>
 </li>
 </ul>
 </li>
@@ -1525,6 +1544,7 @@ ioctl(sockfd,FIONBIO,<span style=color:#f92672>&amp;</span>on);
 <ul>
 <li>处理短请求以循环方式完成</li>
 <li>处理时间长的请求以并发方式完成
+<img loading=lazy src=https://ftp.bmp.ovh/imgs/2021/05/1d8fd44e6068663b.png alt>
 </li>
 </ul>
 </li>
@@ -1535,6 +1555,7 @@ ioctl(sockfd,FIONBIO,<span style=color:#f92672>&amp;</span>on);
 <li>所有进程调用accept，无连接时将睡眠</li>
 <li>有连接到来时所有进程被唤醒</li>
 <li>某一个进程接受连接后，其余连接继续睡眠
+<img loading=lazy src=https://i.loli.net/2021/05/18/ctweTXfW5zx1h4E.png alt>
 </li>
 </ul>
 </li>
@@ -1544,6 +1565,7 @@ ioctl(sockfd,FIONBIO,<span style=color:#f92672>&amp;</span>on);
 <li>子进程接收连接时给父进程发1，关闭时发0</li>
 <li>父进程收到1时，检查空闲子进程数是否小于上限，小于则创建新的子进程</li>
 <li>父进程收到0时，检查空闲子进程数是否大于上限，大于则终止一些子进程
+<img loading=lazy src=https://i.loli.net/2021/05/18/8IV7OS2vrqAayew.png alt>
 </li>
 </ul>
 </li>
@@ -1595,6 +1617,7 @@ ioctl(sockfd,FIONBIO,<span style=color:#f92672>&amp;</span>on);
 <ul>
 <li>TCP只支持<strong>1字节</strong>带外数据</li>
 <li>TCP使用URG标志位和紧急指针指明带外数据：紧急指针=带外数据位置+1
+<img loading=lazy src=https://i.loli.net/2021/05/25/DsXykvhjlIaTzY3.png alt>
 </li>
 </ul>
 <h3 id=发送tcp带外数据的函数>发送TCP带外数据的函数<a hidden class=anchor aria-hidden=true href=#发送tcp带外数据的函数>#</a></h3>

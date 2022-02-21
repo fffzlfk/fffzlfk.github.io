@@ -52,13 +52,8 @@
 </div>
 <ul id=menu>
 <li>
-<a href=https://fffzlfk.github.io/archives title=Archive>
-<span>Archive</span>
-</a>
-</li>
-<li>
-<a href=https://fffzlfk.github.io/search/ title="Search (Alt + /)" accesskey=/>
-<span>Search</span>
+<a href=https://github.com/fffzlfk title=GitHub>
+<span>GitHub</span>
 </a>
 </li>
 <li>
@@ -66,14 +61,24 @@
 <span>Tags</span>
 </a>
 </li>
-</ul>
-<div class=social-icons>
-<a href=https://github.com/fffzlfk target=_blank rel="noopener noreferrer me" title=Github><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+<li>
+<a href=https://fffzlfk.github.io/archives title=Archive>
+<span>Archive</span>
 </a>
-</div>
+</li>
+<li>
+<a href=https://fffzlfk.github.io/about/ title=About>
+<span>About</span>
+</a>
+</li>
+<li>
+<a href=https://fffzlfk.github.io/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
+</ul>
 </nav>
-</header>
-<main class=main>
+</header><main class=main>
 <article class=post-single>
 <header class=post-header>
 <div class=breadcrumbs><a href=https://fffzlfk.github.io>Home</a>&nbsp;»&nbsp;<a href=https://fffzlfk.github.io/posts/>Posts</a></div>
@@ -82,7 +87,184 @@
 </h1>
 <div class=post-meta><span title="2021-03-13 13:57:34 +0800 +0800">March 13, 2021</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;fffzlfk&nbsp;|&nbsp;<a href=https://github.com/fffzlfk/fffzlfk.github.io/blob/master/content/posts/%e5%88%86%e5%b8%83%e5%bc%8f%e8%ae%a1%e7%ae%97.md rel="noopener noreferrer" target=_blank>Suggest Changes</a>
 </div>
-</header>
+</header> <div class=toc>
+<details>
+<summary accesskey=c title="(Alt + C)">
+<span class=details>Table of Contents</span>
+</summary>
+<div class=inner><ul>
+<li>
+<a href=#%e6%a6%82%e8%bf%b0 aria-label=概述>概述</a><ul>
+<li>
+<a href=#%e5%88%86%e5%b8%83%e5%bc%8f%e7%b3%bb%e7%bb%9f%e5%ae%9a%e4%b9%89 aria-label=分布式系统定义>分布式系统定义</a><ul>
+<li>
+<a href=#%e7%90%86%e8%a7%a3%e5%88%86%e5%b8%83%e5%bc%8f%e7%b3%bb%e7%bb%9f%e5%ae%9a%e4%b9%89%e7%9a%84%e5%87%a0%e4%b8%aa%e8%a6%81%e7%82%b9 aria-label=理解分布式系统定义的几个要点>理解分布式系统定义的几个要点</a></li></ul>
+</li>
+<li>
+<a href=#%e4%b8%8e%e5%b9%b6%e8%a1%8c%e8%ae%a1%e7%ae%97%e7%9a%84%e5%85%b3%e7%b3%bb aria-label=与并行计算的关系>与并行计算的关系</a></li>
+<li>
+<a href=#%e6%9e%84%e5%bb%ba%e5%88%86%e5%b8%83%e5%bc%8f%e7%b3%bb%e7%bb%9f%e7%9a%84%e7%9b%ae%e7%9a%84 aria-label=构建分布式系统的目的>构建分布式系统的目的</a></li>
+<li>
+<a href=#%e8%a1%a1%e9%87%8f%e5%88%86%e5%b8%83%e5%bc%8f%e7%b3%bb%e7%bb%9f%e4%bc%98%e5%8a%a3%e7%9a%84%e7%89%b9%e6%80%a7 aria-label=衡量分布式系统优劣的特性>衡量分布式系统优劣的特性</a></li>
+<li>
+<a href=#%e8%ae%be%e8%ae%a1%e5%88%86%e5%b8%83%e5%bc%8f%e7%b3%bb%e7%bb%9f%e7%9a%84%e6%8c%91%e6%88%98 aria-label=设计分布式系统的挑战>设计分布式系统的挑战</a></li>
+<li>
+<a href=#%e5%85%b3%e4%ba%8e%e5%88%86%e5%b8%83%e5%bc%8f%e4%b8%80%e8%87%b4%e6%80%a7 aria-label=关于分布式一致性>关于分布式一致性</a></li>
+<li>
+<a href=#%e5%87%a0%e7%b1%bb%e5%88%86%e5%b8%83%e5%bc%8f%e7%b3%bb%e7%bb%9f%e6%a1%86%e6%9e%b6%e6%a8%a1%e5%bc%8f aria-label=几类分布式系统框架模式>几类分布式系统框架模式</a></li>
+<li>
+<a href=#%e5%b8%b8%e7%94%a8%e7%9a%84%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1%e7%ad%96%e7%95%a5 aria-label=常用的负载均衡策略>常用的负载均衡策略</a></li>
+<li>
+<a href=#%e4%b8%ad%e9%97%b4%e4%bb%b6%e7%9a%84%e5%9f%ba%e6%9c%ac%e6%a6%82%e5%bf%b5 aria-label=中间件的基本概念>中间件的基本概念</a><ul>
+<li>
+<a href=#%e4%b8%ad%e9%97%b4%e4%bb%b6%e7%9a%84%e4%bd%9c%e7%94%a8 aria-label=中间件的作用>中间件的作用</a></li>
+<li>
+<a href=#%e5%b8%b8%e7%94%a8%e7%9a%84%e4%b8%ad%e9%97%b4%e4%bb%b6 aria-label=常用的中间件>常用的中间件</a></li>
+<li>
+<a href=#%e4%b8%ad%e9%97%b4%e4%bb%b6%e7%9a%84%e8%a1%a8%e7%8e%b0%e5%bd%a2%e5%bc%8f aria-label=中间件的表现形式>中间件的表现形式</a></li></ul>
+</li>
+<li>
+<a href=#%e6%8a%bd%e8%b1%a1%e7%90%86%e8%ae%ba%e6%a8%a1%e5%9e%8b aria-label=抽象理论模型>抽象理论模型</a></li></ul>
+</li>
+<li>
+<a href=#%e5%88%86%e5%b8%83%e5%bc%8f%e8%8a%82%e7%82%b9%e4%b9%8b%e9%97%b4%e7%9a%84%e9%80%9a%e4%bf%a1%e6%8a%80%e6%9c%af aria-label=分布式节点之间的通信技术>分布式节点之间的通信技术</a><ul>
+<li>
+<a href=#tcpip%e7%bd%91%e7%bb%9c%e4%bd%93%e7%b3%bb%e4%bb%8b%e7%bb%8d aria-label=TCP/IP网络体系介绍>TCP/IP网络体系介绍</a></li>
+<li>
+<a href=#socket aria-label=Socket>Socket</a><ul>
+<li>
+<a href=#%e4%bb%80%e4%b9%88%e6%98%afsocket aria-label=什么是Socket>什么是Socket</a></li>
+<li>
+<a href=#%e5%a5%97%e6%8e%a5%e5%ad%97%e5%88%86%e7%b1%bb-socket%e7%b1%bb%e5%9e%8b aria-label=套接字分类-Socket类型>套接字分类-Socket类型</a></li>
+<li>
+<a href=#%e5%a6%82%e4%bd%95%e6%a0%87%e8%af%86%e4%b8%80%e4%b8%aasocket aria-label=如何标识一个Socket>如何标识一个Socket</a></li></ul>
+</li>
+<li>
+<a href=#%e5%b9%b6%e5%8f%91%e6%9c%8d%e5%8a%a1%e6%8a%80%e6%9c%af aria-label=并发服务技术>并发服务技术</a><ul>
+<li>
+<a href=#%e7%a4%ba%e4%be%8b%e7%a8%8b%e5%ba%8f aria-label=示例程序>示例程序</a></li></ul>
+</li>
+<li>
+<a href=#%e7%ac%ac%e4%b8%80%e6%ac%a1%e4%bd%9c%e4%b8%9a aria-label=第一次作业>第一次作业</a></li>
+<li>
+<a href=#%e8%bf%9c%e7%a8%8b%e8%b0%83%e7%94%a8rpc%e5%92%8crmi aria-label=远程调用RPC和RMI>远程调用RPC和RMI</a><ul>
+<li>
+<a href=#%e8%bf%9c%e7%a8%8b%e8%b0%83%e7%94%a8rpc aria-label=远程调用RPC>远程调用RPC</a></li>
+<li>
+<a href=#%e8%bf%9c%e7%a8%8b%e6%96%b9%e6%b3%95%e8%b0%83%e7%94%a8rmi aria-label=远程方法调用RMI>远程方法调用RMI</a></li>
+<li>
+<a href=#rpcrmi%e4%b8%ad%e9%97%b4%e4%bb%b6%e7%9a%84%e4%bd%9c%e7%94%a8 aria-label=RPC/RMI中间件的作用>RPC/RMI中间件的作用</a></li>
+<li>
+<a href=#%e6%b3%a8%e5%86%8c%e4%b8%ad%e5%bf%83 aria-label=注册中心>注册中心</a></li>
+<li>
+<a href=#rpcrmi%e4%b8%ad%e9%97%b4%e4%bb%b6%e7%9a%84%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86 aria-label=RPC/RMI中间件的实现原理>RPC/RMI中间件的实现原理</a></li>
+<li>
+<a href=#grpc%e4%b8%ad%e9%97%b4%e4%bb%b6 aria-label=gRPC中间件>gRPC中间件</a><ul>
+<li>
+<a href=#%e7%a8%8b%e5%ba%8f%e4%b8%ad%e5%ba%94%e7%94%a8protobuf%e7%9a%84%e6%96%b9%e6%b3%95 aria-label=程序中应用Protobuf的方法>程序中应用Protobuf的方法</a></li>
+<li>
+<a href=#%e7%a8%8b%e5%ba%8f%e4%b8%ad%e5%ba%94%e7%94%a8grpc%e7%9a%84%e6%96%b9%e6%b3%95 aria-label=程序中应用gRPC的方法>程序中应用gRPC的方法</a></li></ul>
+</li></ul>
+</li>
+<li>
+<a href=#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e4%bd%9c%e4%b8%9a aria-label=第二次作业>第二次作业</a></li>
+<li>
+<a href=#%e5%be%ae%e6%9c%8d%e5%8a%a1 aria-label=微服务>微服务</a></li>
+<li>
+<a href=#%e5%9f%ba%e4%ba%8e%e6%b6%88%e6%81%af%e4%b8%ad%e9%97%b4%e4%bb%b6%e7%9a%84%e9%80%9a%e4%bf%a1%e6%8a%80%e6%9c%af aria-label=基于消息中间件的通信技术>基于消息中间件的通信技术</a><ul>
+<li>
+<a href=#%e7%82%b9%e5%88%b0%e7%82%b9%e9%80%9a%e4%bf%a1%e6%8a%80%e6%9c%af%e7%9a%84%e7%bc%ba%e7%82%b9 aria-label=点到点通信技术的缺点>点到点通信技术的缺点</a></li>
+<li>
+<a href=#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88%e5%a2%9e%e5%87%8f%e4%b8%ad%e4%bb%8b%e8%8a%82%e7%82%b9 aria-label=解决方案——增减中介节点>解决方案——增减中介节点</a></li>
+<li>
+<a href=#%e9%9d%a2%e5%90%91%e6%b6%88%e6%81%af%e4%b8%ad%e9%97%b4%e4%bb%b6message-oriented-middlewaremom aria-label="面向消息中间件（Message Oriented Middleware，MOM）">面向消息中间件（Message Oriented Middleware，MOM）</a></li>
+<li>
+<a href=#mom%e4%b8%a4%e7%a7%8d%e9%80%9a%e4%bf%a1%e6%a8%a1%e5%bc%8f aria-label=MOM两种通信模式>MOM两种通信模式</a></li>
+<li>
+<a href=#%e4%b8%89%e7%a7%8d%e6%8e%a5%e6%94%b6%e6%96%b9%e5%bc%8f aria-label=三种接收方式>三种接收方式</a></li></ul>
+</li>
+<li>
+<a href=#%e7%ac%ac%e4%b8%89%e6%ac%a1%e4%bd%9c%e4%b8%9a aria-label=第三次作业>第三次作业</a></li></ul>
+</li>
+<li>
+<a href=#%e5%88%86%e5%b8%83%e5%bc%8f%e5%ad%98%e5%82%a8 aria-label=分布式存储>分布式存储</a><ul>
+<li>
+<a href=#%e5%88%86%e5%b8%83%e5%bc%8f%e5%ad%98%e5%82%a8%e8%a6%81%e8%be%be%e5%88%b0%e7%9a%84%e7%9b%ae%e6%a0%87 aria-label=分布式存储要达到的目标>分布式存储要达到的目标</a></li>
+<li>
+<a href=#%e5%9f%ba%e6%9c%ac%e6%89%8b%e6%ae%b5%e5%a4%8d%e5%88%b6replica aria-label=基本手段：复制（replica）>基本手段：复制（replica）</a></li>
+<li>
+<a href=#%e5%9f%ba%e6%9c%ac%e6%89%8b%e6%ae%b5%e5%88%86%e5%8c%bapartitioning aria-label=基本手段：分区（Partitioning)>基本手段：分区（Partitioning)</a></li>
+<li>
+<a href=#%e5%9f%ba%e4%ba%8e%e9%a2%86%e5%af%bc%e8%80%85%e7%9a%84%e5%a4%8d%e5%88%b6%e4%b8%bb%e4%bb%8e%e5%a4%8d%e5%88%b6 aria-label=基于领导者的复制（主从复制）>基于领导者的复制（主从复制）</a><ul>
+<li>
+<a href=#%e5%90%8c%e6%ad%a5%e5%a4%8d%e5%88%b6%e5%92%8c%e5%bc%82%e6%ad%a5%e5%a4%8d%e5%88%b6 aria-label=同步复制和异步复制>同步复制和异步复制</a></li>
+<li>
+<a href=#%e5%a4%9a%e5%89%af%e6%9c%ac%e5%88%86%e5%b8%83%e5%bc%8f%e5%ad%98%e5%82%a8%e4%b8%ad%e7%9a%84%e4%b8%80%e8%87%b4%e6%80%a7%e9%97%ae%e9%a2%98 aria-label=多副本分布式存储中的一致性问题>多副本分布式存储中的一致性问题</a></li>
+<li>
+<a href=#cap%e5%ae%9a%e7%90%86 aria-label=CAP定理>CAP定理</a></li>
+<li>
+<a href=#base%e5%ae%9a%e7%90%86 aria-label=BASE定理>BASE定理</a></li></ul>
+</li>
+<li>
+<a href=#%e6%95%b0%e6%8d%ae%e5%88%86%e5%8c%ba%e7%9a%84%e5%9f%ba%e6%9c%ac%e6%96%b9%e6%b3%95 aria-label=数据分区的基本方法>数据分区的基本方法</a><ul>
+<li>
+<a href=#%e6%a0%b9%e6%8d%ae%e4%b8%bb%e9%94%ae%e8%8c%83%e5%9b%b4%e8%bf%9b%e8%a1%8c%e5%88%86%e5%8c%ba aria-label=根据主键范围进行分区>根据主键范围进行分区</a></li>
+<li>
+<a href=#%e6%a0%b9%e6%8d%ae%e4%b8%bb%e9%94%ae%e7%9a%84%e5%93%88%e5%b8%8c%e5%80%bc%e8%bf%9b%e8%a1%8c%e5%88%86%e5%8c%ba aria-label=根据主键的哈希值进行分区>根据主键的哈希值进行分区</a><ul>
+<li>
+<a href=#%e5%93%88%e5%b8%8c%e5%87%bd%e6%95%b0 aria-label=哈希函数>哈希函数</a></li>
+<li>
+<a href=#%e4%b8%bb%e8%a6%81%e6%80%9d%e6%83%b3 aria-label=主要思想>主要思想</a></li>
+<li>
+<a href=#%e4%bc%98%e7%82%b9 aria-label=优点>优点</a></li>
+<li>
+<a href=#%e7%bc%ba%e7%82%b9 aria-label=缺点>缺点</a></li></ul>
+</li>
+<li>
+<a href=#%e5%9f%ba%e4%ba%8e%e4%b8%80%e8%87%b4%e6%80%a7%e5%93%88%e5%b8%8c%e7%ae%97%e6%b3%95%e7%9a%84%e5%88%86%e5%8c%ba%e5%93%88%e5%b8%8c%e7%8e%af aria-label=基于一致性哈希算法的分区——哈希环>基于一致性哈希算法的分区——哈希环</a></li>
+<li>
+<a href=#%e4%bd%bf%e7%94%a8%e8%99%9a%e6%8b%9f%e8%8a%82%e7%82%b9%e6%94%b9%e8%bf%9b%e7%9a%84%e4%b8%80%e8%87%b4%e6%80%a7%e5%93%88%e5%b8%8c aria-label=使用虚拟节点改进的一致性哈希>使用虚拟节点改进的一致性哈希</a></li></ul>
+</li>
+<li>
+<a href=#hdfs%e5%88%86%e5%b8%83%e5%bc%8f%e6%96%87%e4%bb%b6%e7%b3%bb%e7%bb%9f aria-label=HDFS分布式文件系统>HDFS分布式文件系统</a><ul>
+<li>
+<a href=#namenode%e7%bb%b4%e6%8a%a4%e7%9a%84%e4%b8%a4%e5%bc%a0%e8%a1%a8 aria-label=NameNode维护的两张表>NameNode维护的两张表</a></li>
+<li>
+<a href=#%e5%86%99%e6%b5%81%e7%a8%8b aria-label=写流程>写流程</a></li>
+<li>
+<a href=#%e8%af%bb%e6%b5%81%e7%a8%8b aria-label=读流程>读流程</a></li></ul>
+</li></ul>
+</li>
+<li>
+<a href=#mapreduce%e6%a8%a1%e5%9e%8b%e5%92%8c%e5%88%86%e5%b8%83%e5%bc%8f%e8%ae%a1%e7%ae%97%e6%a1%86%e6%9e%b6 aria-label=MapReduce模型和分布式计算框架>MapReduce模型和分布式计算框架</a><ul>
+<li>
+<a href=#mapreduce%e5%b9%b6%e8%a1%8c%e8%ae%a1%e7%ae%97%e6%a8%a1%e5%9e%8b aria-label=MapReduce并行计算模型>MapReduce并行计算模型</a><ul>
+<li>
+<a href=#%e5%8d%95%e8%af%8d%e8%ae%a1%e6%95%b0%e7%9a%84%e4%be%8b%e5%ad%90 aria-label=单词计数的例子>单词计数的例子</a></li>
+<li>
+<a href=#hadoop-mapreduce%e8%ae%a1%e7%ae%97%e6%a8%a1%e5%9e%8b aria-label="Hadoop MapReduce计算模型">Hadoop MapReduce计算模型</a></li></ul>
+</li></ul>
+</li>
+<li>
+<a href=#spark%e5%b9%b3%e5%8f%b0%e5%92%8c%e5%9f%ba%e4%ba%8erdd-dag%e7%9a%84%e8%ae%a1%e7%ae%97%e6%a8%a1%e5%9e%8b aria-label=Spark平台和基于RDD-DAG的计算模型>Spark平台和基于RDD-DAG的计算模型</a><ul>
+<li>
+<a href=#spark%e7%ae%80%e4%bb%8b aria-label=Spark简介>Spark简介</a></li>
+<li>
+<a href=#spark%e5%b9%b3%e5%8f%b0%e4%bd%93%e7%b3%bb%e7%bb%93%e6%9e%84 aria-label=Spark平台体系结构>Spark平台体系结构</a></li>
+<li>
+<a href=#%e5%88%86%e5%b8%83%e5%bc%8f%e5%bc%b9%e6%80%a7%e6%95%b0%e6%8d%ae%e9%9b%86rdds aria-label=分布式弹性数据集RDDs>分布式弹性数据集RDDs</a><ul>
+<li>
+<a href=#%e5%ae%b9%e9%94%99%e6%80%a7 aria-label=容错性>容错性</a></li></ul>
+</li>
+<li>
+<a href=#%e5%b0%86%e8%ae%a1%e7%ae%97%e4%bb%bb%e5%8a%a1%e6%8a%bd%e8%b1%a1%e4%b8%ba%e6%9c%89%e5%90%91%e6%97%a0%e7%8e%af%e5%9b%be aria-label=将计算任务抽象为有向无环图>将计算任务抽象为有向无环图</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</details>
+</div>
 <div class=post-content><h2 id=概述>概述<a hidden class=anchor aria-hidden=true href=#概述>#</a></h2>
 <h3 id=分布式系统定义>分布式系统定义<a hidden class=anchor aria-hidden=true href=#分布式系统定义>#</a></h3>
 <p><strong>分布式计算</strong>：多个通过网络互联的计算节点通过相互协作共同完成计算任务。</p>
@@ -93,6 +275,7 @@
 <li>独立自治</li>
 <li>相互协作共同完成目标</li>
 <li>消息传递模型
+<img loading=lazy src=https://files.catbox.moe/6krt9v.png alt>
 </li>
 </ol>
 <h3 id=与并行计算的关系>与并行计算的关系<a hidden class=anchor aria-hidden=true href=#与并行计算的关系>#</a></h3>
@@ -148,10 +331,13 @@
 <li>服务质量保证</li>
 </ul>
 <h3 id=关于分布式一致性>关于分布式一致性<a hidden class=anchor aria-hidden=true href=#关于分布式一致性>#</a></h3>
+<p><img loading=lazy src=https://files.catbox.moe/mjtetf.png alt>
+</p>
 <h3 id=几类分布式系统框架模式>几类分布式系统框架模式<a hidden class=anchor aria-hidden=true href=#几类分布式系统框架模式>#</a></h3>
 <ul>
 <li>
 <p><strong>客户端-服务器</strong>（Client-Server）模式
+<img loading=lazy src=https://files.catbox.moe/c4agmt.png alt>
 </p>
 <ul>
 <li>客户端发出服务请求，服务端根据客户端请求参数完成实际运算，并将运算结果返回给客户端</li>
@@ -172,6 +358,7 @@
 </li>
 <li>
 <p><strong>主从</strong>（Master-Slave）模式<br>
+<img loading=lazy src=https://files.catbox.moe/cwxyyw.png alt>
 </p>
 <ul>
 <li>主节点（Master）负责将总任务分解为多个自任务分发给各个从节点（Slave，也叫Worker节点）</li>
@@ -181,6 +368,7 @@
 </li>
 <li>
 <p><strong>总线</strong>模式<br>
+<img loading=lazy src=https://files.catbox.moe/1jcgxf.png alt>
 </p>
 <ul>
 <li>不同节点通过虚拟总线相连</li>
@@ -214,6 +402,8 @@
 <li>基于各服务器实际负载的动态负载均衡算法</li>
 </ul>
 <h3 id=中间件的基本概念>中间件的基本概念<a hidden class=anchor aria-hidden=true href=#中间件的基本概念>#</a></h3>
+<p><img loading=lazy src=https://files.catbox.moe/9ygrjt.png alt>
+</p>
 <h4 id=中间件的作用>中间件的作用<a hidden class=anchor aria-hidden=true href=#中间件的作用>#</a></h4>
 <ul>
 <li>为开发者提供高层的编程抽象，屏蔽分布式系统的底层的异构型复杂性</li>
@@ -261,13 +451,16 @@
 <h3 id=tcpip网络体系介绍>TCP/IP网络体系介绍<a hidden class=anchor aria-hidden=true href=#tcpip网络体系介绍>#</a></h3>
 <ul>
 <li>TCP/IP先于OSI模型，不完全符合OSI标准
+<img loading=lazy src=https://files.catbox.moe/8iiy7l.png alt>
 </li>
 <li>TCP/IP四层模型（也可分为五层，将网络接口分为两层）
+<img loading=lazy src=https://files.catbox.moe/m70wnd.png alt>
 </li>
 </ul>
 <h3 id=socket>Socket<a hidden class=anchor aria-hidden=true href=#socket>#</a></h3>
 <h4 id=什么是socket>什么是Socket<a hidden class=anchor aria-hidden=true href=#什么是socket>#</a></h4>
 <p><strong>网络层和传输层</strong>提供给<strong>应用层</strong>的标准化编程接口（或称为编程接口）
+<img loading=lazy src=https://files.catbox.moe/0zwhtu.png alt>
 </p>
 <h4 id=套接字分类-socket类型>套接字分类-Socket类型<a hidden class=anchor aria-hidden=true href=#套接字分类-socket类型>#</a></h4>
 <ul>
@@ -279,6 +472,8 @@
 </li>
 <li>
 <p>原始套接字</p>
+<p><img loading=lazy src=https://files.catbox.moe/8do6bt.png alt>
+</p>
 </li>
 </ul>
 <h4 id=如何标识一个socket>如何标识一个Socket<a hidden class=anchor aria-hidden=true href=#如何标识一个socket>#</a></h4>
@@ -295,10 +490,12 @@
 </li>
 <li>
 <p>TCP套接字编程典型模型
+<img loading=lazy src=https://files.catbox.moe/iqu4ni.png alt>
 </p>
 </li>
 <li>
 <p>UDP套接字编程典型模型
+<img loading=lazy src=https://files.catbox.moe/ijma9k.png alt>
 </p>
 </li>
 </ul>
@@ -341,6 +538,8 @@
 <li>在服务端支持并发访问（多采用多线程技术）</li>
 </ol>
 <h4 id=注册中心>注册中心<a hidden class=anchor aria-hidden=true href=#注册中心>#</a></h4>
+<p><img loading=lazy src=https://kirito.iocoder.cn/17071-20170522235215679-280378465.png alt>
+</p>
 <ul>
 <li>用于服务端注册远程服务以及客户端发现服务</li>
 <li>可以实现负载均衡</li>
@@ -352,6 +551,8 @@
 <li><code>stub</code>和<code>skeleton</code>之间利用Socket进行通信</li>
 <li><code>skeleton</code>相当于服务器端</li>
 </ul>
+<p><img loading=lazy src=https://files.catbox.moe/juehyk.png alt>
+</p>
 <h4 id=grpc中间件>gRPC中间件<a hidden class=anchor aria-hidden=true href=#grpc中间件>#</a></h4>
 <ul>
 <li>通信协议基于HTTP协议标准，对象序列化基于**ProtoBuf(Protocol Buffers)**序列化协议</li>
@@ -391,15 +592,21 @@
 </ol>
 <p><a href=https://github.com/fffzlfk/DistributedComputing/tree/master/homework/task2>实现</a></p>
 <h3 id=微服务>微服务<a hidden class=anchor aria-hidden=true href=#微服务>#</a></h3>
+<p><img loading=lazy src=https://files.catbox.moe/1avqnf.png alt>
+</p>
 <p>各个模块独立（大多采用容器技术（如Docker）），模块之间使用RPC通信。</p>
 <h3 id=基于消息中间件的通信技术>基于消息中间件的通信技术<a hidden class=anchor aria-hidden=true href=#基于消息中间件的通信技术>#</a></h3>
 <h4 id=点到点通信技术的缺点>点到点通信技术的缺点<a hidden class=anchor aria-hidden=true href=#点到点通信技术的缺点>#</a></h4>
+<p><img loading=lazy src=https://files.catbox.moe/h1bt85.png alt>
+</p>
 <ul>
 <li>关系复杂，耦合度高</li>
 <li>可扩展性差：增加生产者或消费者对多个节点产生影响</li>
 <li>容错性差：节点失效或生产者和消费者速度不匹配会丢失数据</li>
 </ul>
 <h4 id=解决方案增减中介节点>解决方案——增减中介节点<a hidden class=anchor aria-hidden=true href=#解决方案增减中介节点>#</a></h4>
+<p><img loading=lazy src=https://files.catbox.moe/vfardp.png alt>
+</p>
 <ul>
 <li>降低了耦合性</li>
 <li>提高了容错性：中介节点具有数据缓存功能</li>
@@ -407,6 +614,8 @@
 </ul>
 <h4 id=面向消息中间件message-oriented-middlewaremom>面向消息中间件（Message Oriented Middleware，MOM）<a hidden class=anchor aria-hidden=true href=#面向消息中间件message-oriented-middlewaremom>#</a></h4>
 <p>使分布式应用程序可以通过发送和接收消息来进行<strong>异步</strong>通信和交换数据。</p>
+<p><img loading=lazy src=https://files.catbox.moe/kdfo5j.png alt>
+</p>
 <h4 id=mom两种通信模式>MOM两种通信模式<a hidden class=anchor aria-hidden=true href=#mom两种通信模式>#</a></h4>
 <ul>
 <li>
@@ -421,6 +630,7 @@
 <ul>
 <li>多个订阅同一主题的消费者可以同时接收发布到该消息主题的消息</li>
 <li>可以实现广播
+<img loading=lazy src=https://files.catbox.moe/inhwuo.png alt>
 </li>
 </ul>
 </li>
@@ -480,6 +690,8 @@
 </ul>
 </li>
 </ul>
+<p><img loading=lazy src=https://files.catbox.moe/30q22o.png alt>
+</p>
 <h3 id=基于领导者的复制主从复制>基于领导者的复制（主从复制）<a hidden class=anchor aria-hidden=true href=#基于领导者的复制主从复制>#</a></h3>
 <ol>
 <li>客户端要向数据存储系统写入数据时，它必须将请求发送给领导者；领导者将新数据写入本地存储，同时也会将数据变更发送给所有的追随者。</li>
@@ -489,8 +701,10 @@
 <h4 id=同步复制和异步复制>同步复制和异步复制<a hidden class=anchor aria-hidden=true href=#同步复制和异步复制>#</a></h4>
 <ul>
 <li>同步
+<img loading=lazy src=https://files.catbox.moe/mj2twr.png alt>
 </li>
 <li>异步
+<img loading=lazy src=https://files.catbox.moe/xj67ij.png alt>
 </li>
 </ul>
 <h4 id=多副本分布式存储中的一致性问题>多副本分布式存储中的一致性问题<a hidden class=anchor aria-hidden=true href=#多副本分布式存储中的一致性问题>#</a></h4>
@@ -505,14 +719,20 @@
 <li>因果一致性</li>
 <li>最终一致性</li>
 </ul>
+<p><img loading=lazy src=https://files.catbox.moe/hcu53a.png alt>
+</p>
 <h4 id=cap定理>CAP定理<a hidden class=anchor aria-hidden=true href=#cap定理>#</a></h4>
 <p>Consistensy（一致性）、Partition Tolerance（切割容忍性）、Availability（可用性）三者只能取其二，不可兼得三者。</p>
 <p>很多时候只能取CP或AP，因为一般无法保证网络每时每刻畅通</p>
+<p><img loading=lazy src=https://ftp.bmp.ovh/imgs/2021/05/d3b13c70de6439a5.png alt>
+</p>
 <h4 id=base定理>BASE定理<a hidden class=anchor aria-hidden=true href=#base定理>#</a></h4>
 <p>对CAP中的一致性和可用性权衡的结果：基本可用（Basically Available）、软件态（Soft State）、最终一致性（Eventually Consistency）</p>
 <h3 id=数据分区的基本方法>数据分区的基本方法<a hidden class=anchor aria-hidden=true href=#数据分区的基本方法>#</a></h3>
 <h4 id=根据主键范围进行分区>根据主键范围进行分区<a hidden class=anchor aria-hidden=true href=#根据主键范围进行分区>#</a></h4>
 <p>一般都是<strong>非均匀分布</strong>的，所以需要建立<strong>全局索引</strong></p>
+<p><img loading=lazy src=https://ftp.bmp.ovh/imgs/2021/05/7f8cf2a61985f97a.png alt>
+</p>
 <h4 id=根据主键的哈希值进行分区>根据主键的哈希值进行分区<a hidden class=anchor aria-hidden=true href=#根据主键的哈希值进行分区>#</a></h4>
 <h5 id=哈希函数>哈希函数<a hidden class=anchor aria-hidden=true href=#哈希函数>#</a></h5>
 <ul>
@@ -538,8 +758,14 @@
 <p>当节点数量变动时，需要大量的数据迁移。</p>
 <h4 id=基于一致性哈希算法的分区哈希环>基于一致性哈希算法的分区——哈希环<a hidden class=anchor aria-hidden=true href=#基于一致性哈希算法的分区哈希环>#</a></h4>
 <p>当新增节点后，仅仅需要迁移少量数据。</p>
+<p><img loading=lazy src=https://i.loli.net/2021/05/25/dOMtWXbaKku2PyH.png alt>
+</p>
+<p><img loading=lazy src=https://i.loli.net/2021/05/25/leK38cxDM91OEsg.png alt>
+</p>
 <p>缺点：只能在节点之间新增新节点，这样会导致负载分配不均衡。</p>
 <h4 id=使用虚拟节点改进的一致性哈希>使用虚拟节点改进的一致性哈希<a hidden class=anchor aria-hidden=true href=#使用虚拟节点改进的一致性哈希>#</a></h4>
+<p><img loading=lazy src=https://res-static.hc-cdn.cn/fms/img/8b8af61e094ba8f93809cda87097cea71603441285877 alt>
+</p>
 <p>每个物理节点有若干个虚拟节点，这样一个物理节点可以通过虚拟节点的方式均匀分散在哈希环的各个部分，解决了数据倾斜问题。</p>
 <h3 id=hdfs分布式文件系统>HDFS分布式文件系统<a hidden class=anchor aria-hidden=true href=#hdfs分布式文件系统>#</a></h3>
 <h4 id=namenode维护的两张表>NameNode维护的两张表<a hidden class=anchor aria-hidden=true href=#namenode维护的两张表>#</a></h4>
@@ -547,12 +773,16 @@
 <li>文件名——数据块对应表：每个文件被切片之后对应若干个有唯一标识号的数据块</li>
 <li>数据块——物理节点对应表：每个数据块在不同DataNode存储3份（3备份策略）</li>
 </ol>
+<p><img loading=lazy src=https://i.loli.net/2021/06/01/DnwRcLsZVmXI79q.png alt>
+</p>
 <h4 id=写流程>写流程<a hidden class=anchor aria-hidden=true href=#写流程>#</a></h4>
 <ol>
 <li>Client向NameNode请求增加数据块（维护文件名——数据块对应表）</li>
 <li>NameNode返回数据块号及分配的3个DataNode IP地址（3备份策略）</li>
 <li>Client与NameNode流水线方式写入数据块（完成后维护数据块——物理节点对应表）</li>
 </ol>
+<p><img loading=lazy src=https://i.loli.net/2021/06/01/h9C86frjDxai3gu.png alt>
+</p>
 <h4 id=读流程>读流程<a hidden class=anchor aria-hidden=true href=#读流程>#</a></h4>
 <ol>
 <li>客户端向请求NameNode，传送参数：文件名、偏移量、长度</li>
@@ -561,7 +791,11 @@
 </ol>
 <h2 id=mapreduce模型和分布式计算框架>MapReduce模型和分布式计算框架<a hidden class=anchor aria-hidden=true href=#mapreduce模型和分布式计算框架>#</a></h2>
 <h3 id=mapreduce并行计算模型>MapReduce并行计算模型<a hidden class=anchor aria-hidden=true href=#mapreduce并行计算模型>#</a></h3>
+<p><img loading=lazy src=https://i.loli.net/2021/06/08/VjOwL8zZcbJfYNn.png alt>
+</p>
 <h4 id=单词计数的例子>单词计数的例子<a hidden class=anchor aria-hidden=true href=#单词计数的例子>#</a></h4>
+<p><img loading=lazy src=https://i.loli.net/2021/06/08/Xy7ElW9DTae1ARY.png alt>
+</p>
 <h4 id=hadoop-mapreduce计算模型>Hadoop MapReduce计算模型<a hidden class=anchor aria-hidden=true href=#hadoop-mapreduce计算模型>#</a></h4>
 <ul>
 <li>Client类
@@ -585,12 +819,16 @@
 <h3 id=spark简介>Spark简介<a hidden class=anchor aria-hidden=true href=#spark简介>#</a></h3>
 <p>Spark是一个快速、通用、可扩展的分布式计算平台。</p>
 <h3 id=spark平台体系结构>Spark平台体系结构<a hidden class=anchor aria-hidden=true href=#spark平台体系结构>#</a></h3>
+<p><img loading=lazy src=https://i.loli.net/2021/06/15/mr7iZHCsUMtK5A8.png alt>
+</p>
 <h3 id=分布式弹性数据集rdds>分布式弹性数据集RDDs<a hidden class=anchor aria-hidden=true href=#分布式弹性数据集rdds>#</a></h3>
 <p>RDDs全称Resilient Distributed Datasets是Spark最基本的数据抽象，它是只读的、分区存储的、分布式的数据集合。</p>
 <p>可以将RDDs看作一个分布式存储的“大数组”，应用程序只需关心如何由一个RDDs转换为另一个RDDs，不用关心RDD在底层是如何分区、如何分布到多个节点上、如何在内存中缓存、内存缓存丢失后如何重新生成。</p>
 <h4 id=容错性>容错性<a hidden class=anchor aria-hidden=true href=#容错性>#</a></h4>
 <p>如果RDDs的某个分区失效，Spark会根据DAG往回查看并重新恢复数据。</p>
 <h3 id=将计算任务抽象为有向无环图>将计算任务抽象为有向无环图<a hidden class=anchor aria-hidden=true href=#将计算任务抽象为有向无环图>#</a></h3>
+<p><img loading=lazy src=https://i.loli.net/2021/06/15/sCFtiD8EXYdjxKo.png alt>
+</p>
 </div>
 <footer class=post-footer>
 <ul class=post-tags>
@@ -602,10 +840,10 @@
 <br>
 <span>网络应用程序设计</span>
 </a>
-<a class=next href=https://fffzlfk.github.io/posts/about/>
+<a class=next href=https://fffzlfk.github.io/posts/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/>
 <span class=title>Next Page »</span>
 <br>
-<span>About</span>
+<span>编译原理</span>
 </a>
 </nav>
 </footer><div id=disqus_thread></div>
