@@ -15,7 +15,7 @@ minify:
   minifyOutput: true
 
 params:
-  env: production # to enable google analytics, opengraph, twitter-cards and schema.
+  # env: production # to enable google analytics, opengraph, twitter-cards and schema.
   title: fffzlfk's Blog
   description: "Thinking will not overcome fear but action will."
   keywords: [Blog, Portfolio, PaperMod]
@@ -78,8 +78,8 @@ params:
       url: "https://github.com/fffzlfk"
 
   analytics:
-    google:
-      SiteVerificationTag: "G-YMYDYG1JEZ"
+    # google:
+      # SiteVerificationTag: "UA-147061302-1"
     # bing:
     #   SiteVerificationTag: "XYZabc"
     # yandex:
