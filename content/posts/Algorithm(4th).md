@@ -680,19 +680,19 @@ public class Quick {
 ### average-case analysis
 
 $C_N $ satisfies the recurrence $C_0 = C_1=0$ and for $ N\ge 2 $:  
-$$ C_N = (N + 1) + (\frac{C_0+C_{N-1{N})+ (\frac{C_1+C_{N-2{N})+ ... +(\frac{C_{N-1}+C_{0{N}) $$
+$$ C_N = (N + 1) + (\frac{C_0+C_{N-1}}{N})+ (\frac{C_1+C_{N-2}}{N})+ ... +(\frac{C_{N-1}+C_{0{N}}}) $$
 - Multiply both sides by N and collect terms:
 $$ NC_N = N(N+1)+2(C_0+C_1+...+C_{N-1}) $$
 - Substract this from the same equation for $N - 1$:
 $$ NC_N-(N-1)C_{N-1}=2N+2C_{N-1} $$
 - Rearrage terms and devide by $N(N+1)$:
-$$ \frac{C_N}{N+1} = \frac{C_{N-1{N} + \frac{2}{N+1} $$
+$$ \frac{C_N}{N+1} = \frac{C_{N-1{N}}} + \frac{2}{N+1} $$
 - Repeatedly apply above equation:
 $$
 \begin{aligned}
-\frac{C_N}{N+1} &= \frac{C_{N-1{N}+\frac{2}{N+1} \cr
-&= \frac{C_{N-2{N-1}+\frac{2}{N}+\frac{2}{N+1} \cr
-&= \frac{C_{N-3{N-2}+\frac{2}{N-1}+\frac{2}{N}+\frac{2}{N+1} \cr
+\frac{C_N}{N+1} &= \frac{C_{N-1}}{N}+\frac{2}{N+1} \cr
+&= \frac{C_{N-2}}{N-1}+\frac{2}{N}+\frac{2}{N+1} \cr
+&= \frac{C_{N-3}}{N-2}+\frac{2}{N-1}+\frac{2}{N}+\frac{2}{N+1} \cr
 &= \frac 2 3 + \frac 2 4 + \frac 2 5 +...+\frac 2 {N+1}
 \end{aligned}
 $$
