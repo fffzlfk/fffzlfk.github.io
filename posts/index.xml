@@ -7,11 +7,11 @@
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Wed, 23 Feb 2022 23:31:50 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>C&#43;&#43;中常见的常见的编码错误</title>
-      <link>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B8%B8%E8%A7%81%E7%9A%84%E7%BC%96%E7%A0%81%E9%94%99%E8%AF%AF/</link>
+      <title>C&#43;&#43;中容易犯的错误</title>
+      <link>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%AD%E5%AE%B9%E6%98%93%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</link>
       <pubDate>Wed, 23 Feb 2022 23:31:50 +0800</pubDate>
       
-      <guid>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B8%B8%E8%A7%81%E7%9A%84%E7%BC%96%E7%A0%81%E9%94%99%E8%AF%AF/</guid>
+      <guid>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%AD%E5%AE%B9%E6%98%93%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</guid>
       <description>不正确地使用new和delete 无论我们如何努力，要释放所有动态分配的内存是非常困难的。即使我们能做到这一点，也往往不能安全地避免出现异常。让我们看一个简单的例子。
 void SomeMethod() { ClassA *a = new ClassA; SomeOtherMethod(); // it can throws an execption  delete a; } 如果SomeOtherMethod抛出了异常，那么a对象永远不会被删除。下面的例子展示了一个更加安全同时又更简洁的实现，使用了在C++11提出的std::unique_ptr。
 void SomeMethod() { std::unique_ptr&amp;lt;ClassA&amp;gt; a(new ClassA); SomeOtherMethod(); } 无论发生什么，当a退出作用域的时候，它会被释放。

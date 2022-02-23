@@ -80,7 +80,7 @@
 </header>
 <article class=post-entry>
 <header class=entry-header>
-<h2>C++中常见的常见的编码错误
+<h2>C++中容易犯的错误
 </h2>
 </header>
 <section class=entry-content>
@@ -96,7 +96,7 @@ class MyString : public std::string { ~MyString() {} }; int main() { std::string
 在数组中使用智能指针，如unique_ptr&lt;T>, shared_ptr，也是不正确的。当这样的智能指针从作用域中退出时，它将调用不带[]括号的删除操作符，这将导致上面描述的同样问题。如果需要对数组使用智能指针，可以使用unique_ptr&lt;T[]>的特殊化。...</p>
 </section>
 <footer class=entry-footer><span title="2022-02-23 23:31:50 +0800 +0800">February 23, 2022</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;fffzlfk</footer>
-<a class=entry-link aria-label="post link to C++中常见的常见的编码错误" href=https://fffzlfk.github.io/posts/c++%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B8%B8%E8%A7%81%E7%9A%84%E7%BC%96%E7%A0%81%E9%94%99%E8%AF%AF/></a>
+<a class=entry-link aria-label="post link to C++中容易犯的错误" href=https://fffzlfk.github.io/posts/c++%E4%B8%AD%E5%AE%B9%E6%98%93%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/></a>
 </article>
 <article class=post-entry>
 <header class=entry-header>
