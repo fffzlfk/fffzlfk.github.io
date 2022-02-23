@@ -2,7 +2,7 @@
 title: "Cuda 编程模型"
 date: "2022-01-19T12:55:19+08:00"
 tags:
-    - Cuda
+    - CUDA
 ---
 
 ## Kernels

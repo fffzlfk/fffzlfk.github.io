@@ -2,7 +2,7 @@
 title: "Cuda软件架构"
 date: "2022-01-08T06:27:04+08:00"
 tags:
-    - Cuda
+    - CUDA
 ---
 
 ## 硬件

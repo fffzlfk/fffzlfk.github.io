@@ -2,7 +2,7 @@
 title: "Cuda 硬件实现"
 date: "2022-01-18T15:31:10+08:00"
 tags:
-    - Cuda
+    - CUDA
 ---
 
 ## 一组带有 on-chip 共享内存的 SIMD 多处理器
