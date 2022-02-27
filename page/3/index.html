@@ -79,6 +79,26 @@
 </header><main class=main>
 <article class=post-entry>
 <header class=entry-header>
+<h2>Cuda软件架构
+</h2>
+</header>
+<section class=entry-content>
+<p>硬件 SP(Streaming Processor)：流处理器，是GPU最基本的处理单元，在fermi架构开始被叫做CUDA core。
+SM(Streaming MultiProcessor)：一个SM由多个CUDA core组成。
+比如说，如果一个GPU有 $4$ 个SM，并且每个SM有 $768$ 个SP(Aka CUDA core)；那么在某一时刻，真正并行运行的线程数不会超过 $4 \times 768$ 个。
+软件 threads被组织成blocks。一个block的线程可以用1Dimension(x), 2Dimensions(x, y)或者3Dim indexs(x, y, z) 索引，
+显然，如果你需要 $4 \times 768$ 个以上的threads的话你需要 $4$ 个以上的blocks。blocks也可以使用1D, 2D或3D索引，这些blocks被放在等待队列上进入GPU执行。
+Wrap 当一个kernel被执行时，grid中的线程块被分配到SM上。一个CUDA core可以执行一个thread，一个SM的CUDA core会分成几个wrap，由wrap scheduler负责调度。
+一个wrap中的线程在同一个block中，如果block所含线程数不是wrap的大小的整数倍，那么多出来的那些thread所在的wrap中，会剩余一些inactive的thread。
+一个简单的case 处理一张 $512 \times 512$ 的图片。
+假设我们希望一个线程处理一个像素pixel(i, j)。
+我们可以使用每 $64$ 个线程的区块。所以我们需要 $\frac{512 \times 512 }{64} = 4096$ 个区块（为了拥有 $512 \times 512 $ 个线程 ）。...</p>
+</section>
+<footer class=entry-footer><span title="2022-01-08 06:27:04 +0800 +0800">January 8, 2022</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;fffzlfk</footer>
+<a class=entry-link aria-label="post link to Cuda软件架构" href=https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/></a>
+</article>
+<article class=post-entry>
+<header class=entry-header>
 <h2>CodeForces 762
 </h2>
 </header>
@@ -120,17 +140,6 @@
 </section>
 <footer class=entry-footer><span title="2021-04-24 21:19:14 +0800 +0800">April 24, 2021</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;fffzlfk</footer>
 <a class=entry-link aria-label="post link to MapReduce_in_Go" href=https://fffzlfk.github.io/posts/mapreduce_in_go/></a>
-</article>
-<article class=post-entry>
-<header class=entry-header>
-<h2>网络应用程序设计
-</h2>
-</header>
-<section class=entry-content>
-<p>Network Program Design for Application</p>
-</section>
-<footer class=entry-footer><span title="2021-04-07 20:48:12 +0800 +0800">April 7, 2021</span>&nbsp;·&nbsp;14 min&nbsp;·&nbsp;fffzlfk</footer>
-<a class=entry-link aria-label="post link to 网络应用程序设计" href=https://fffzlfk.github.io/posts/%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/></a>
 </article>
 <footer class=page-footer>
 <nav class=pagination>
