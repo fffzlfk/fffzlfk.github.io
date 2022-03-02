@@ -15,7 +15,7 @@
       <description>Kernels CUDA C++对C++进行了扩展，允许程序员定义C++函数，称为内核，当被调用时，由 $N$ 个不同的CUDA线程并行执行 $N$ 次，而不是像普通C++函数那样只执行一次。
 kernel是使用__global__声明定义的，对于特定的内核调用，执行该内核的CUDA线程数量是使用&amp;lt;&amp;lt;&amp;lt;...&amp;gt;&amp;gt;&amp;gt;执行配置语法指定的（C++语言扩展）。每个执行内核的线程都有一个唯一的线程ID，可以在内核内通过内置变量访问。
 作为说明，下面的示例代码，使用内置变量threadIdx，将两个大小为 $N$ 的向量 $A$ 和 $B$ 相加，并将结果存入向量 $C$ 。
-// Kernel definition __global__ void VecAdd(float* A, float* B, float* C) { int i = threadIdx.x; C[i] = A[i] + B[i]; } int main() { ... // Kernel invocation with N threads  VecAdd&amp;lt;&amp;lt;&amp;lt;1, N&amp;gt;&amp;gt;&amp;gt;(A, B, C); ... } 在这里，执行VecAdd()的 $N$ 个线程中的每一个都执行了一次加法。
+// Kernel definition __global__ void VecAdd(float* A, float* B, float* C) {  int i = threadIdx.x;  C[i] = A[i] + B[i]; }  int main() {  ...  // Kernel invocation with N threads  VecAdd&amp;lt;&amp;lt;&amp;lt;1, N&amp;gt;&amp;gt;&amp;gt;(A, B, C);  ... } 在这里，执行VecAdd()的 $N$ 个线程中的每一个都执行了一次加法。
 线程体系 为方便起见，threadIdx是一个 $3$ 分量的向量，因此可以用一维、二维或三维的线程索引来识别线程，形成一个一维、二维或三维的线程块，称为线程块。这提供了一种自然的方式来调用域中的元素进行计算，如矢量、矩阵或体积。
 一个例子，下面的代码将两个大小为 $N\times N$ 的矩阵 $A$ 和 $B$ 相加，并将结果存入矩阵 $C$ 。</description>
     </item>
