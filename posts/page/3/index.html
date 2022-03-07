@@ -65,6 +65,17 @@
 </li></ul></nav></header><main class=main>
 <header class=page-header><div class=breadcrumbs><a href=https://fffzlfk.github.io>Home</a></div><h1>Posts</h1></header><article class=post-entry>
 <header class=entry-header>
+<h2>OpenCV Blurring
+</h2></header><section class=entry-content>
+<p>理论 Smoothing也叫blurring（模糊化），是一个简单而常用的图像处理操作。
+Smoothing有很多原因。在本教程中，我们将重点讨论平滑操作，以减少噪音。
+为了进行平滑操作，我们将对我们的图像应用一个filter。最常见的filter是线性的，其中输出像素的值（即 $g(i,j)$ ）为输入像素值的加权和（即 $f(i+k,j+l)$ ）。
+$$ g(i, j) = \sum_{k, l}{f(i+k, j+l)h(k, l)} $$
+$h(k,l)$ 被称为kernel，它只不过是filter的系数。这有助于把滤波器想象成一个在图像上滑动的系数窗口。
+滤波器有很多种类，这里我们将提到最常用的几种。
+Normalized Box Filter（归一化块滤波器） 这个滤波器是最简单的，每个输出像素都是其内核邻居的平均值（所有的像素都有相同的权重）。 $$ K = \frac{1}{K_{width} \cdot k_{height}} \begin{bmatrix} 1 & 1 & 1 & …& 1\\ 1 & 1 & 1 & …& 1\\ . & . & . & …& 1\\ 1 & 1 & 1 & …& 1 \end{bmatrix} $$...</p></section><footer class=entry-footer><span title="2022-01-09 07:37:09 +0800 +0800">January 9, 2022</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;fffzlfk</footer><a class=entry-link aria-label="post link to OpenCV Blurring" href=https://fffzlfk.github.io/posts/opencv_blurring/></a>
+</article><article class=post-entry>
+<header class=entry-header>
 <h2>Cuda软件架构
 </h2></header><section class=entry-content>
 <p>硬件 SP(Streaming Processor)：流处理器，是GPU最基本的处理单元，在fermi架构开始被叫做CUDA core。
@@ -92,11 +103,6 @@ Wrap 当一个kernel被执行时，grid中的线程块被分配到SM上。一个
 <h2>Go设计模式
 </h2></header><section class=entry-content>
 <p>Go Design Scheme</p></section><footer class=entry-footer><span title="2021-07-18 22:52:35 +0800 +0800">July 18, 2021</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;fffzlfk</footer><a class=entry-link aria-label="post link to Go设计模式" href=https://fffzlfk.github.io/posts/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/></a>
-</article><article class=post-entry>
-<header class=entry-header>
-<h2>MapReduce_in_Go
-</h2></header><section class=entry-content>
-<p>Map-Reduce</p></section><footer class=entry-footer><span title="2021-04-24 21:19:14 +0800 +0800">April 24, 2021</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;fffzlfk</footer><a class=entry-link aria-label="post link to MapReduce_in_Go" href=https://fffzlfk.github.io/posts/mapreduce_in_go/></a>
 </article><footer class=page-footer>
 <nav class=pagination>
 <a class=prev href=https://fffzlfk.github.io/posts/page/2/>« Prev Page</a>
