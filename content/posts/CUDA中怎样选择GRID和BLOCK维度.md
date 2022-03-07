@@ -1,7 +1,6 @@
 ---
 title: "CUDA中怎样选择GRID和BLOCK维度"
 date: 2022-03-07T16:10:36+08:00
-draft: true
 tags:
     - CUDA
 ---
