@@ -5,7 +5,19 @@
     <link>https://fffzlfk.github.io/</link>
     <description>Recent content on fffzlfk&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 27 Mar 2022 21:19:14 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 02 Apr 2022 22:20:04 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>可变参数模板的应用</title>
+      <link>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Sat, 02 Apr 2022 22:20:04 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
+      <description>引入 在C++中经常打印变量来调试代码，但无论是printf还是cout总是很麻烦：
+  printf
+int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; printf(&amp;#34;a = %d, b = %f, c = %c&amp;#34;, a, b, c);   cout
+int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; std::cout &amp;lt;&amp;lt; &amp;#34;a = &amp;#34; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; &amp;#34;, b = &amp;#34; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; &amp;#34;, c = &amp;#34; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; &amp;#39;\n&amp;#39;;   可变参数宏 可变参数宏是C99引入的一个特性，C++11开始支持。</description>
+    </item>
+    
     <item>
       <title>MapReduce in Go</title>
       <link>https://fffzlfk.github.io/posts/mapreduce_in_go/</link>
