@@ -68,13 +68,26 @@ params:
 
   # home-info mode
   homeInfoParams:
-    enabled: false
+    enabled: true
     Title: "Hi there \U0001F44B"
-    Content: Welcome to fffzlfk's blog
+    Content: Thinking will not overcome fear but action will.
+    Avatar: "https://avatars.githubusercontent.com/u/44939690?v=4"
     
   socialIcons:
     - name: github
       url: "https://github.com/fffzlfk"
+    - name: twitter
+      url: "https://twitter.com/fffzlfk"
+    - name: instagram
+      url: "https://instagram.com/fffzlfk"
+    - name: bilibili
+      url: "https://space.bilibili.com/82433974"
+    - name: gitlab
+      url: "https://gitlab.com/fffzlfk"
+    - name: stackoverflow
+      url: "https://stackoverflow.com/users/11393838/zlfk-fffk"
+    - name: buymeacoffee
+      url: "https://buymeacoffee.com/fffzlfk"
 
   analytics:
     # google:
