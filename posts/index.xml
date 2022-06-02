@@ -13,9 +13,10 @@
       
       <guid>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
       <description>引入 在C++中经常打印变量来调试代码，但无论是printf还是cout总是很麻烦：
-  printf
-int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; printf(&amp;#34;a = %d, b = %f, c = %c&amp;#34;, a, b, c);   cout
-int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; std::cout &amp;lt;&amp;lt; &amp;#34;a = &amp;#34; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; &amp;#34;, b = &amp;#34; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; &amp;#34;, c = &amp;#34; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; &amp;#39;\n&amp;#39;;   可变参数宏 可变参数宏是C99引入的一个特性，C++11开始支持。</description>
+printf
+int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; printf(&amp;#34;a = %d, b = %f, c = %c&amp;#34;, a, b, c); cout
+int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; std::cout &amp;lt;&amp;lt; &amp;#34;a = &amp;#34; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; &amp;#34;, b = &amp;#34; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; &amp;#34;, c = &amp;#34; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; &amp;#39;\n&amp;#39;; 可变参数宏 可变参数宏是C99引入的一个特性，C++11开始支持。
+#define def_name(...) def_body(__VA_ARGS__) 可变参数模板 C++11允许模板定义有任意类型任意数量的模板参数（包括 $0$ 个模板参数）。</description>
     </item>
     
     <item>
@@ -24,8 +25,8 @@ int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; std::cout &amp;lt;&amp;l
       <pubDate>Sun, 27 Mar 2022 21:19:14 +0800</pubDate>
       
       <guid>https://fffzlfk.github.io/posts/mapreduce_in_go/</guid>
-      <description>简单版Generic Map func Map[T any](data []T, f func(T) T) []T { 	res := make([]T, len(data)) 	for i, v := range data { 	res[i] = f(v) 	} 	return res } 我们可以下面的代码测试这个简易的Map函数
-func TestMap(t *testing.T) { 	square := func(x int) int { 	return x * x 	} 	nums := []int{1, 2, 3, 4, 5} 	squareArr := Map(nums, square) 	for i, num := range nums { 	if squareArr[i] !</description>
+      <description>简单版Generic Map func Map[T any](data []T, f func(T) T) []T { res := make([]T, len(data)) for i, v := range data { res[i] = f(v) } return res } 我们可以下面的代码测试这个简易的Map函数
+func TestMap(t *testing.T) { square := func(x int) int { return x * x } nums := []int{1, 2, 3, 4, 5} squareArr := Map(nums, square) for i, num := range nums { if squareArr[i] != num*num { t.Errorf(&amp;#34;Expected %d, got %d&amp;#34;, num*num, squareArr[i]) } } upCase := func(s string) string { return strings.</description>
     </item>
     
     <item>
@@ -35,11 +36,11 @@ func TestMap(t *testing.T) { 	square := func(x int) int { 	return x * x 	} 	nums
       
       <guid>https://fffzlfk.github.io/posts/cuda%E4%B8%AD%E6%80%8E%E6%A0%B7%E9%80%89%E6%8B%A9grid%E5%92%8Cblock%E7%BB%B4%E5%BA%A6/</guid>
       <description>硬件限制 这是容易量化的方面。目前CUDA编程指南的附录F列出了一些硬件限制，这些限制限制了内核启动时每块可以有多少个线程。如果你超过了这些限制，你的内核将无法运行。这些限制可以粗略地概括为：
- 每个区块不能超过 $512$ / $1024$ 个线程（分别是计算能力1.x或2.x及以后的计算能力 每个块的最大尺寸限制在 $[512, 512, 64]$ / $[1024, 1024, 64]$（计算能力1.x/2.x及以后的计算能力 每个块消耗的寄存器总数不能超过 $8k/16k/32k/64k/32k/64k/32k/64k$ （计算能力 $1.0,1.1/1.2,1.3/2.x-3.0/3.2/3.5-5.2/5.3/6-6.1/6.2/7.0$ 每个块不能消耗超过 $16kb/48kb/96kb$ 的共享内存（计算能力 $1.x/2.x-6.2/7.0$  如果你保持在这些限制之内，任何你能成功编译的内核都会无错误地启动。
+每个区块不能超过 $512$ / $1024$ 个线程（分别是计算能力1.x或2.x及以后的计算能力 每个块的最大尺寸限制在 $[512, 512, 64]$ / $[1024, 1024, 64]$（计算能力1.x/2.x及以后的计算能力 每个块消耗的寄存器总数不能超过 $8k/16k/32k/64k/32k/64k/32k/64k$ （计算能力 $1.0,1.1/1.2,1.3/2.x-3.0/3.2/3.5-5.2/5.3/6-6.1/6.2/7.0$ 每个块不能消耗超过 $16kb/48kb/96kb$ 的共享内存（计算能力 $1.x/2.x-6.2/7.0$ 如果你保持在这些限制之内，任何你能成功编译的内核都会无错误地启动。
 性能调教 这是需要经验的一部分。在上述的硬件约束条件下，你选择的每块线程数可以而且确实影响到硬件上运行的代码性能。每个代码的表现都是不同的，唯一真正的方法是通过仔细的基准测试和剖析来量化它。但还是那句话，非常粗略地总结一下：
- 每个区块的线程数应该是wrap大小的整数倍，在目前所有的硬件上都是 $32$ GPU上的每个流式多处理器必须有足够的active wraps来充分隐藏架构的的所有不同内存和指令流水线延迟，以实现最大吞吐量。这里的正确做法是尝试实现最佳的硬件占用率  CUDA内置函数 上述指出了块的大小是如何影响性能的，并提出了一种基于占用率最大化的通用启发式选择方法。在不想提供选择块大小的标准的情况下，值得一提的是，CUDA 6.5+包括几个新的运行时函数来帮助占用率的计算和启动配置1。
+每个区块的线程数应该是wrap大小的整数倍，在目前所有的硬件上都是 $32$ GPU上的每个流式多处理器必须有足够的active wraps来充分隐藏架构的的所有不同内存和指令流水线延迟，以实现最大吞吐量。这里的正确做法是尝试实现最佳的硬件占用率 CUDA内置函数 上述指出了块的大小是如何影响性能的，并提出了一种基于占用率最大化的通用启发式选择方法。在不想提供选择块大小的标准的情况下，值得一提的是，CUDA 6.5+包括几个新的运行时函数来帮助占用率的计算和启动配置1。
 其中一个有用的函数是cudaOccupancyMaxPotentialBlockSize，它启发式地计算了一个能达到最佳占用率的块大小。该函数提供的值可以作为手动优化参数的起点。下面是一个例子：
-/************************/ /* TEST KERNEL FUNCTION */ /************************/ __global__ void MyKernel(int *a, int *b, int *c, int N) {  int idx = threadIdx.x + blockIdx.x * blockDim.x;   if (idx &amp;lt; N) { c[idx] = a[idx] + b[idx]; } }  /********/ /* MAIN */ /********/ void main() {  const int N = 1000000;   int blockSize; // The launch configurator returned block size  int minGridSize; // The minimum grid size needed to achieve the maximum occupancy for a full device launch  int gridSize; // The actual grid size needed, based on input size   int* h_vec1 = (int*) malloc(N*sizeof(int));  int* h_vec2 = (int*) malloc(N*sizeof(int));  int* h_vec3 = (int*) malloc(N*sizeof(int));  int* h_vec4 = (int*) malloc(N*sizeof(int));   int* d_vec1; cudaMalloc((void**)&amp;amp;d_vec1, N*sizeof(int));  int* d_vec2; cudaMalloc((void**)&amp;amp;d_vec2, N*sizeof(int));  int* d_vec3; cudaMalloc((void**)&amp;amp;d_vec3, N*sizeof(int));   for (int i=0; i&amp;lt;N; i++) {  h_vec1[i] = 10;  h_vec2[i] = 20;  h_vec4[i] = h_vec1[i] + h_vec2[i];  }   cudaMemcpy(d_vec1, h_vec1, N*sizeof(int), cudaMemcpyHostToDevice);  cudaMemcpy(d_vec2, h_vec2, N*sizeof(int), cudaMemcpyHostToDevice);   float time;  cudaEvent_t start, stop;  cudaEventCreate(&amp;amp;start);  cudaEventCreate(&amp;amp;stop);  cudaEventRecord(start, 0);   cudaOccupancyMaxPotentialBlockSize(&amp;amp;minGridSize, &amp;amp;blockSize, MyKernel, 0, N);   // Round up according to array size  gridSize = (N + blockSize - 1) / blockSize;   cudaEventRecord(stop, 0);  cudaEventSynchronize(stop);  cudaEventElapsedTime(&amp;amp;time, start, stop);  printf(&amp;#34;Occupancy calculator elapsed time: %3.</description>
+/************************/ /* TEST KERNEL FUNCTION */ /************************/ __global__ void MyKernel(int *a, int *b, int *c, int N) { int idx = threadIdx.x + blockIdx.x * blockDim.x; if (idx &amp;lt; N) { c[idx] = a[idx] + b[idx]; } } /********/ /* MAIN */ /********/ void main() { const int N = 1000000; int blockSize; // The launch configurator returned block size int minGridSize; // The minimum grid size needed to achieve the maximum occupancy for a full device launch int gridSize; // The actual grid size needed, based on input size int* h_vec1 = (int*) malloc(N*sizeof(int)); int* h_vec2 = (int*) malloc(N*sizeof(int)); int* h_vec3 = (int*) malloc(N*sizeof(int)); int* h_vec4 = (int*) malloc(N*sizeof(int)); int* d_vec1; cudaMalloc((void**)&amp;amp;d_vec1, N*sizeof(int)); int* d_vec2; cudaMalloc((void**)&amp;amp;d_vec2, N*sizeof(int)); int* d_vec3; cudaMalloc((void**)&amp;amp;d_vec3, N*sizeof(int)); for (int i=0; i&amp;lt;N; i++) { h_vec1[i] = 10; h_vec2[i] = 20; h_vec4[i] = h_vec1[i] + h_vec2[i]; } cudaMemcpy(d_vec1, h_vec1, N*sizeof(int), cudaMemcpyHostToDevice); cudaMemcpy(d_vec2, h_vec2, N*sizeof(int), cudaMemcpyHostToDevice); float time; cudaEvent_t start, stop; cudaEventCreate(&amp;amp;start); cudaEventCreate(&amp;amp;stop); cudaEventRecord(start, 0); cudaOccupancyMaxPotentialBlockSize(&amp;amp;minGridSize, &amp;amp;blockSize, MyKernel, 0, N); // Round up according to array size gridSize = (N + blockSize - 1) / blockSize; cudaEventRecord(stop, 0); cudaEventSynchronize(stop); cudaEventElapsedTime(&amp;amp;time, start, stop); printf(&amp;#34;Occupancy calculator elapsed time: %3.</description>
     </item>
     
     <item>
@@ -49,7 +50,7 @@ func TestMap(t *testing.T) { 	square := func(x int) int { 	return x * x 	} 	nums
       
       <guid>https://fffzlfk.github.io/posts/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%8F%8A%E5%85%B6%E6%80%A7%E8%83%BD%E5%88%BB%E7%94%BB/</guid>
       <description>使用多线程提高并行性 同步的代价 我们研究对一列整数 $0, &amp;hellip;, n - 1$ 求和，我们将序列划分成 $t$ 个不相交的的区域，给 $t$ 个线程每个分配一个区域。将线程的和放入一个变量中，并且我们使用互斥锁来保护这个变量。
-use std::{  sync::{Arc, Mutex},  thread,  time::Instant, };  fn main() {  let args = std::env::args().collect::&amp;lt;Vec&amp;lt;String&amp;gt;&amp;gt;();  if args.len() != 3 {  panic!(&amp;#34;Usage: {} &amp;lt;nthreads&amp;gt; &amp;lt;log_nelems&amp;gt;&amp;#34;, args[0]);  }   let nthreads: usize = args[1].parse().unwrap();  let log_nelems: usize = args[2].parse().unwrap();   let nelems = 1_usize &amp;lt;&amp;lt; log_nelems;  let nelems_per_thread = nelems / nthreads;   let gsum = Arc::new(Mutex::new(0));   let now = Instant::now();   let mut handlers = vec!</description>
+use std::{ sync::{Arc, Mutex}, thread, time::Instant, }; fn main() { let args = std::env::args().collect::&amp;lt;Vec&amp;lt;String&amp;gt;&amp;gt;(); if args.len() != 3 { panic!(&amp;#34;Usage: {} &amp;lt;nthreads&amp;gt; &amp;lt;log_nelems&amp;gt;&amp;#34;, args[0]); } let nthreads: usize = args[1].parse().unwrap(); let log_nelems: usize = args[2].parse().unwrap(); let nelems = 1_usize &amp;lt;&amp;lt; log_nelems; let nelems_per_thread = nelems / nthreads; let gsum = Arc::new(Mutex::new(0)); let now = Instant::now(); let mut handlers = vec!</description>
     </item>
     
     <item>
@@ -59,13 +60,16 @@ use std::{  sync::{Arc, Mutex},  thread,  time::Instant, };  fn main() {  let ar
       
       <guid>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%AD%E5%AE%B9%E6%98%93%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</guid>
       <description>不正确地使用new和delete 无论我们如何努力，要释放所有动态分配的内存是非常困难的。即使我们能做到这一点，也往往不能安全地避免出现异常。让我们看一个简单的例子。
-void SomeMethod() {  ClassA *a = new ClassA;  SomeOtherMethod(); // it can throws an execption  delete a; } 如果SomeOtherMethod抛出了异常，那么a对象永远不会被删除。下面的例子展示了一个更加安全同时又更简洁的实现，使用了在C++11提出的std::unique_ptr。
-void SomeMethod() {  std::unique_ptr&amp;lt;ClassA&amp;gt; a(new ClassA);  SomeOtherMethod(); } 无论发生什么，当a退出作用域的时候，它会被释放。
+void SomeMethod() { ClassA *a = new ClassA; SomeOtherMethod(); // it can throws an execption delete a; } 如果SomeOtherMethod抛出了异常，那么a对象永远不会被删除。下面的例子展示了一个更加安全同时又更简洁的实现，使用了在C++11提出的std::unique_ptr。
+void SomeMethod() { std::unique_ptr&amp;lt;ClassA&amp;gt; a(new ClassA); SomeOtherMethod(); } 无论发生什么，当a退出作用域的时候，它会被释放。
 然而，这仅仅是C++中这种错误最简单的例子，还有很多例子表明delete应该在其他地方调用，也许是在外层函数或者另一个线程中。这就是为什么应该避免使用new和delete，而应该使用适当的智能指针。
 被忘记的虚析构函数 这是最常见的错误之一，如果派生类中有动态内存分配，将会导致派生类的内存泄漏。这里有一些例子，当一个类不打算用于继承，并且它的大小和性能是至关重要的。虚析构函数或任何其他虚函数在类在类中引入了额外的数据，即指向虚函数表的指针，这使得类的任何实例的大小变大。
 然而，在大多数情况下，类可以被继承，即使它的初衷并非如此。因此，在声明一个类的时候，添加一个虚析构函数是一个非常好的做法。否则，如果一个类由于性能的原因必须不包含虚函数，那么在类的声明文件里面加上一个注释，说明这个类不应该被继承，是一个很好的做法。避免这个问题的最佳选择之一是使用一个支持在创建类时创建虚析构函数的IDE。
 关于这个问题，还有一点是来自标准库的类或模板。它们不是用来继承的，也没有一个虚析构函数。例如，如果我们创建了一个公开继承自std::string的新的增强字符串类，就可能有人错误地使用它与std::string的指针或引用，从而导致内存泄漏。
-class MyString : public std::string {  ~MyString() {} };  int main() {  std::string *s = new MyString(); 	delete s; // May not invoke the destructor defined in MyString } 为了避免这样的问题，重用标准库中的类或模板的一个更安全的方法是使用私有继承1或组合。</description>
+class MyString : public std::string { ~MyString() {} }; int main() { std::string *s = new MyString(); delete s; // May not invoke the destructor defined in MyString } 为了避免这样的问题，重用标准库中的类或模板的一个更安全的方法是使用私有继承1或组合。
+用delete或智能指针删除一个数组 创建动态大小的临时数组往往是必要的。当它们不再需要时，释放分配的内存是很重要的。这里的问题是，C++需要带有[]括号的特殊删除操作符，这一点很容易被遗忘。delete[]操作符不仅会删除分配给数组的内存，而且会首先调用数组中所有对象的析构函数。对原始类型使用不带[]括号的删除操作符也是不正确的，尽管这些类型没有析构函数，每个编译器都不能保证一个数组的指针会指向数组的第一个元素，所以使用不带[]括号的delete也会导致未定义的行为。
+在数组中使用智能指针，如unique_ptr&amp;lt;T&amp;gt;, shared_ptr，也是不正确的。当这样的智能指针从作用域中退出时，它将调用不带[]括号的删除操作符，这将导致上面描述的同样问题。如果需要对数组使用智能指针，可以使用unique_ptr&amp;lt;T[]&amp;gt;的特殊化。
+如果不需要引用计数的功能，主要是数组的情况，最优雅的方法是使用STL向量来代替。它们不只是负责释放内存，而且还提供额外的功能。</description>
     </item>
     
     <item>
@@ -75,11 +79,12 @@ class MyString : public std::string {  ~MyString() {} };  int main() {  std::str
       
       <guid>https://fffzlfk.github.io/posts/c&#43;&#43;_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</guid>
       <description>为什么要有完美转发 下面是一个类工厂函数：
-template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg arg) {  return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 参数对象arg在上面的例子中是传值方式传递，这带来了生成额外临时对象1的代价，所以我们改成引用传递：
-template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg &amp;amp;arg) {  return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 但这种实现的问题是不能绑定右值实参。如factory&amp;lt;X&amp;gt;(42)将编译报错，进一步的，我们按常量引用来传递：
-template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(const Arg &amp;amp;arg) {  return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 这种实现的问题是不能支持移动语义，形参使用右值引用可以解决完美转发问题。
+template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 参数对象arg在上面的例子中是传值方式传递，这带来了生成额外临时对象1的代价，所以我们改成引用传递：
+template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg &amp;amp;arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 但这种实现的问题是不能绑定右值实参。如factory&amp;lt;X&amp;gt;(42)将编译报错，进一步的，我们按常量引用来传递：
+template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(const Arg &amp;amp;arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 这种实现的问题是不能支持移动语义，形参使用右值引用可以解决完美转发问题。
 引用折叠 在C++11之前，我们不能对一个引用类型继续引用，但C++由于右值引用的出现而放宽2了这一做法，从而产生了引用折叠规则，允许我们对引用进行引用，既能左引用，又能右引用。但是却遵循如下规则：
-   函数形参类型 实参类型 推导后函数形参类型     T&amp;amp; 左引用 T&amp;amp;   T&amp;amp; 右引用 T&amp;amp;   T&amp;amp;&amp;amp; 左引用 T&amp;amp;   T&amp;amp;&amp;amp; 右引用 T&amp;amp;&amp;amp;    模板参数类型推导 对函数模板template&amp;lt;typename T&amp;gt;void foo(T&amp;amp;&amp;amp;);，应用上述引用折叠规则，可总结出以下结论：</description>
+函数形参类型 实参类型 推导后函数形参类型 T&amp;amp; 左引用 T&amp;amp; T&amp;amp; 右引用 T&amp;amp; T&amp;amp;&amp;amp; 左引用 T&amp;amp; T&amp;amp;&amp;amp; 右引用 T&amp;amp;&amp;amp; 模板参数类型推导 对函数模板template&amp;lt;typename T&amp;gt;void foo(T&amp;amp;&amp;amp;);，应用上述引用折叠规则，可总结出以下结论：
+如果实参是类型A的左值，则模板参数T的类型为A&amp;amp;，形参类型为A&amp;amp;； 如果实参是类型A的右值，则模板参数T的类型为A&amp;amp;&amp;amp;，形参类型为A&amp;amp;&amp;amp;。 这同样适用于类模板的成员函数模板的类型推导：</description>
     </item>
     
     <item>
@@ -91,7 +96,7 @@ template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;g
       <description>Kernels CUDA C++对C++进行了扩展，允许程序员定义C++函数，称为内核，当被调用时，由 $N$ 个不同的CUDA线程并行执行 $N$ 次，而不是像普通C++函数那样只执行一次。
 kernel是使用__global__声明定义的，对于特定的内核调用，执行该内核的CUDA线程数量是使用&amp;lt;&amp;lt;&amp;lt;...&amp;gt;&amp;gt;&amp;gt;执行配置语法指定的（C++语言扩展）。每个执行内核的线程都有一个唯一的线程ID，可以在内核内通过内置变量访问。
 作为说明，下面的示例代码，使用内置变量threadIdx，将两个大小为 $N$ 的向量 $A$ 和 $B$ 相加，并将结果存入向量 $C$ 。
-// Kernel definition __global__ void VecAdd(float* A, float* B, float* C) {  int i = threadIdx.x;  C[i] = A[i] + B[i]; }  int main() {  ...  // Kernel invocation with N threads  VecAdd&amp;lt;&amp;lt;&amp;lt;1, N&amp;gt;&amp;gt;&amp;gt;(A, B, C);  ... } 在这里，执行VecAdd()的 $N$ 个线程中的每一个都执行了一次加法。
+// Kernel definition __global__ void VecAdd(float* A, float* B, float* C) { int i = threadIdx.x; C[i] = A[i] + B[i]; } int main() { ... // Kernel invocation with N threads VecAdd&amp;lt;&amp;lt;&amp;lt;1, N&amp;gt;&amp;gt;&amp;gt;(A, B, C); ... } 在这里，执行VecAdd()的 $N$ 个线程中的每一个都执行了一次加法。
 线程体系 为方便起见，threadIdx是一个 $3$ 分量的向量，因此可以用一维、二维或三维的线程索引来识别线程，形成一个一维、二维或三维的线程块，称为线程块。这提供了一种自然的方式来调用域中的元素进行计算，如矢量、矩阵或体积。
 一个例子，下面的代码将两个大小为 $N\times N$ 的矩阵 $A$ 和 $B$ 相加，并将结果存入矩阵 $C$ 。</description>
     </item>
@@ -103,8 +108,8 @@ kernel是使用__global__声明定义的，对于特定的内核调用，执行�
       
       <guid>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</guid>
       <description>一组带有 on-chip 共享内存的 SIMD 多处理器 设备可以被看作一组多处理器，如图所示。每个多处理器使用单指令多数据(SIMD)架构：在任何给定的时钟周期内，多处理器的每个处理器执行同一指令，但操作不同的数据。
- 每个多处理器使用四个以下类型的on-chip内存：
- 每个处理器一组 $32$ 位寄存器 并行数据缓存或共享内存，被所有处理器共享实现内存空间共享 通过设备内存的一个只读区域，一个只读常量缓存器被所有处理器共享 通过设备内存的一个只读区域，一个只读纹理缓存器被所有处理器共享  本地和全局内存空间作为设备内存的读写区域，而不被缓冲。 每个多处理器通过纹理单元访问纹理缓冲器，它执行各种各样的寻址模式和数据过滤。
+每个多处理器使用四个以下类型的on-chip内存：
+每个处理器一组 $32$ 位寄存器 并行数据缓存或共享内存，被所有处理器共享实现内存空间共享 通过设备内存的一个只读区域，一个只读常量缓存器被所有处理器共享 通过设备内存的一个只读区域，一个只读纹理缓存器被所有处理器共享 本地和全局内存空间作为设备内存的读写区域，而不被缓冲。 每个多处理器通过纹理单元访问纹理缓冲器，它执行各种各样的寻址模式和数据过滤。
 执行模式 一个线程块网格是通过多处理器规划执行的。每个多处理器一个接一个的处理块批处理。一个块只被一个多处理器处理，因此可以对驻留在on-chip共享内存的共享内存空间形成非常快速的访问。
 一个批处理中每个多处理器可以处理多少个块，取决于每个线程中分配了多少个寄存器和已知内核中每个时钟需要多少的共享内存，因为多处理器的寄存器和内存在所有的线程中是分开的。如果在至少一个块中，每个多处理器没有足够高的寄存器或共享内存用，那么内核将无法启动。
 线程块在一个批处理中被一个多处理器执行，被称为active，每个active块被划分成SIMD线程组，被称为warps；每一条这样的warp包含数量相同的线程，叫做warp大小，并且在SIMD的方式下通过多处理器执行，执行调度程序周期性地从一条warp切换到另一条warp，以达到多处理器计算资源使用的最大化。
@@ -123,9 +128,9 @@ kernel是使用__global__声明定义的，对于特定的内核调用，执行�
       
       <guid>https://fffzlfk.github.io/posts/opencv_canny_detector/</guid>
       <description>理论 Canny边缘检测是由John F. Canny在1986年开发的。许多人也将其称为最佳检测器，Canny算法旨在满足三个主要标准。
- 好的检测：算法能够尽可能多地标识出图像中的实际边缘。 好的定位：标识出的边缘要与实际图像中的实际边缘尽可能接近。 最小响应：图像中的边缘只能标识一次，并且可能存在的图像雜訊不应标识为边缘。  步骤   降噪：使用高斯滤波来达到，下面是一个大小为 $5$ 的高斯核的例子： $$ K = \frac{1}{159}\begin{bmatrix} 2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2\\ 4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\\ 5 &amp;amp; 12 &amp;amp; 15 &amp;amp; 12 &amp;amp; 5\\ 4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\\ 2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2 \end{bmatrix} $$
-  找到图像的亮度梯度：为此，我们遵循一个类似于Sobel的程序：
- 应用一对卷积masks（在 $x$ 和 $y$ 方向上）： $$ G_x = \begin{bmatrix} -1 &amp;amp; 0 &amp;amp; +1\\ -2 &amp;amp; 0 &amp;amp; +2\\ -1 &amp;amp; 0 &amp;amp; +1 \end{bmatrix}, G_y=\begin{bmatrix} -1 &amp;amp; -2 &amp;amp; -1\\ 0 &amp;amp; 0 &amp;amp; 0\\ +1 &amp;amp; +2 &amp;amp; +1 \end{bmatrix} $$ 寻找梯度强度和方向： $$ G=\sqrt{G_x^2+G_y^2}\\ \theta = \arctan(\frac{G_y}{G_x}) $$ 方向被四舍五入为四个可能的角度之一（即 $0\degree$ 、 $45\degree$ 、 $90\degree$ 或 $135\degree$ ）。    过滤非最大值：在高斯滤波过程中，边缘有可能被放大了。这个步骤使用一个规则来过滤不是边缘的点，使边缘的宽度尽可能为1个像素点：如果一个像素点属于边缘，那么这个像素点在梯度方向上的梯度值是最大的。否则不是边缘，将灰度值设为 $0$ 。 $$ M_T(m, n) = \begin{cases} M(m, n)&amp;amp; \text{if } M(m, n) \lt T\\ 0 &amp;amp; \text{otherwise} \end{cases} $$</description>
+好的检测：算法能够尽可能多地标识出图像中的实际边缘。 好的定位：标识出的边缘要与实际图像中的实际边缘尽可能接近。 最小响应：图像中的边缘只能标识一次，并且可能存在的图像雜訊不应标识为边缘。 步骤 降噪：使用高斯滤波来达到，下面是一个大小为 $5$ 的高斯核的例子： $$ K = \frac{1}{159}\begin{bmatrix} 2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2\\ 4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\\ 5 &amp;amp; 12 &amp;amp; 15 &amp;amp; 12 &amp;amp; 5\\ 4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\\ 2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2 \end{bmatrix} $$
+找到图像的亮度梯度：为此，我们遵循一个类似于Sobel的程序：
+应用一对卷积masks（在 $x$ 和 $y$ 方向上）： $$ G_x = \begin{bmatrix} -1 &amp;amp; 0 &amp;amp; +1\\ -2 &amp;amp; 0 &amp;amp; +2\\ -1 &amp;amp; 0 &amp;amp; +1 \end{bmatrix}, G_y=\begin{bmatrix} -1 &amp;amp; -2 &amp;amp; -1\\ 0 &amp;amp; 0 &amp;amp; 0\\ +1 &amp;amp; +2 &amp;amp; +1 \end{bmatrix} $$ 寻找梯度强度和方向： $$ G=\sqrt{G_x^2+G_y^2}\\ \theta = \arctan(\frac{G_y}{G_x}) $$ 方向被四舍五入为四个可能的角度之一（即 $0\degree$ 、 $45\degree$ 、 $90\degree$ 或 $135\degree$ ）。 过滤非最大值：在高斯滤波过程中，边缘有可能被放大了。这个步骤使用一个规则来过滤不是边缘的点，使边缘的宽度尽可能为1个像素点：如果一个像素点属于边缘，那么这个像素点在梯度方向上的梯度值是最大的。否则不是边缘，将灰度值设为 $0$ 。 $$ M_T(m, n) = \begin{cases} M(m, n)&amp;amp; \text{if } M(m, n) \lt T\\ 0 &amp;amp; \text{otherwise} \end{cases} $$</description>
     </item>
     
     <item>
@@ -134,9 +139,9 @@ kernel是使用__global__声明定义的，对于特定的内核调用，执行�
       <pubDate>Mon, 17 Jan 2022 08:22:11 +0800</pubDate>
       
       <guid>https://fffzlfk.github.io/posts/opencv_laplace_operator/</guid>
-      <description>理论   在之前的教程中，我们学习了如何使用Sobel算子。它是基于这样一个事实，即在边缘区域，像素强度显示了一个 &amp;ldquo;跳跃&amp;quot;或强度的高变化。得到强度的一阶导数，我们观察到边缘的特征是一个最大值，如图所示：    那么，如果我们取二阶导数会怎样？  你可以观察到，边缘二阶导数是零! 因此，我们也可以用这个标准来尝试检测图像的边缘。然而，请注意，零值不仅会出现在边缘（它们实际上可以出现在其他无意义的位置）；这可以通过在需要时使用过滤来解决。
-  拉普拉斯算子  从上面的解释中，我们可以推断出，二阶导数可以用来检测边缘。由于图像是二维的，我们需要在两个维度上取导数。这里，拉普拉斯算子就派上用场了。 拉普拉斯算子的定义是： $$ Laplace(f) = \frac{\partial^2f}{\partial x^2}+\frac{\partial^2f}{\partial y^2} $$ 拉普拉斯算子在OpenCV中是由函数Laplacian()实现的。事实上，由于拉普拉斯算子使用图像的梯度，它在内部调用索贝尔算子来进行计算的。  Code 代码链接
-Explanation 变量声明 // Declare the variables we are going to use Mat src, src_gray, dst; int kernel_size = 3; int scale = 1; int delta = 0; int ddepth = CV_16S; const char* window_name = &amp;#34;Laplace Demo&amp;#34;; 加载图像 const char* imageName = argc &amp;gt;=2 ?</description>
+      <description>理论 在之前的教程中，我们学习了如何使用Sobel算子。它是基于这样一个事实，即在边缘区域，像素强度显示了一个 &amp;ldquo;跳跃&amp;quot;或强度的高变化。得到强度的一阶导数，我们观察到边缘的特征是一个最大值，如图所示： 那么，如果我们取二阶导数会怎样？ 你可以观察到，边缘二阶导数是零! 因此，我们也可以用这个标准来尝试检测图像的边缘。然而，请注意，零值不仅会出现在边缘（它们实际上可以出现在其他无意义的位置）；这可以通过在需要时使用过滤来解决。
+拉普拉斯算子 从上面的解释中，我们可以推断出，二阶导数可以用来检测边缘。由于图像是二维的，我们需要在两个维度上取导数。这里，拉普拉斯算子就派上用场了。 拉普拉斯算子的定义是： $$ Laplace(f) = \frac{\partial^2f}{\partial x^2}+\frac{\partial^2f}{\partial y^2} $$ 拉普拉斯算子在OpenCV中是由函数Laplacian()实现的。事实上，由于拉普拉斯算子使用图像的梯度，它在内部调用索贝尔算子来进行计算的。 Code 代码链接
+Explanation 变量声明 // Declare the variables we are going to use Mat src, src_gray, dst; int kernel_size = 3; int scale = 1; int delta = 0; int ddepth = CV_16S; const char* window_name = &amp;#34;Laplace Demo&amp;#34;; 加载图像 const char* imageName = argc &amp;gt;=2 ? argv[1] : &amp;#34;./images/lena.jpg&amp;#34;; src = imread( samples::findFile( imageName ), IMREAD_COLOR ); // Load an image // Check if image is loaded fine if(src.</description>
     </item>
     
     <item>
@@ -145,12 +150,12 @@ Explanation 变量声明 // Declare the variables we are going to use Mat src, s
       <pubDate>Sun, 16 Jan 2022 12:18:12 +0800</pubDate>
       
       <guid>https://fffzlfk.github.io/posts/opencv_sobel_derivatives/</guid>
-      <description>理论   在之前的两个教程中，我们已经看到了卷积的应用实例。最重要的卷积之一是计算图像中的导数（或对它们的近似值）
-  为什么图像中的导数计算可能是重要的？让我们设想一下，我们要检测图像中存在的边缘。比如说：  你可以很容易地注意到，在一个边缘，像素强度的变化是很明显的。一个表达变化的好方法是使用导数。梯度的高变化表示图像中的一个重大变化。
-  为了更加形象，让我们假设我们有一个一维图像。在下面的图中，一个边缘由强度的 &amp;ldquo;跳跃 &amp;ldquo;来表示：    如果我们取第一个导数，可以更容易地看到边缘的 &amp;ldquo;跳跃&amp;rdquo;（实际上，这里出现的是一个最大值）：    因此，从上面的解释中，我们可以推断出，检测图像中的边缘的方法可以通过定位梯度高于其邻居的像素位置（或者概括地说，高于一个阈值）来进行。
-  更详细的解释，请参考Bradski和Kaehler的《Learning OpenCV》。
-  Sobel 算子  Sobel算子是一个离散的微分算子，它计算图像强度函数的梯度的近似值。 Sobel算子结合了Gaussian smoothing和微分。  Formulation 假设要操作的图像为 $I$:
- 我们计算两个导数：  水平变化：这是通过用奇数大小的内核 $G_x$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_x$ 将被计算为： $$ G_x=\begin{bmatrix} -1 &amp;amp; 0 &amp;amp; +1\\ -2 &amp;amp; 0 &amp;amp; +2\\ -1 &amp;amp; 0 &amp;amp; +1 \end{bmatrix} * I $$ 垂直变化：这是通过用奇数大小的内核 $G_y$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_y$ 将被计算为： $$ G_y = \begin{bmatrix} -1 &amp;amp; -2 &amp;amp; -1\\ 0 &amp;amp; 0 &amp;amp; 0\\ +1 &amp;amp; +2 &amp;amp; + 1 \end{bmatrix} * I $$   在图像的每一点上，我们通过结合上述两个结果计算出该点的梯度近似值： $$ G = \sqrt{G_{x}^{2}+G_{y}^{2}} $$ 有时会使用以下更简单的方程式： $$ G = |G_x|+|G_y| $$   当核的大小为 $3$ 时，上面显示的 Sobel核可能会产生明显的不准确（毕竟， Sobel 只是一个导数的近似值）。OpenCV通过使用 Scharr() 函数来解决这种大小为 $3$ 的核的不精确性。这和标准的 Sobel 函数一样快，但比它更准确。它可以实现以下内核 $$ G_x=\begin{bmatrix} -3 &amp;amp; 0 &amp;amp; +3\\ -10 &amp;amp; 0 &amp;amp; +10\\ -3 &amp;amp; 0 &amp;amp; +3 \end{bmatrix}, G_y=\begin{bmatrix} -3 &amp;amp; -10 &amp;amp; -3\\ 0 &amp;amp; 0 &amp;amp; 0\\ +3 &amp;amp; +10 &amp;amp; +3 \end{bmatrix} $$</description>
+      <description>理论 在之前的两个教程中，我们已经看到了卷积的应用实例。最重要的卷积之一是计算图像中的导数（或对它们的近似值）
+为什么图像中的导数计算可能是重要的？让我们设想一下，我们要检测图像中存在的边缘。比如说： 你可以很容易地注意到，在一个边缘，像素强度的变化是很明显的。一个表达变化的好方法是使用导数。梯度的高变化表示图像中的一个重大变化。
+为了更加形象，让我们假设我们有一个一维图像。在下面的图中，一个边缘由强度的 &amp;ldquo;跳跃 &amp;ldquo;来表示： 如果我们取第一个导数，可以更容易地看到边缘的 &amp;ldquo;跳跃&amp;rdquo;（实际上，这里出现的是一个最大值）： 因此，从上面的解释中，我们可以推断出，检测图像中的边缘的方法可以通过定位梯度高于其邻居的像素位置（或者概括地说，高于一个阈值）来进行。
+更详细的解释，请参考Bradski和Kaehler的《Learning OpenCV》。
+Sobel 算子 Sobel算子是一个离散的微分算子，它计算图像强度函数的梯度的近似值。 Sobel算子结合了Gaussian smoothing和微分。 Formulation 假设要操作的图像为 $I$:
+我们计算两个导数： 水平变化：这是通过用奇数大小的内核 $G_x$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_x$ 将被计算为： $$ G_x=\begin{bmatrix} -1 &amp;amp; 0 &amp;amp; +1\\ -2 &amp;amp; 0 &amp;amp; +2\\ -1 &amp;amp; 0 &amp;amp; +1 \end{bmatrix} * I $$ 垂直变化：这是通过用奇数大小的内核 $G_y$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_y$ 将被计算为： $$ G_y = \begin{bmatrix} -1 &amp;amp; -2 &amp;amp; -1\\ 0 &amp;amp; 0 &amp;amp; 0\\ +1 &amp;amp; +2 &amp;amp; + 1 \end{bmatrix} * I $$ 在图像的每一点上，我们通过结合上述两个结果计算出该点的梯度近似值： $$ G = \sqrt{G_{x}^{2}+G_{y}^{2}} $$ 有时会使用以下更简单的方程式： $$ G = |G_x|+|G_y| $$ 当核的大小为 $3$ 时，上面显示的 Sobel核可能会产生明显的不准确（毕竟， Sobel 只是一个导数的近似值）。OpenCV通过使用 Scharr() 函数来解决这种大小为 $3$ 的核的不精确性。这和标准的 Sobel 函数一样快，但比它更准确。它可以实现以下内核 $$ G_x=\begin{bmatrix} -3 &amp;amp; 0 &amp;amp; +3\\ -10 &amp;amp; 0 &amp;amp; +10\\ -3 &amp;amp; 0 &amp;amp; +3 \end{bmatrix}, G_y=\begin{bmatrix} -3 &amp;amp; -10 &amp;amp; -3\\ 0 &amp;amp; 0 &amp;amp; 0\\ +3 &amp;amp; +10 &amp;amp; +3 \end{bmatrix} $$</description>
     </item>
     
     <item>
@@ -159,7 +164,7 @@ Explanation 变量声明 // Declare the variables we are going to use Mat src, s
       <pubDate>Sun, 09 Jan 2022 12:25:24 +0800</pubDate>
       
       <guid>https://fffzlfk.github.io/posts/opencv_erosion_dilatation/</guid>
-      <description>形态学操作  简而言之：一套基于形状处理图像的操作。形态学操作将一个结构化元素应用于输入图像，并生成一个输出图像。 最基本的形态学操作是。腐蚀和膨胀。它们有广泛的用途，即  去除噪音 隔离单个元素和连接图像中不同的元素 寻找图像中的强度凹凸点或洞   我们将以下面的图像为例，简要地解释膨胀和侵蚀。    Dilation（膨胀）  这种操作包括将图像A与一些kernel B进行卷积，内核可以有任何形状或大小，通常是一个正方形或圆形。 kernel B有一个定义的锚点(anchor point)，通常是核的中心。 当kernel B在图像上扫描时，我们计算出被B重叠的最大像素值，并用该最大值替换锚点位置的图像像素。正如你可以推断的那样，这种最大化的操作会使图像中的明亮区域 &amp;ldquo;增长&amp;rdquo;（因此被称为膨胀）。 膨胀操作： $dst(x, y)=max(x^{&amp;rsquo;}, y^{&amp;rsquo;})_{:element(x^{&amp;rsquo;}, y^{&amp;rsquo;}) \ne 0} src(x+x^{&amp;rsquo;}, y+y^{&amp;rsquo;})$ 以上面的图像为例。应用膨胀的方法，我们可以得到    腐蚀  它在给定内核的区域内计算局部最小值。当内核B在图像上被扫描时，我们计算出被B重叠的最小像素值，并用该最小值替换锚点下的图像像素。 腐蚀操作为：$dst(x, y)=min(x^{&amp;rsquo;}, y^{&amp;rsquo;})_{:element(x^{&amp;rsquo;}, y^{&amp;rsquo;}) \ne 0} src(x+x^{&amp;rsquo;}, y+y^{&amp;rsquo;})$ 与膨胀的例子类似，我们可以对原始图像应用腐蚀算子（如上图）。你可以在下面的结果中看到，图像的亮区变薄了，而暗区变大了。    Code #include &amp;#34;basic/erosion_dilatation.hpp&amp;#34; namespace basic { namespace erosion_dilatation { namespace impl { Mat src, erosion_dst, dilation_dst; int erosion_elem = 0; int erosion_size = 0; int dilation_elem = 0; int dilation_size = 0; int const max_elem = 2; int const max_kernel_size = 21;  int work(int argc, char **argv) {  CommandLineParser parser(argc, argv,  &amp;#34;{@input | .</description>
+      <description>形态学操作 简而言之：一套基于形状处理图像的操作。形态学操作将一个结构化元素应用于输入图像，并生成一个输出图像。 最基本的形态学操作是。腐蚀和膨胀。它们有广泛的用途，即 去除噪音 隔离单个元素和连接图像中不同的元素 寻找图像中的强度凹凸点或洞 我们将以下面的图像为例，简要地解释膨胀和侵蚀。 Dilation（膨胀） 这种操作包括将图像A与一些kernel B进行卷积，内核可以有任何形状或大小，通常是一个正方形或圆形。 kernel B有一个定义的锚点(anchor point)，通常是核的中心。 当kernel B在图像上扫描时，我们计算出被B重叠的最大像素值，并用该最大值替换锚点位置的图像像素。正如你可以推断的那样，这种最大化的操作会使图像中的明亮区域 &amp;ldquo;增长&amp;rdquo;（因此被称为膨胀）。 膨胀操作： $dst(x, y)=max(x^{&amp;rsquo;}, y^{&amp;rsquo;})_{:element(x^{&amp;rsquo;}, y^{&amp;rsquo;}) \ne 0} src(x+x^{&amp;rsquo;}, y+y^{&amp;rsquo;})$ 以上面的图像为例。应用膨胀的方法，我们可以得到 腐蚀 它在给定内核的区域内计算局部最小值。当内核B在图像上被扫描时，我们计算出被B重叠的最小像素值，并用该最小值替换锚点下的图像像素。 腐蚀操作为：$dst(x, y)=min(x^{&amp;rsquo;}, y^{&amp;rsquo;})_{:element(x^{&amp;rsquo;}, y^{&amp;rsquo;}) \ne 0} src(x+x^{&amp;rsquo;}, y+y^{&amp;rsquo;})$ 与膨胀的例子类似，我们可以对原始图像应用腐蚀算子（如上图）。你可以在下面的结果中看到，图像的亮区变薄了，而暗区变大了。 Code #include &amp;#34;basic/erosion_dilatation.hpp&amp;#34; namespace basic { namespace erosion_dilatation { namespace impl { Mat src, erosion_dst, dilation_dst; int erosion_elem = 0; int erosion_size = 0; int dilation_elem = 0; int dilation_size = 0; int const max_elem = 2; int const max_kernel_size = 21; int work(int argc, char **argv) { CommandLineParser parser(argc, argv, &amp;#34;{@input | .</description>
     </item>
     
     <item>
@@ -168,13 +173,15 @@ Explanation 变量声明 // Declare the variables we are going to use Mat src, s
       <pubDate>Sun, 09 Jan 2022 07:37:09 +0800</pubDate>
       
       <guid>https://fffzlfk.github.io/posts/opencv_blurring/</guid>
-      <description>理论   Smoothing也叫blurring（模糊化），是一个简单而常用的图像处理操作。
-  Smoothing有很多原因。在本教程中，我们将重点讨论平滑操作，以减少噪音。
-  为了进行平滑操作，我们将对我们的图像应用一个filter。最常见的filter是线性的，其中输出像素的值（即 $g(i,j)$ ）为输入像素值的加权和（即 $f(i+k,j+l)$ ）。
-  $$ g(i, j) = \sum_{k, l}{f(i+k, j+l)h(k, l)} $$
-  $h(k,l)$ 被称为kernel，它只不过是filter的系数。这有助于把滤波器想象成一个在图像上滑动的系数窗口。
-  滤波器有很多种类，这里我们将提到最常用的几种。
-  Normalized Box Filter（归一化块滤波器）  这个滤波器是最简单的，每个输出像素都是其内核邻居的平均值（所有的像素都有相同的权重）。  $$ K = \frac{1}{K_{width} \cdot k_{height}} \begin{bmatrix} 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\\ 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\\ . &amp;amp; . &amp;amp; . &amp;amp; &amp;hellip;&amp;amp; 1\\ 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1 \end{bmatrix} $$</description>
+      <description>理论 Smoothing也叫blurring（模糊化），是一个简单而常用的图像处理操作。
+Smoothing有很多原因。在本教程中，我们将重点讨论平滑操作，以减少噪音。
+为了进行平滑操作，我们将对我们的图像应用一个filter。最常见的filter是线性的，其中输出像素的值（即 $g(i,j)$ ）为输入像素值的加权和（即 $f(i+k,j+l)$ ）。
+$$ g(i, j) = \sum_{k, l}{f(i+k, j+l)h(k, l)} $$
+$h(k,l)$ 被称为kernel，它只不过是filter的系数。这有助于把滤波器想象成一个在图像上滑动的系数窗口。
+滤波器有很多种类，这里我们将提到最常用的几种。
+Normalized Box Filter（归一化块滤波器） 这个滤波器是最简单的，每个输出像素都是其内核邻居的平均值（所有的像素都有相同的权重）。 $$ K = \frac{1}{K_{width} \cdot k_{height}} \begin{bmatrix} 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\\ 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\\ . &amp;amp; . &amp;amp; . &amp;amp; &amp;hellip;&amp;amp; 1\\ 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1 \end{bmatrix} $$
+Gaussian Filter（高斯滤波器） 可能是最有用的滤波器（尽管不是最快的）。高斯滤波是通过用高斯内核对输入阵列中的每个点进行卷积，然后将它们全部相加来产生输出阵列的。
+让我们回顾一下1D Gaussian kernel是什么样子： 假设图像是一维的，你可以注意到，位于中间的像素会有最大的权重。它的邻居的权重随着它们与中心像素之间的空间距离增加而减少。</description>
     </item>
     
     <item>
@@ -183,16 +190,18 @@ Explanation 变量声明 // Declare the variables we are going to use Mat src, s
       <pubDate>Sat, 08 Jan 2022 06:27:04 +0800</pubDate>
       
       <guid>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</guid>
-      <description>硬件   SP(Streaming Processor)：流处理器，是GPU最基本的处理单元，在fermi架构开始被叫做CUDA core。
-  SM(Streaming MultiProcessor)：一个SM由多个CUDA core组成。
-  比如说，如果一个GPU有 $4$ 个SM，并且每个SM有 $768$ 个SP(Aka CUDA core)；那么在某一时刻，真正并行运行的线程数不会超过 $4 \times 768$ 个。
+      <description>硬件 SP(Streaming Processor)：流处理器，是GPU最基本的处理单元，在fermi架构开始被叫做CUDA core。
+SM(Streaming MultiProcessor)：一个SM由多个CUDA core组成。
+比如说，如果一个GPU有 $4$ 个SM，并且每个SM有 $768$ 个SP(Aka CUDA core)；那么在某一时刻，真正并行运行的线程数不会超过 $4 \times 768$ 个。
 软件 threads被组织成blocks。一个block的线程可以用1Dimension(x), 2Dimensions(x, y)或者3Dim indexs(x, y, z) 索引，
 显然，如果你需要 $4 \times 768$ 个以上的threads的话你需要 $4$ 个以上的blocks。blocks也可以使用1D, 2D或3D索引，这些blocks被放在等待队列上进入GPU执行。
 Wrap 当一个kernel被执行时，grid中的线程块被分配到SM上。一个CUDA core可以执行一个thread，一个SM的CUDA core会分成几个wrap，由wrap scheduler负责调度。
 一个wrap中的线程在同一个block中，如果block所含线程数不是wrap的大小的整数倍，那么多出来的那些thread所在的wrap中，会剩余一些inactive的thread。
 一个简单的case 处理一张 $512 \times 512$ 的图片。
 假设我们希望一个线程处理一个像素pixel(i, j)。
-我们可以使用每 $64$ 个线程的区块。所以我们需要 $\frac{512 \times 512 }{64} = 4096$ 个区块（为了拥有 $512 \times 512 $ 个线程 ）。</description>
+我们可以使用每 $64$ 个线程的区块。所以我们需要 $\frac{512 \times 512 }{64} = 4096$ 个区块（为了拥有 $512 \times 512 $ 个线程 ）。
+通常情况下，我们将线程组织在2D区块中（为了更容易索引图像像素）。blockDim= $8 * 8$ ，我更喜欢叫它threadsPerBlock。
+dim3 threadsPerBlock(8, 8); 还有2D的gridDim= $64 \times 64$ （需要 $4096$ 个区块）。我更喜欢叫它numBlocks。</description>
     </item>
     
     <item>

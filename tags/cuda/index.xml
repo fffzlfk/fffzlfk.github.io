@@ -13,11 +13,11 @@
       
       <guid>https://fffzlfk.github.io/posts/cuda%E4%B8%AD%E6%80%8E%E6%A0%B7%E9%80%89%E6%8B%A9grid%E5%92%8Cblock%E7%BB%B4%E5%BA%A6/</guid>
       <description>硬件限制 这是容易量化的方面。目前CUDA编程指南的附录F列出了一些硬件限制，这些限制限制了内核启动时每块可以有多少个线程。如果你超过了这些限制，你的内核将无法运行。这些限制可以粗略地概括为：
- 每个区块不能超过 $512$ / $1024$ 个线程（分别是计算能力1.x或2.x及以后的计算能力 每个块的最大尺寸限制在 $[512, 512, 64]$ / $[1024, 1024, 64]$（计算能力1.x/2.x及以后的计算能力 每个块消耗的寄存器总数不能超过 $8k/16k/32k/64k/32k/64k/32k/64k$ （计算能力 $1.0,1.1/1.2,1.3/2.x-3.0/3.2/3.5-5.2/5.3/6-6.1/6.2/7.0$ 每个块不能消耗超过 $16kb/48kb/96kb$ 的共享内存（计算能力 $1.x/2.x-6.2/7.0$  如果你保持在这些限制之内，任何你能成功编译的内核都会无错误地启动。
+每个区块不能超过 $512$ / $1024$ 个线程（分别是计算能力1.x或2.x及以后的计算能力 每个块的最大尺寸限制在 $[512, 512, 64]$ / $[1024, 1024, 64]$（计算能力1.x/2.x及以后的计算能力 每个块消耗的寄存器总数不能超过 $8k/16k/32k/64k/32k/64k/32k/64k$ （计算能力 $1.0,1.1/1.2,1.3/2.x-3.0/3.2/3.5-5.2/5.3/6-6.1/6.2/7.0$ 每个块不能消耗超过 $16kb/48kb/96kb$ 的共享内存（计算能力 $1.x/2.x-6.2/7.0$ 如果你保持在这些限制之内，任何你能成功编译的内核都会无错误地启动。
 性能调教 这是需要经验的一部分。在上述的硬件约束条件下，你选择的每块线程数可以而且确实影响到硬件上运行的代码性能。每个代码的表现都是不同的，唯一真正的方法是通过仔细的基准测试和剖析来量化它。但还是那句话，非常粗略地总结一下：
- 每个区块的线程数应该是wrap大小的整数倍，在目前所有的硬件上都是 $32$ GPU上的每个流式多处理器必须有足够的active wraps来充分隐藏架构的的所有不同内存和指令流水线延迟，以实现最大吞吐量。这里的正确做法是尝试实现最佳的硬件占用率  CUDA内置函数 上述指出了块的大小是如何影响性能的，并提出了一种基于占用率最大化的通用启发式选择方法。在不想提供选择块大小的标准的情况下，值得一提的是，CUDA 6.5+包括几个新的运行时函数来帮助占用率的计算和启动配置1。
+每个区块的线程数应该是wrap大小的整数倍，在目前所有的硬件上都是 $32$ GPU上的每个流式多处理器必须有足够的active wraps来充分隐藏架构的的所有不同内存和指令流水线延迟，以实现最大吞吐量。这里的正确做法是尝试实现最佳的硬件占用率 CUDA内置函数 上述指出了块的大小是如何影响性能的，并提出了一种基于占用率最大化的通用启发式选择方法。在不想提供选择块大小的标准的情况下，值得一提的是，CUDA 6.5+包括几个新的运行时函数来帮助占用率的计算和启动配置1。
 其中一个有用的函数是cudaOccupancyMaxPotentialBlockSize，它启发式地计算了一个能达到最佳占用率的块大小。该函数提供的值可以作为手动优化参数的起点。下面是一个例子：
-/************************/ /* TEST KERNEL FUNCTION */ /************************/ __global__ void MyKernel(int *a, int *b, int *c, int N) {  int idx = threadIdx.x + blockIdx.x * blockDim.x;   if (idx &amp;lt; N) { c[idx] = a[idx] + b[idx]; } }  /********/ /* MAIN */ /********/ void main() {  const int N = 1000000;   int blockSize; // The launch configurator returned block size  int minGridSize; // The minimum grid size needed to achieve the maximum occupancy for a full device launch  int gridSize; // The actual grid size needed, based on input size   int* h_vec1 = (int*) malloc(N*sizeof(int));  int* h_vec2 = (int*) malloc(N*sizeof(int));  int* h_vec3 = (int*) malloc(N*sizeof(int));  int* h_vec4 = (int*) malloc(N*sizeof(int));   int* d_vec1; cudaMalloc((void**)&amp;amp;d_vec1, N*sizeof(int));  int* d_vec2; cudaMalloc((void**)&amp;amp;d_vec2, N*sizeof(int));  int* d_vec3; cudaMalloc((void**)&amp;amp;d_vec3, N*sizeof(int));   for (int i=0; i&amp;lt;N; i++) {  h_vec1[i] = 10;  h_vec2[i] = 20;  h_vec4[i] = h_vec1[i] + h_vec2[i];  }   cudaMemcpy(d_vec1, h_vec1, N*sizeof(int), cudaMemcpyHostToDevice);  cudaMemcpy(d_vec2, h_vec2, N*sizeof(int), cudaMemcpyHostToDevice);   float time;  cudaEvent_t start, stop;  cudaEventCreate(&amp;amp;start);  cudaEventCreate(&amp;amp;stop);  cudaEventRecord(start, 0);   cudaOccupancyMaxPotentialBlockSize(&amp;amp;minGridSize, &amp;amp;blockSize, MyKernel, 0, N);   // Round up according to array size  gridSize = (N + blockSize - 1) / blockSize;   cudaEventRecord(stop, 0);  cudaEventSynchronize(stop);  cudaEventElapsedTime(&amp;amp;time, start, stop);  printf(&amp;#34;Occupancy calculator elapsed time: %3.</description>
+/************************/ /* TEST KERNEL FUNCTION */ /************************/ __global__ void MyKernel(int *a, int *b, int *c, int N) { int idx = threadIdx.x + blockIdx.x * blockDim.x; if (idx &amp;lt; N) { c[idx] = a[idx] + b[idx]; } } /********/ /* MAIN */ /********/ void main() { const int N = 1000000; int blockSize; // The launch configurator returned block size int minGridSize; // The minimum grid size needed to achieve the maximum occupancy for a full device launch int gridSize; // The actual grid size needed, based on input size int* h_vec1 = (int*) malloc(N*sizeof(int)); int* h_vec2 = (int*) malloc(N*sizeof(int)); int* h_vec3 = (int*) malloc(N*sizeof(int)); int* h_vec4 = (int*) malloc(N*sizeof(int)); int* d_vec1; cudaMalloc((void**)&amp;amp;d_vec1, N*sizeof(int)); int* d_vec2; cudaMalloc((void**)&amp;amp;d_vec2, N*sizeof(int)); int* d_vec3; cudaMalloc((void**)&amp;amp;d_vec3, N*sizeof(int)); for (int i=0; i&amp;lt;N; i++) { h_vec1[i] = 10; h_vec2[i] = 20; h_vec4[i] = h_vec1[i] + h_vec2[i]; } cudaMemcpy(d_vec1, h_vec1, N*sizeof(int), cudaMemcpyHostToDevice); cudaMemcpy(d_vec2, h_vec2, N*sizeof(int), cudaMemcpyHostToDevice); float time; cudaEvent_t start, stop; cudaEventCreate(&amp;amp;start); cudaEventCreate(&amp;amp;stop); cudaEventRecord(start, 0); cudaOccupancyMaxPotentialBlockSize(&amp;amp;minGridSize, &amp;amp;blockSize, MyKernel, 0, N); // Round up according to array size gridSize = (N + blockSize - 1) / blockSize; cudaEventRecord(stop, 0); cudaEventSynchronize(stop); cudaEventElapsedTime(&amp;amp;time, start, stop); printf(&amp;#34;Occupancy calculator elapsed time: %3.</description>
     </item>
     
     <item>
@@ -29,7 +29,7 @@
       <description>Kernels CUDA C++对C++进行了扩展，允许程序员定义C++函数，称为内核，当被调用时，由 $N$ 个不同的CUDA线程并行执行 $N$ 次，而不是像普通C++函数那样只执行一次。
 kernel是使用__global__声明定义的，对于特定的内核调用，执行该内核的CUDA线程数量是使用&amp;lt;&amp;lt;&amp;lt;...&amp;gt;&amp;gt;&amp;gt;执行配置语法指定的（C++语言扩展）。每个执行内核的线程都有一个唯一的线程ID，可以在内核内通过内置变量访问。
 作为说明，下面的示例代码，使用内置变量threadIdx，将两个大小为 $N$ 的向量 $A$ 和 $B$ 相加，并将结果存入向量 $C$ 。
-// Kernel definition __global__ void VecAdd(float* A, float* B, float* C) {  int i = threadIdx.x;  C[i] = A[i] + B[i]; }  int main() {  ...  // Kernel invocation with N threads  VecAdd&amp;lt;&amp;lt;&amp;lt;1, N&amp;gt;&amp;gt;&amp;gt;(A, B, C);  ... } 在这里，执行VecAdd()的 $N$ 个线程中的每一个都执行了一次加法。
+// Kernel definition __global__ void VecAdd(float* A, float* B, float* C) { int i = threadIdx.x; C[i] = A[i] + B[i]; } int main() { ... // Kernel invocation with N threads VecAdd&amp;lt;&amp;lt;&amp;lt;1, N&amp;gt;&amp;gt;&amp;gt;(A, B, C); ... } 在这里，执行VecAdd()的 $N$ 个线程中的每一个都执行了一次加法。
 线程体系 为方便起见，threadIdx是一个 $3$ 分量的向量，因此可以用一维、二维或三维的线程索引来识别线程，形成一个一维、二维或三维的线程块，称为线程块。这提供了一种自然的方式来调用域中的元素进行计算，如矢量、矩阵或体积。
 一个例子，下面的代码将两个大小为 $N\times N$ 的矩阵 $A$ 和 $B$ 相加，并将结果存入矩阵 $C$ 。</description>
     </item>
@@ -41,8 +41,8 @@ kernel是使用__global__声明定义的，对于特定的内核调用，执行�
       
       <guid>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</guid>
       <description>一组带有 on-chip 共享内存的 SIMD 多处理器 设备可以被看作一组多处理器，如图所示。每个多处理器使用单指令多数据(SIMD)架构：在任何给定的时钟周期内，多处理器的每个处理器执行同一指令，但操作不同的数据。
- 每个多处理器使用四个以下类型的on-chip内存：
- 每个处理器一组 $32$ 位寄存器 并行数据缓存或共享内存，被所有处理器共享实现内存空间共享 通过设备内存的一个只读区域，一个只读常量缓存器被所有处理器共享 通过设备内存的一个只读区域，一个只读纹理缓存器被所有处理器共享  本地和全局内存空间作为设备内存的读写区域，而不被缓冲。 每个多处理器通过纹理单元访问纹理缓冲器，它执行各种各样的寻址模式和数据过滤。
+每个多处理器使用四个以下类型的on-chip内存：
+每个处理器一组 $32$ 位寄存器 并行数据缓存或共享内存，被所有处理器共享实现内存空间共享 通过设备内存的一个只读区域，一个只读常量缓存器被所有处理器共享 通过设备内存的一个只读区域，一个只读纹理缓存器被所有处理器共享 本地和全局内存空间作为设备内存的读写区域，而不被缓冲。 每个多处理器通过纹理单元访问纹理缓冲器，它执行各种各样的寻址模式和数据过滤。
 执行模式 一个线程块网格是通过多处理器规划执行的。每个多处理器一个接一个的处理块批处理。一个块只被一个多处理器处理，因此可以对驻留在on-chip共享内存的共享内存空间形成非常快速的访问。
 一个批处理中每个多处理器可以处理多少个块，取决于每个线程中分配了多少个寄存器和已知内核中每个时钟需要多少的共享内存，因为多处理器的寄存器和内存在所有的线程中是分开的。如果在至少一个块中，每个多处理器没有足够高的寄存器或共享内存用，那么内核将无法启动。
 线程块在一个批处理中被一个多处理器执行，被称为active，每个active块被划分成SIMD线程组，被称为warps；每一条这样的warp包含数量相同的线程，叫做warp大小，并且在SIMD的方式下通过多处理器执行，执行调度程序周期性地从一条warp切换到另一条warp，以达到多处理器计算资源使用的最大化。
@@ -60,16 +60,18 @@ kernel是使用__global__声明定义的，对于特定的内核调用，执行�
       <pubDate>Sat, 08 Jan 2022 06:27:04 +0800</pubDate>
       
       <guid>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</guid>
-      <description>硬件   SP(Streaming Processor)：流处理器，是GPU最基本的处理单元，在fermi架构开始被叫做CUDA core。
-  SM(Streaming MultiProcessor)：一个SM由多个CUDA core组成。
-  比如说，如果一个GPU有 $4$ 个SM，并且每个SM有 $768$ 个SP(Aka CUDA core)；那么在某一时刻，真正并行运行的线程数不会超过 $4 \times 768$ 个。
+      <description>硬件 SP(Streaming Processor)：流处理器，是GPU最基本的处理单元，在fermi架构开始被叫做CUDA core。
+SM(Streaming MultiProcessor)：一个SM由多个CUDA core组成。
+比如说，如果一个GPU有 $4$ 个SM，并且每个SM有 $768$ 个SP(Aka CUDA core)；那么在某一时刻，真正并行运行的线程数不会超过 $4 \times 768$ 个。
 软件 threads被组织成blocks。一个block的线程可以用1Dimension(x), 2Dimensions(x, y)或者3Dim indexs(x, y, z) 索引，
 显然，如果你需要 $4 \times 768$ 个以上的threads的话你需要 $4$ 个以上的blocks。blocks也可以使用1D, 2D或3D索引，这些blocks被放在等待队列上进入GPU执行。
 Wrap 当一个kernel被执行时，grid中的线程块被分配到SM上。一个CUDA core可以执行一个thread，一个SM的CUDA core会分成几个wrap，由wrap scheduler负责调度。
 一个wrap中的线程在同一个block中，如果block所含线程数不是wrap的大小的整数倍，那么多出来的那些thread所在的wrap中，会剩余一些inactive的thread。
 一个简单的case 处理一张 $512 \times 512$ 的图片。
 假设我们希望一个线程处理一个像素pixel(i, j)。
-我们可以使用每 $64$ 个线程的区块。所以我们需要 $\frac{512 \times 512 }{64} = 4096$ 个区块（为了拥有 $512 \times 512 $ 个线程 ）。</description>
+我们可以使用每 $64$ 个线程的区块。所以我们需要 $\frac{512 \times 512 }{64} = 4096$ 个区块（为了拥有 $512 \times 512 $ 个线程 ）。
+通常情况下，我们将线程组织在2D区块中（为了更容易索引图像像素）。blockDim= $8 * 8$ ，我更喜欢叫它threadsPerBlock。
+dim3 threadsPerBlock(8, 8); 还有2D的gridDim= $64 \times 64$ （需要 $4096$ 个区块）。我更喜欢叫它numBlocks。</description>
     </item>
     
   </channel>

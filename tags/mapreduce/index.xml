@@ -12,8 +12,8 @@
       <pubDate>Sun, 27 Mar 2022 21:19:14 +0800</pubDate>
       
       <guid>https://fffzlfk.github.io/posts/mapreduce_in_go/</guid>
-      <description>简单版Generic Map func Map[T any](data []T, f func(T) T) []T { 	res := make([]T, len(data)) 	for i, v := range data { 	res[i] = f(v) 	} 	return res } 我们可以下面的代码测试这个简易的Map函数
-func TestMap(t *testing.T) { 	square := func(x int) int { 	return x * x 	} 	nums := []int{1, 2, 3, 4, 5} 	squareArr := Map(nums, square) 	for i, num := range nums { 	if squareArr[i] !</description>
+      <description>简单版Generic Map func Map[T any](data []T, f func(T) T) []T { res := make([]T, len(data)) for i, v := range data { res[i] = f(v) } return res } 我们可以下面的代码测试这个简易的Map函数
+func TestMap(t *testing.T) { square := func(x int) int { return x * x } nums := []int{1, 2, 3, 4, 5} squareArr := Map(nums, square) for i, num := range nums { if squareArr[i] != num*num { t.Errorf(&amp;#34;Expected %d, got %d&amp;#34;, num*num, squareArr[i]) } } upCase := func(s string) string { return strings.</description>
     </item>
     
   </channel>

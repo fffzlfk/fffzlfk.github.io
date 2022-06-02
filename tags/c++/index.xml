@@ -13,9 +13,10 @@
       
       <guid>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
       <description>引入 在C++中经常打印变量来调试代码，但无论是printf还是cout总是很麻烦：
-  printf
-int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; printf(&amp;#34;a = %d, b = %f, c = %c&amp;#34;, a, b, c);   cout
-int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; std::cout &amp;lt;&amp;lt; &amp;#34;a = &amp;#34; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; &amp;#34;, b = &amp;#34; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; &amp;#34;, c = &amp;#34; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; &amp;#39;\n&amp;#39;;   可变参数宏 可变参数宏是C99引入的一个特性，C++11开始支持。</description>
+printf
+int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; printf(&amp;#34;a = %d, b = %f, c = %c&amp;#34;, a, b, c); cout
+int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; std::cout &amp;lt;&amp;lt; &amp;#34;a = &amp;#34; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; &amp;#34;, b = &amp;#34; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; &amp;#34;, c = &amp;#34; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; &amp;#39;\n&amp;#39;; 可变参数宏 可变参数宏是C99引入的一个特性，C++11开始支持。
+#define def_name(...) def_body(__VA_ARGS__) 可变参数模板 C++11允许模板定义有任意类型任意数量的模板参数（包括 $0$ 个模板参数）。</description>
     </item>
     
     <item>
@@ -25,13 +26,16 @@ int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; std::cout &amp;lt;&amp;l
       
       <guid>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%AD%E5%AE%B9%E6%98%93%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</guid>
       <description>不正确地使用new和delete 无论我们如何努力，要释放所有动态分配的内存是非常困难的。即使我们能做到这一点，也往往不能安全地避免出现异常。让我们看一个简单的例子。
-void SomeMethod() {  ClassA *a = new ClassA;  SomeOtherMethod(); // it can throws an execption  delete a; } 如果SomeOtherMethod抛出了异常，那么a对象永远不会被删除。下面的例子展示了一个更加安全同时又更简洁的实现，使用了在C++11提出的std::unique_ptr。
-void SomeMethod() {  std::unique_ptr&amp;lt;ClassA&amp;gt; a(new ClassA);  SomeOtherMethod(); } 无论发生什么，当a退出作用域的时候，它会被释放。
+void SomeMethod() { ClassA *a = new ClassA; SomeOtherMethod(); // it can throws an execption delete a; } 如果SomeOtherMethod抛出了异常，那么a对象永远不会被删除。下面的例子展示了一个更加安全同时又更简洁的实现，使用了在C++11提出的std::unique_ptr。
+void SomeMethod() { std::unique_ptr&amp;lt;ClassA&amp;gt; a(new ClassA); SomeOtherMethod(); } 无论发生什么，当a退出作用域的时候，它会被释放。
 然而，这仅仅是C++中这种错误最简单的例子，还有很多例子表明delete应该在其他地方调用，也许是在外层函数或者另一个线程中。这就是为什么应该避免使用new和delete，而应该使用适当的智能指针。
 被忘记的虚析构函数 这是最常见的错误之一，如果派生类中有动态内存分配，将会导致派生类的内存泄漏。这里有一些例子，当一个类不打算用于继承，并且它的大小和性能是至关重要的。虚析构函数或任何其他虚函数在类在类中引入了额外的数据，即指向虚函数表的指针，这使得类的任何实例的大小变大。
 然而，在大多数情况下，类可以被继承，即使它的初衷并非如此。因此，在声明一个类的时候，添加一个虚析构函数是一个非常好的做法。否则，如果一个类由于性能的原因必须不包含虚函数，那么在类的声明文件里面加上一个注释，说明这个类不应该被继承，是一个很好的做法。避免这个问题的最佳选择之一是使用一个支持在创建类时创建虚析构函数的IDE。
 关于这个问题，还有一点是来自标准库的类或模板。它们不是用来继承的，也没有一个虚析构函数。例如，如果我们创建了一个公开继承自std::string的新的增强字符串类，就可能有人错误地使用它与std::string的指针或引用，从而导致内存泄漏。
-class MyString : public std::string {  ~MyString() {} };  int main() {  std::string *s = new MyString(); 	delete s; // May not invoke the destructor defined in MyString } 为了避免这样的问题，重用标准库中的类或模板的一个更安全的方法是使用私有继承1或组合。</description>
+class MyString : public std::string { ~MyString() {} }; int main() { std::string *s = new MyString(); delete s; // May not invoke the destructor defined in MyString } 为了避免这样的问题，重用标准库中的类或模板的一个更安全的方法是使用私有继承1或组合。
+用delete或智能指针删除一个数组 创建动态大小的临时数组往往是必要的。当它们不再需要时，释放分配的内存是很重要的。这里的问题是，C++需要带有[]括号的特殊删除操作符，这一点很容易被遗忘。delete[]操作符不仅会删除分配给数组的内存，而且会首先调用数组中所有对象的析构函数。对原始类型使用不带[]括号的删除操作符也是不正确的，尽管这些类型没有析构函数，每个编译器都不能保证一个数组的指针会指向数组的第一个元素，所以使用不带[]括号的delete也会导致未定义的行为。
+在数组中使用智能指针，如unique_ptr&amp;lt;T&amp;gt;, shared_ptr，也是不正确的。当这样的智能指针从作用域中退出时，它将调用不带[]括号的删除操作符，这将导致上面描述的同样问题。如果需要对数组使用智能指针，可以使用unique_ptr&amp;lt;T[]&amp;gt;的特殊化。
+如果不需要引用计数的功能，主要是数组的情况，最优雅的方法是使用STL向量来代替。它们不只是负责释放内存，而且还提供额外的功能。</description>
     </item>
     
     <item>
@@ -41,11 +45,12 @@ class MyString : public std::string {  ~MyString() {} };  int main() {  std::str
       
       <guid>https://fffzlfk.github.io/posts/c&#43;&#43;_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</guid>
       <description>为什么要有完美转发 下面是一个类工厂函数：
-template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg arg) {  return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 参数对象arg在上面的例子中是传值方式传递，这带来了生成额外临时对象1的代价，所以我们改成引用传递：
-template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg &amp;amp;arg) {  return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 但这种实现的问题是不能绑定右值实参。如factory&amp;lt;X&amp;gt;(42)将编译报错，进一步的，我们按常量引用来传递：
-template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(const Arg &amp;amp;arg) {  return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 这种实现的问题是不能支持移动语义，形参使用右值引用可以解决完美转发问题。
+template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 参数对象arg在上面的例子中是传值方式传递，这带来了生成额外临时对象1的代价，所以我们改成引用传递：
+template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg &amp;amp;arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 但这种实现的问题是不能绑定右值实参。如factory&amp;lt;X&amp;gt;(42)将编译报错，进一步的，我们按常量引用来传递：
+template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(const Arg &amp;amp;arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 这种实现的问题是不能支持移动语义，形参使用右值引用可以解决完美转发问题。
 引用折叠 在C++11之前，我们不能对一个引用类型继续引用，但C++由于右值引用的出现而放宽2了这一做法，从而产生了引用折叠规则，允许我们对引用进行引用，既能左引用，又能右引用。但是却遵循如下规则：
-   函数形参类型 实参类型 推导后函数形参类型     T&amp;amp; 左引用 T&amp;amp;   T&amp;amp; 右引用 T&amp;amp;   T&amp;amp;&amp;amp; 左引用 T&amp;amp;   T&amp;amp;&amp;amp; 右引用 T&amp;amp;&amp;amp;    模板参数类型推导 对函数模板template&amp;lt;typename T&amp;gt;void foo(T&amp;amp;&amp;amp;);，应用上述引用折叠规则，可总结出以下结论：</description>
+函数形参类型 实参类型 推导后函数形参类型 T&amp;amp; 左引用 T&amp;amp; T&amp;amp; 右引用 T&amp;amp; T&amp;amp;&amp;amp; 左引用 T&amp;amp; T&amp;amp;&amp;amp; 右引用 T&amp;amp;&amp;amp; 模板参数类型推导 对函数模板template&amp;lt;typename T&amp;gt;void foo(T&amp;amp;&amp;amp;);，应用上述引用折叠规则，可总结出以下结论：
+如果实参是类型A的左值，则模板参数T的类型为A&amp;amp;，形参类型为A&amp;amp;； 如果实参是类型A的右值，则模板参数T的类型为A&amp;amp;&amp;amp;，形参类型为A&amp;amp;&amp;amp;。 这同样适用于类模板的成员函数模板的类型推导：</description>
     </item>
     
     <item>
