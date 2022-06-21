@@ -5,7 +5,16 @@
     <link>https://fffzlfk.github.io/</link>
     <description>Recent content on fffzlfk&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 02 Apr 2022 22:20:04 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 21 Jun 2022 23:49:57 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cloudflare事故报告(中文翻译)</title>
+      <link>https://fffzlfk.github.io/posts/cloudflare_outage_on_june_21_2022chinese/</link>
+      <pubDate>Tue, 21 Jun 2022 23:49:57 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/cloudflare_outage_on_june_21_2022chinese/</guid>
+      <description>Cloudflare outage on June 21, 2022 (Chinese translation)</description>
+    </item>
+    
     <item>
       <title>可变参数模板的应用</title>
       <link>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</link>
