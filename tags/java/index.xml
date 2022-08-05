@@ -5,7 +5,17 @@
     <link>https://fffzlfk.github.io/tags/java/</link>
     <description>Recent content in Java on fffzlfk&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Fri, 09 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 04 Aug 2022 22:33:37 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Java泛型</title>
+      <link>https://fffzlfk.github.io/posts/java%E6%B3%9B%E5%9E%8B/</link>
+      <pubDate>Thu, 04 Aug 2022 22:33:37 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/java%E6%B3%9B%E5%9E%8B/</guid>
+      <description>擦拭法 编译器把类型&amp;lt;T&amp;gt;视为Object public class Pair&amp;lt;T&amp;gt; { private final T first; private final T last; public Pair(T first, T last) { this.first = first; this.last = last; } public T getFirst() { return first; } public T getLast() { return last; } } Java中泛型是在编译阶段的，编译器将上述代码经过擦除法，JVM实际看到的代码如下所示：
+public class Pair { private final Object first; private final Object last; public Pair(Object first, Object last) { this.first = first; this.last = last; } public Object getFirst() { return first; } public Object getLast() { return last; } } 编译器根据&amp;lt;T&amp;gt;实现安全的强制转型 Pair&amp;lt;String&amp;gt; p = new Pair&amp;lt;&amp;gt;(&amp;#34;Hello&amp;#34;, &amp;#34;world&amp;#34;); String first = p.</description>
+    </item>
+    
     <item>
       <title>算法（第四版）</title>
       <link>https://fffzlfk.github.io/posts/algorithm4th/</link>

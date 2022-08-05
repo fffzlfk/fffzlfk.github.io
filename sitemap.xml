@@ -2,19 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://fffzlfk.github.io/</loc>
+    <lastmod>2022-08-04T22:33:37+08:00</lastmod>
+  </url><url>
+    <loc>https://fffzlfk.github.io/tags/java/</loc>
+    <lastmod>2022-08-04T22:33:37+08:00</lastmod>
+  </url><url>
+    <loc>https://fffzlfk.github.io/posts/java%E6%B3%9B%E5%9E%8B/</loc>
+    <lastmod>2022-08-04T22:33:37+08:00</lastmod>
+  </url><url>
+    <loc>https://fffzlfk.github.io/posts/</loc>
+    <lastmod>2022-08-04T22:33:37+08:00</lastmod>
+  </url><url>
+    <loc>https://fffzlfk.github.io/tags/</loc>
+    <lastmod>2022-08-04T22:33:37+08:00</lastmod>
+  </url><url>
     <loc>https://fffzlfk.github.io/posts/cloudflare_outage_on_june_21_2022chinese/</loc>
     <lastmod>2022-06-21T23:49:57+08:00</lastmod>
   </url><url>
-    <loc>https://fffzlfk.github.io/</loc>
-    <lastmod>2022-06-21T23:49:57+08:00</lastmod>
-  </url><url>
-    <loc>https://fffzlfk.github.io/posts/</loc>
-    <lastmod>2022-06-21T23:49:57+08:00</lastmod>
-  </url><url>
     <loc>https://fffzlfk.github.io/tags/c&#43;&#43;/</loc>
-    <lastmod>2022-04-02T22:20:04+08:00</lastmod>
-  </url><url>
-    <loc>https://fffzlfk.github.io/tags/</loc>
     <lastmod>2022-04-02T22:20:04+08:00</lastmod>
   </url><url>
     <loc>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</loc>
@@ -148,9 +154,6 @@
   </url><url>
     <loc>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/</loc>
     <lastmod>2020-10-10T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://fffzlfk.github.io/tags/java/</loc>
-    <lastmod>2020-10-09T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://fffzlfk.github.io/posts/algorithm4th/</loc>
     <lastmod>2020-10-09T00:00:00+00:00</lastmod>
