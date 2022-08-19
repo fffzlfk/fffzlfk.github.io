@@ -5,7 +5,18 @@
     <link>https://fffzlfk.github.io/</link>
     <description>Recent content on fffzlfk&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 04 Aug 2022 22:33:37 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 19 Aug 2022 21:44:22 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用Rust实现Helang😅</title>
+      <link>https://fffzlfk.github.io/posts/%E4%BD%BF%E7%94%A8rust%E5%AE%9E%E7%8E%B0helangdoge/</link>
+      <pubDate>Fri, 19 Aug 2022 21:44:22 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E4%BD%BF%E7%94%A8rust%E5%AE%9E%E7%8E%B0helangdoge/</guid>
+      <description>引入 最近b站上很多小伙伴对何同学的错误代码进行了一些很有意思的二创，一度登上了Github Trending：
+其中看到有人使用C++中的宏实现了何同学的“或运算”，于是受到启发，使用Rust中的宏实现了一下。
+Source Code fn parse_to_vec(nums: &amp;amp;str) -&amp;gt; Vec&amp;lt;usize&amp;gt; { let nums = nums.replace(&amp;#39; &amp;#39;, &amp;#34;&amp;#34;); nums.split(&amp;#39;|&amp;#39;).map(|x| x.parse().unwrap()).collect() } fn power_con(powers: &amp;amp;mut [u8], nums: &amp;amp;[usize], power: u8) { for &amp;amp;num in nums { powers[num] = power; } } #[macro_export] macro_rules! powerCon { ($powers: expr, $nums: expr, $force: expr) =&amp;gt; { power_con($powers, &amp;amp;parse_to_vec(stringify!($nums)), $force) }; } fn main() { let mut powers = [0_u8; 68]; powerCon!(&amp;amp;mut powers, 0, 100); powerCon!</description>
+    </item>
+    
     <item>
       <title>Java泛型</title>
       <link>https://fffzlfk.github.io/posts/java%E6%B3%9B%E5%9E%8B/</link>
