@@ -149,7 +149,7 @@ menu:
       url: https://github.com/fffzlfk
       weight: 5
     - name: Travellings
-      url: https://travellings.link
+      url: https://travellings.link/
       weight: 30
 # Read: https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#using-hugos-syntax-highlighter-chroma
 # pygmentsUseClasses: true
