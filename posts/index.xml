@@ -5,7 +5,22 @@
     <link>https://fffzlfk.github.io/posts/</link>
     <description>Recent content in Posts on fffzlfk&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Fri, 19 Aug 2022 21:44:22 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 08 Oct 2022 19:50:03 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>组合数学笔记</title>
+      <link>https://fffzlfk.github.io/posts/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sat, 08 Oct 2022 19:50:03 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description>第一章 组合数学基础 排列 相异元素不允许重复的排列 $P(n, r)$
+球盒模型：将$r$ 个有区别的球放入 $n$ 个不同的盒子里，每盒不超过一个。 计算公式：$$ P(n, r)=\frac{n!}{(n-r)!} $$ 集合描述：$$ S=\{1 \cdot e_1, 1 \cdot e_2,&amp;hellip;,1 \cdot e_n\} $$ 相异元素允许重复的排列 $RP(\infty, r)$
+球盒模型：将$r$ 个有区别的球放入 $n$ 个不同的盒子里，每个盒子的球数不加限制而且同盒的球不分次序。
+计算公式：$$ RP(\infty, r) = n^r $$
+集合描述：$$ S=\{\infty \cdot e_1, \infty \cdot e_2,&amp;hellip;,\infty \cdot e_n\} $$
+不尽相异元素的全排列
+球盒模型：将$r$个有区别的球放入$t$个不同的盒子，每个盒子的容量是有限的，其中第$i$个盒子最多只能放入$n_i$个球，同盒的球不分次序。 集合描述：$$ S=\{ n_1 \cdot e_1, n_2 \cdot e_2,&amp;hellip;,n_t \cdot e_t \}, n_1+n_2+&amp;hellip;+n_t=n $$ 特例 $r=1$ $$ RP(n, 1) = t $$ $r=n$ $$ RP(n, n) = \frac{n!</description>
+    </item>
+    
     <item>
       <title>使用Rust实现Helang😅</title>
       <link>https://fffzlfk.github.io/posts/%E4%BD%BF%E7%94%A8rust%E5%AE%9E%E7%8E%B0helangdoge/</link>
