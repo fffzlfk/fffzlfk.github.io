@@ -5,7 +5,19 @@
     <link>https://fffzlfk.github.io/posts/</link>
     <description>Recent content in Posts on fffzlfk&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 08 Oct 2022 19:50:03 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 18 Oct 2022 21:52:39 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>反向传播</title>
+      <link>https://fffzlfk.github.io/posts/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/</link>
+      <pubDate>Tue, 18 Oct 2022 21:52:39 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/</guid>
+      <description>反向传播 反向传播（英语：Backpropagation，意为误差反向传播，缩写为BP）是对多层人工神经网络进行梯度下降的算法，也就是用链式法则以网络每层的权重为变数计算损失函数的梯度，以更新权重来最小化损失函数。
+简单例子计算 符号 $ w_ij $ 权重 $ z_i $ 输入 $ y_i $ 输出 $ E = \frac{1}{2}(y_p-y_a)^2$ 损失 $ f(x) = \frac{1}{1+e^(-x)}$ 激活函数 例如求 $\Delta w_{53}$ $$ \begin{cases} E = \frac{1}{2}(y_5-y_a)^2\\ y_5 = f(z_5)\\ z_5 = w_{53} * y_3 + w_{54} * y_4 \end{cases} $$
+$$ \begin{align} \Delta w_{53} &amp;amp;= \frac{\partial E}{\partial w_{53}} \\ &amp;amp;= \frac{\partial E}{\partial y_{5}} \frac{\partial y_5}{\partial z_5} \frac{\partial z_5}{\partial w_{53}} \end{align} $$
+代码实现 from math import exp, sqrt def f(x): &amp;#34;&amp;#34;&amp;#34;returns sigmoid(x)&amp;#34;&amp;#34;&amp;#34; return 1 / (1 + exp(-x)) def d_f(x): &amp;#34;&amp;#34;&amp;#34;return d(sigmoid(x))/dx&amp;#34;&amp;#34;&amp;#34; return f(x) * (1 - f(x)) def E(yp, ya): &amp;#34;&amp;#34;&amp;#34;return the error in squre&amp;#34;&amp;#34;&amp;#34; return 1/2*(yp-ya)**2 def d_E(yp, ya): &amp;#34;&amp;#34;&amp;#34;return dE/d(yp)&amp;#34;&amp;#34;&amp;#34; return yp - ya ya = 0.</description>
+    </item>
+    
     <item>
       <title>组合数学笔记</title>
       <link>https://fffzlfk.github.io/posts/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%E7%AC%94%E8%AE%B0/</link>

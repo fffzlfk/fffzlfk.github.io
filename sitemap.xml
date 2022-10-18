@@ -2,19 +2,28 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://fffzlfk.github.io/</loc>
+    <lastmod>2022-10-18T21:52:39+08:00</lastmod>
+  </url><url>
+    <loc>https://fffzlfk.github.io/tags/nn/</loc>
+    <lastmod>2022-10-18T21:52:39+08:00</lastmod>
+  </url><url>
+    <loc>https://fffzlfk.github.io/posts/</loc>
+    <lastmod>2022-10-18T21:52:39+08:00</lastmod>
+  </url><url>
+    <loc>https://fffzlfk.github.io/tags/python/</loc>
+    <lastmod>2022-10-18T21:52:39+08:00</lastmod>
+  </url><url>
+    <loc>https://fffzlfk.github.io/tags/</loc>
+    <lastmod>2022-10-18T21:52:39+08:00</lastmod>
+  </url><url>
+    <loc>https://fffzlfk.github.io/posts/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/</loc>
+    <lastmod>2022-10-18T21:52:39+08:00</lastmod>
+  </url><url>
     <loc>https://fffzlfk.github.io/tags/academic/</loc>
     <lastmod>2022-10-08T19:50:03+08:00</lastmod>
   </url><url>
-    <loc>https://fffzlfk.github.io/</loc>
-    <lastmod>2022-10-08T19:50:03+08:00</lastmod>
-  </url><url>
     <loc>https://fffzlfk.github.io/tags/math/</loc>
-    <lastmod>2022-10-08T19:50:03+08:00</lastmod>
-  </url><url>
-    <loc>https://fffzlfk.github.io/posts/</loc>
-    <lastmod>2022-10-08T19:50:03+08:00</lastmod>
-  </url><url>
-    <loc>https://fffzlfk.github.io/tags/</loc>
     <lastmod>2022-10-08T19:50:03+08:00</lastmod>
   </url><url>
     <loc>https://fffzlfk.github.io/posts/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%E7%AC%94%E8%AE%B0/</loc>
@@ -139,9 +148,6 @@
   </url><url>
     <loc>https://fffzlfk.github.io/posts/%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C%E9%97%AE%E9%A2%98/</loc>
     <lastmod>2021-02-21T22:46:48+08:00</lastmod>
-  </url><url>
-    <loc>https://fffzlfk.github.io/tags/python/</loc>
-    <lastmod>2021-02-02T14:23:44+08:00</lastmod>
   </url><url>
     <loc>https://fffzlfk.github.io/posts/python%E8%A3%85%E9%A5%B0%E5%99%A8/</loc>
     <lastmod>2021-02-02T14:23:44+08:00</lastmod>
