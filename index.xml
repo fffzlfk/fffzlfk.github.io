@@ -332,17 +332,6 @@ dim3 threadsPerBlock(8, 8); 还有2D的gridDim= $64 \times 64$ （需要 $4096$ 
     </item>
     
     <item>
-      <title>About</title>
-      <link>https://fffzlfk.github.io/about/</link>
-      <pubDate>Thu, 11 Mar 2021 05:35:07 +0000</pubDate>
-      
-      <guid>https://fffzlfk.github.io/about/</guid>
-      <description>Code is like humor. When you have to explain it, it&#39;s bad.
-Hey，我是fffzlfk一名西电CS在读本科生 学习之余，我还是一个喜欢折腾的人
-你可以在下面找到我 GitHub Email </description>
-    </item>
-    
-    <item>
       <title>编译原理</title>
       <link>https://fffzlfk.github.io/posts/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/</link>
       <pubDate>Thu, 11 Mar 2021 10:51:32 +0800</pubDate>
