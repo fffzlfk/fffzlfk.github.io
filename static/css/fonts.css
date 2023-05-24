@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'FusionKai';
+  src: url('/fonts/FusionKaiG-Regular.ttf')
+}
+
+body {
+  font-family: 'FusionKai', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
