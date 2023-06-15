@@ -6,7 +6,20 @@
     <description>Recent content on fffzlfk&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 15 Dec 2022 13:18:08 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 15 Jun 2023 20:59:46 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用Docker部署openwrt软路由</title>
+      <link>https://fffzlfk.github.io/posts/how-to-deploy-soft-router-with-docker/</link>
+      <pubDate>Thu, 15 Jun 2023 20:59:46 +0800</pubDate>
+      
+      <guid>https://fffzlfk.github.io/posts/how-to-deploy-soft-router-with-docker/</guid>
+      <description>前期准备 拉取 Docker image docker pull registry.cn-shanghai.aliyuncs.com/suling/openwrt:x86_64 注：这里的镜像 tag 为架构，这里是 x86_64，可以根据自己的架构选择镜像。
+开启网卡混杂模式 sudo ip link set eth0 promisc on 这里的eth0修改为自己的网卡名称。
+创建 Docker 网络 docker network create -d macvlan --subnet=192.168.0.0/24 --gateway=192.168.0.1 -o parent=eth0 macnet 同样的，这里的subnet修改为自己的网段，gateway修改为当前网络内的网关。
+部署镜像 创建网络配置文件 vim /path/to/openwrt/network 配置文件如下：
+config interface &amp;#39;loopback&amp;#39; option ifname &amp;#39;lo&amp;#39; option proto &amp;#39;static&amp;#39; option ipaddr &amp;#39;127.0.0.1&amp;#39; option netmask &amp;#39;255.0.0.0&amp;#39; config globals &amp;#39;globals&amp;#39; option packet_steering &amp;#39;1&amp;#39; config interface &amp;#39;lan&amp;#39; option type &amp;#39;bridge&amp;#39; option ifname &amp;#39;eth0&amp;#39; option proto &amp;#39;static&amp;#39; option ipaddr &amp;#39;192.</description>
+    </item>
+    
     <item>
       <title>Are You Sure You Want to Use MMAP in Your Database Management System?[部分翻译]</title>
       <link>https://fffzlfk.github.io/posts/are-you-sure-you-want-to-use-mmap-in-your-database-management-system_experimental-%E9%83%A8%E5%88%86%E7%BF%BB%E8%AF%91/</link>
