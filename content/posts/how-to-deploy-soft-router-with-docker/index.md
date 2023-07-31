@@ -70,7 +70,7 @@ config interface 'vpn0'
 ### 启动容器
 
 ```bash
-docker run --restart always --name openwrt-container -d --ip 192.168.0.x -v /path/to/openwrt/network:/etc/config/network --network macnet --privileged registry.cn-shanghai.aliyuncs.com/suling/openwrt:x86_64 /sbin/inut
+docker run --restart always --name openwrt-container -d --ip 192.168.0.x -v /path/to/openwrt/network:/etc/config/network --network macnet --privileged registry.cn-shanghai.aliyuncs.com/suling/openwrt:x86_64 /sbin/init
 ```
 
 `--ip`修改为上面网络配置文件中的`option ipaddr`。
