@@ -2,5 +2,5 @@
 	path = themes/hugo-notice
 	url = https://github.com/martignoni/hugo-notice.git
 [submodule "themes/hugo-paper"]
-	path = themes/paper
-	url = git@github.com:fffzlfk/hugo-paper.git
+	path = themes/hugo-paper
+	url = https://github.com/fffzlfk/hugo-paper.git
