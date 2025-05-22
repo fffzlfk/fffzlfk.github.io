@@ -1,33 +1,52 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>Python on fffzlfk&#39;s Blog</title>
-    <link>https://fffzlfk.github.io/tags/python/</link>
-    <description>Recent content in Python on fffzlfk&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Tue, 18 Oct 2022 21:52:39 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>反向传播</title>
-      <link>https://fffzlfk.github.io/posts/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/</link>
-      <pubDate>Tue, 18 Oct 2022 21:52:39 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/</guid>
-      <description>反向传播 反向传播（英语：Backpropagation，意为误差反向传播，缩写为BP）是对多层人工神经网络进行梯度下降的算法，也就是用链式法则以网络每层的权重为变数计算损失函数的梯度，以更新权重来最小化损失函数。
-简单例子计算 符号 $ w_{ij} $ 权重 $ z_i $ 输入 $ y_i $ 输出 $ E = \frac{1}{2}(y_p-y_a)^2$ 损失 $ f(x) = \frac{1}{1+e^{-x}}$ 激活函数 例如更新$w_{53}$
-主要思想就是我们无法找到$E$和$w_{53}$的直接关系，所以使用链式求导法则来间接求梯度： $$ w_{53}(new) = w_{53}(old) - \Delta w_{53} $$
-$$ \begin{cases} E = \frac{1}{2}(y_5-y_a)^2\\ y_5 = f(z_5)\\ z_5 = w_{53} * y_3 + w_{54} * y_4 \end{cases} $$
-$$ \begin{align} \Delta w_{53} &amp;amp;= \frac{\partial E}{\partial w_{53}} \\ &amp;amp;= \frac{\partial E}{\partial y_{5}} \frac{\partial y_5}{\partial z_5} \frac{\partial z_5}{\partial w_{53}} \end{align} $$</description>
-    </item>
-    
-    <item>
-      <title>Python装饰器</title>
-      <link>https://fffzlfk.github.io/posts/python%E8%A3%85%E9%A5%B0%E5%99%A8/</link>
-      <pubDate>Tue, 02 Feb 2021 14:23:44 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/python%E8%A3%85%E9%A5%B0%E5%99%A8/</guid>
-      <description>Python decorator</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Python on fffzlfk's Blog</title><link>https://fffzlfk.github.io/tags/python/</link><description>Recent content in Python on fffzlfk's Blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Tue, 18 Oct 2022 21:52:39 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/python/index.xml" rel="self" type="application/rss+xml"/><item><title>反向传播</title><link>https://fffzlfk.github.io/posts/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/</link><pubDate>Tue, 18 Oct 2022 21:52:39 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/</guid><description>&lt;h2 id="反向传播">反向传播&lt;/h2>
+&lt;p>反向传播（英语：Backpropagation，意为误差反向传播，缩写为BP）是对多层人工神经网络进行梯度下降的算法，也就是用链式法则以网络每层的权重为变数计算损失函数的梯度，以更新权重来最小化损失函数。&lt;/p>
+&lt;h2 id="简单例子计算">简单例子计算&lt;/h2>
+&lt;p>&lt;img src="https://p0.meituan.net/dpplatform/0102258668e345eee83a8459eaa8b95528740.png" alt="">&lt;/p>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>符号&lt;/th>
+ &lt;th>&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>$ w_{ij} $&lt;/td>
+ &lt;td>权重&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>$ z_i $&lt;/td>
+ &lt;td>输入&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>$ y_i $&lt;/td>
+ &lt;td>输出&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>$ E = \frac{1}{2}(y_p-y_a)^2$&lt;/td>
+ &lt;td>损失&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>$ f(x) = \frac{1}{1+e^{-x}}$&lt;/td>
+ &lt;td>激活函数&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;p>例如更新$w_{53}$&lt;/p>
+&lt;p>主要思想就是我们无法找到$E$和$w_{53}$的直接关系，所以使用链式求导法则来间接求梯度：
+$$
+w_{53}(new) = w_{53}(old) - \Delta w_{53}
+$$&lt;/p>
+&lt;p>$$
+\begin{cases}
+E = \frac{1}{2}(y_5-y_a)^2\\
+y_5 = f(z_5)\\
+z_5 = w_{53} * y_3 + w_{54} * y_4
+\end{cases}
+$$&lt;/p>
+&lt;p>$$
+\begin{align}
+\Delta w_{53} &amp;amp;= \frac{\partial E}{\partial w_{53}} \\
+&amp;amp;= \frac{\partial E}{\partial y_{5}} \frac{\partial y_5}{\partial z_5} \frac{\partial z_5}{\partial w_{53}}
+\end{align}
+$$&lt;/p></description></item><item><title>Python装饰器</title><link>https://fffzlfk.github.io/posts/python%E8%A3%85%E9%A5%B0%E5%99%A8/</link><pubDate>Tue, 02 Feb 2021 14:23:44 +0800</pubDate><guid>https://fffzlfk.github.io/posts/python%E8%A3%85%E9%A5%B0%E5%99%A8/</guid><description>Python decorator</description></item></channel></rss>

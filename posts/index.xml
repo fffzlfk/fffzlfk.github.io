@@ -1,468 +1,1078 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>Posts on fffzlfk&#39;s Blog</title>
-    <link>https://fffzlfk.github.io/posts/</link>
-    <description>Recent content in Posts on fffzlfk&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Tue, 10 Oct 2023 04:38:46 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>数据库索引实现</title>
-      <link>https://fffzlfk.github.io/posts/database-index-implementation/</link>
-      <pubDate>Tue, 10 Oct 2023 04:38:46 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/database-index-implementation/</guid>
-      <description>B 树 B 树（B-tree）是一种自平衡的树，能够保持数据有序。这种数据结构能够让查找数据、顺序访问、插入数据及删除的动作，都在对数时间内完成。
-在 B 树中，有两种结点:
-内部结点（internal node）：存储了数据以及指向其子结点的指针。 叶子结点（leaf node）：与内部结点不同的是，叶子结点只存储数据，并没有子结点。 B+ 树 B+ 树是 B 树的一个升级。
-所有的非叶子结点可以看成是索引部分，不存储数据； 叶子结点存储数据，并且所有叶子结点形成链表。 相比 B 树的优点 B+ 树中数据都存储在叶子结点上并链接在一起，这使得 B+ 树在查询范围内的数据时更加高效，因为它可以在一次遍历中查询出所有符合条件的数据。 全表扫描性能好，而B树需要完整遍历整棵树。 B-link 树 B-link 树是在 B+ 树上的一种改进，该结构提升了读写并发度，能够保持高并发下的性能稳定。PostgreSQL 中使用的就是这中索引结构。
-在中间结点增加字段 link pointer，指向右兄弟结点，B-link Tree 的名字也由此而来； 在每个结点内增加一个字段 high key，在查询时如果目标值超过该节点的 high key，就需要循 着 link pointer 继续往后继结点查找。 优势 树结构调整时无需对全局或者局部子树加锁，进而有利于高并发下的性能稳定性。
-哈希索引（Hash Index） 哈希索引是基于哈希表实现的。对于每行数据，存储引擎都会对所有的索引列计算一个哈希值，哈希值不同键值的行计算出来不同，哈希索引将所有的哈希值存储在索引中，同时在哈希表中保存指向每个数据行的指针。
-全文索引（Full-text Index） 全文索引是一种特殊的索引结构，它主要用于快速查询文本数据。全文索引使用的数据结构通常是倒排索引。倒排索引是一种线性结构，它记录了每个单词出现在文本中的位置。使用倒排索引可以快速查询出符合某些文本条件的数据。
-空间索引（Spatial Index） 需要存储一些地理数据的位置或需要存储形状相关的数据时，可以使用空间索引。
-R-Tree R树是用来做空间数据存储的树状数据结构。例如给地理位置，矩形和多边形这类多维数据创建索引。
-KD-Tree kd-tree简称k维树，是一种空间划分的数据结构。常被用于高维空间中的搜索。
-网格索引（Grid Index） 对地理空间进行网格划分，划分成大小相同的网格，每个网格对应着一块存储空间，索引项登记上落入该网格的空间对象。
-BRIN 索引 Block Range Index，简称BRIN索引。</description>
-    </item>
-    
-    <item>
-      <title>使用Docker部署openwrt软路由</title>
-      <link>https://fffzlfk.github.io/posts/how-to-deploy-soft-router-with-docker/</link>
-      <pubDate>Thu, 15 Jun 2023 20:59:46 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/how-to-deploy-soft-router-with-docker/</guid>
-      <description>前期准备 拉取 Docker image docker pull registry.cn-shanghai.aliyuncs.com/suling/openwrt:x86_64 注：这里的镜像 tag 为架构，这里是 x86_64，可以根据自己的架构选择镜像。
-开启网卡混杂模式 sudo ip link set eth0 promisc on 这里的eth0修改为自己的网卡名称。
-创建 Docker 网络 docker network create -d macvlan --subnet=192.168.0.0/24 --gateway=192.168.0.1 -o parent=eth0 macnet 同样的，这里的subnet修改为自己的网段，gateway修改为当前网络内的网关。
-部署镜像 创建网络配置文件 vim /path/to/openwrt/network 配置文件如下：
-config interface &amp;#39;loopback&amp;#39; option ifname &amp;#39;lo&amp;#39; option proto &amp;#39;static&amp;#39; option ipaddr &amp;#39;127.0.0.1&amp;#39; option netmask &amp;#39;255.0.0.0&amp;#39; config globals &amp;#39;globals&amp;#39; option packet_steering &amp;#39;1&amp;#39; config interface &amp;#39;lan&amp;#39; option type &amp;#39;bridge&amp;#39; option ifname &amp;#39;eth0&amp;#39; option proto &amp;#39;static&amp;#39; option ipaddr &amp;#39;192.</description>
-    </item>
-    
-    <item>
-      <title>Are You Sure You Want to Use MMAP in Your Database Management System?[部分翻译]</title>
-      <link>https://fffzlfk.github.io/posts/are-you-sure-you-want-to-use-mmap-in-your-database-management-system_experimental-%E9%83%A8%E5%88%86%E7%BF%BB%E8%AF%91/</link>
-      <pubDate>Thu, 15 Dec 2022 13:18:08 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/are-you-sure-you-want-to-use-mmap-in-your-database-management-system_experimental-%E9%83%A8%E5%88%86%E7%BF%BB%E8%AF%91/</guid>
-      <description>原文 Are You Sure You Want to Use MMAP in Your Database Management System?
-4 实验分析 正如上一节解释的那样，一些mmap的问题可以通过仔细地实现来克服，但是我们认为，如果不进行重大的操作系统级别的重写，其固有的性能限制就无法解决。在这一节，我们通过实验结果分析展示了这些问题。
-我们所有的实验在一个单处理器插槽的机器上运行，其配置信息为：AMD EPYC 7713 CPU(64 cores, 128 hardware threads)，512GB RAM，其中100GB可用于Linux（v5.11）的页面缓存，对于持久性存储，该机器有10×3.8TB的 三星PM1733固态硬盘（额定读取速度为7000MB/s，写入速度为3800MB/s），我们将固态硬盘作为块设备来避免潜在的文件系统开销。
-作为基准线，我们使用了存储基准工具fio1，使用直接I/O(O_DIRECT)来绕过操作系统页面缓存。我们的分析专门聚焦在只读工作负载上，这代表了基于mmap的DBMS的最佳情况；否则，他们需要实现复杂的更新保护（3.1节），从而产生大量的额外开销。特别的是，我们评估了两种常见的访问模式：(1) 随机访问 和 (2) 顺序访问。
-4.1 随机读取 在第一个实验中，我们在一块2TB SSD 范围内使用随机访问模式来模拟大于内存的OLTP工作负载。由于页面缓存只有100GB的内存，95%的访问都导致了缺页中断（即工作负载是I/O绑定的）。
-图2a展示了100个线程每秒随机读取的数量。我们的fio基准线表现出了稳定的性能，达到了接近每秒90万次的读取速度，这符合100次出色的I/O操作和大约100𝜇s的NVMe延迟的预期性能。换句话说，这个结果表明，fio可以使NVMe SSD的性能完全饱和。
-另一方面，mmap表现较差，即使是使用提示来匹配工作负载访问模式。我们在实验中观察到MADV_RANDOM的三个不同阶段。mmap在开始的27秒内与fio表现接近，然后在接下来的5秒钟突然下降到接近0，最后恢复到fio性能的一半。这个突然的性能下降发生在页面缓存被填满的时候，迫使操作系统开始从内存把页面置换出去。不出意料地是，其他访问模式提示下有更糟的性能表现。
-在3.4节，我们列举了页面置换开销的三个关键来源。第一个问题是 TLB shootdowns2，我们使用/usr/interrupts记录的情况如图2b所示。如前所述，TLB shootdowns是十分昂贵的（需要成千上万个时钟周期），因为它涉及到发送处理器间的中断来刷新每个核心的TLB。第二，操作系统使用单个进程（kswapd）来置换页面，这在我们实验中是受CPU限制的。最后，操作系统必须同步页表，这在许多并发的线程中变得高度有竞争性。
-4.2 顺序扫描 顺序扫描是DBMS的另一种常见的访问模式，特别是在OLAP工作负载中。因此，我们也在2TB SSD范围内对比了fio和mmap的扫描性能。我们首先使用仅仅一块SSD运行了我们的实验，然后我们在10块SSD组成的RAID 0上重新跑了相同的工作负载。
-图3展示了fio可以利用一块SSD的全部带宽，同时保持稳定的性能。像之前的实验一样，mmap的性能开始和fio相似，但我们再次观察到，一旦页面缓存在大约17秒后被填满，性能就会急剧下降。另外，和这个工作负载预期的一样，MADV_NORMAL和MADV_SEQUENTIAL标志位比MADV_RANDOM性能要好。
-图4展示了在10块SSD上重复顺序扫描的结果，进一步凸显了现代闪存理论上能够提供的与mmap能够实现的之间的差距。我们观察到在fio和mmap之间大概有20倍的性能差距，与使用一块SSD的结果相比，mmap几乎没有任何提升。
-总的来说，我们发现mmap仅仅在单块SSD上的初始加载阶段表现得好。一旦页面置换开始或者使用多块SSD，mmap要比fio差2~20倍。随着PCIe 5.0 NVMe得即将发布，预计每块SSD的带宽将增加一倍，我们的结果展示了mmap不能够与传统的文件I/O的顺序扫描的性能相媲美。
-6 结论 本论文提出了反对在DBMS中使用mmap来进行文件I/O。尽管有有限的好处，我们还是介绍了mmap的主要缺点，我们的实验分析证实了我们在其性能限制的发现。最后，我们向DBMS的开发者提供以下建议。
-什么时候你不应该在你的DBMS中使用mmap：
-你需要以一种事务安全的方式进行更新。 你想在不阻塞慢速I/O的情况下处理缺页中断，或者需要对内存中的数据进行明确控制。 你关心错误处理，需要返回正确的结果。 你需要在高速持久性存储设备上获得高吞吐量。 什么时候你也许应该使用mmap：
-你的工作集（或者整个数据库）适合在内存中，并且工作负载是只读的。 你需要急于将产品推向市场，而不关心数据的一致性或者长期工程的头痛问题。 否则，永远不要使用。 fio: Flexible I/O Tester.&amp;#160;&amp;#x21a9;&amp;#xfe0e;</description>
-    </item>
-    
-    <item>
-      <title>反向传播</title>
-      <link>https://fffzlfk.github.io/posts/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/</link>
-      <pubDate>Tue, 18 Oct 2022 21:52:39 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/</guid>
-      <description>反向传播 反向传播（英语：Backpropagation，意为误差反向传播，缩写为BP）是对多层人工神经网络进行梯度下降的算法，也就是用链式法则以网络每层的权重为变数计算损失函数的梯度，以更新权重来最小化损失函数。
-简单例子计算 符号 $ w_{ij} $ 权重 $ z_i $ 输入 $ y_i $ 输出 $ E = \frac{1}{2}(y_p-y_a)^2$ 损失 $ f(x) = \frac{1}{1+e^{-x}}$ 激活函数 例如更新$w_{53}$
-主要思想就是我们无法找到$E$和$w_{53}$的直接关系，所以使用链式求导法则来间接求梯度： $$ w_{53}(new) = w_{53}(old) - \Delta w_{53} $$
-$$ \begin{cases} E = \frac{1}{2}(y_5-y_a)^2\\ y_5 = f(z_5)\\ z_5 = w_{53} * y_3 + w_{54} * y_4 \end{cases} $$
-$$ \begin{align} \Delta w_{53} &amp;amp;= \frac{\partial E}{\partial w_{53}} \\ &amp;amp;= \frac{\partial E}{\partial y_{5}} \frac{\partial y_5}{\partial z_5} \frac{\partial z_5}{\partial w_{53}} \end{align} $$</description>
-    </item>
-    
-    <item>
-      <title>组合数学笔记</title>
-      <link>https://fffzlfk.github.io/posts/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Sat, 08 Oct 2022 19:50:03 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>第一章 组合数学基础 排列 相异元素不允许重复的排列 $P(n, r)$
-球盒模型：将$r$ 个有区别的球放入 $n$ 个不同的盒子里，每盒不超过一个。 计算公式：$$ P(n, r)=\frac{n!}{(n-r)!} $$ 集合描述：$$ S=\{1 \cdot e_1, 1 \cdot e_2,&amp;hellip;,1 \cdot e_n\} $$ 相异元素允许重复的排列 $RP(\infty, r)$
-球盒模型：将$r$ 个有区别的球放入 $n$ 个不同的盒子里，每个盒子的球数不加限制而且同盒的球不分次序。
-计算公式：$$ RP(\infty, r) = n^r $$
-集合描述：$$ S=\{\infty \cdot e_1, \infty \cdot e_2,&amp;hellip;,\infty \cdot e_n\} $$
-不尽相异元素的全排列
-球盒模型：将$r$个有区别的球放入$t$个不同的盒子，每个盒子的容量是有限的，其中第$i$个盒子最多只能放入$n_i$个球，同盒的球不分次序。 集合描述：$$ S=\{ n_1 \cdot e_1, n_2 \cdot e_2,&amp;hellip;,n_t \cdot e_t \}, n_1+n_2+&amp;hellip;+n_t=n $$ 特例 $r=1$ $$ RP(n, 1) = t $$ $r=n$ $$ RP(n, n) = \frac{n!</description>
-    </item>
-    
-    <item>
-      <title>使用Rust实现Helang😅</title>
-      <link>https://fffzlfk.github.io/posts/%E4%BD%BF%E7%94%A8rust%E5%AE%9E%E7%8E%B0helangdoge/</link>
-      <pubDate>Fri, 19 Aug 2022 21:44:22 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E4%BD%BF%E7%94%A8rust%E5%AE%9E%E7%8E%B0helangdoge/</guid>
-      <description>引入 最近b站上很多小伙伴对何同学的错误代码进行了一些很有意思的二创，一度登上了Github Trending：
-其中看到有人使用C++中的宏实现了何同学的“或运算”，于是受到启发，使用Rust中的宏实现了一下。
-Source Code fn parse_to_vec(nums: &amp;amp;str) -&amp;gt; Vec&amp;lt;usize&amp;gt; { let nums = nums.replace(&amp;#39; &amp;#39;, &amp;#34;&amp;#34;); nums.split(&amp;#39;|&amp;#39;).map(|x| x.parse().unwrap()).collect() } fn power_con(powers: &amp;amp;mut [u8], nums: &amp;amp;[usize], power: u8) { for &amp;amp;num in nums { powers[num] = power; } } #[macro_export] macro_rules! powerCon { ($powers: expr, $nums: expr, $force: expr) =&amp;gt; { power_con($powers, &amp;amp;parse_to_vec(stringify!($nums)), $force) }; } fn main() { let mut powers = [0_u8; 68]; powerCon!(&amp;amp;mut powers, 0, 100); powerCon!</description>
-    </item>
-    
-    <item>
-      <title>Java泛型</title>
-      <link>https://fffzlfk.github.io/posts/java%E6%B3%9B%E5%9E%8B/</link>
-      <pubDate>Thu, 04 Aug 2022 22:33:37 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/java%E6%B3%9B%E5%9E%8B/</guid>
-      <description>擦拭法 编译器把类型&amp;lt;T&amp;gt;视为Object public class Pair&amp;lt;T&amp;gt; { private final T first; private final T last; public Pair(T first, T last) { this.first = first; this.last = last; } public T getFirst() { return first; } public T getLast() { return last; } } Java中泛型是在编译阶段的，编译器将上述代码经过擦除法，JVM实际看到的代码如下所示：
-public class Pair { private final Object first; private final Object last; public Pair(Object first, Object last) { this.first = first; this.last = last; } public Object getFirst() { return first; } public Object getLast() { return last; } } 编译器根据&amp;lt;T&amp;gt;实现安全的强制转型 Pair&amp;lt;String&amp;gt; p = new Pair&amp;lt;&amp;gt;(&amp;#34;Hello&amp;#34;, &amp;#34;world&amp;#34;); String first = p.</description>
-    </item>
-    
-    <item>
-      <title>Cloudflare事故报告(中文翻译)</title>
-      <link>https://fffzlfk.github.io/posts/cloudflare_outage_on_june_21_2022chinese/</link>
-      <pubDate>Tue, 21 Jun 2022 23:49:57 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/cloudflare_outage_on_june_21_2022chinese/</guid>
-      <description>Cloudflare outage on June 21, 2022 (Chinese translation)</description>
-    </item>
-    
-    <item>
-      <title>可变参数模板的应用</title>
-      <link>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</link>
-      <pubDate>Sat, 02 Apr 2022 22:20:04 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
-      <description>引入 在C++中经常打印变量来调试代码，但无论是printf还是cout总是很麻烦：
-printf
-int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; printf(&amp;#34;a = %d, b = %f, c = %c&amp;#34;, a, b, c); cout
-int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; std::cout &amp;lt;&amp;lt; &amp;#34;a = &amp;#34; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; &amp;#34;, b = &amp;#34; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; &amp;#34;, c = &amp;#34; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; &amp;#39;\n&amp;#39;; 可变参数宏 可变参数宏是C99引入的一个特性，C++11开始支持。
-#define def_name(...) def_body(__VA_ARGS__) 可变参数模板 C++11允许模板定义有任意类型任意数量的模板参数（包括 $0$ 个模板参数）。</description>
-    </item>
-    
-    <item>
-      <title>MapReduce in Go</title>
-      <link>https://fffzlfk.github.io/posts/mapreduce_in_go/</link>
-      <pubDate>Sun, 27 Mar 2022 21:19:14 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/mapreduce_in_go/</guid>
-      <description>简单版Generic Map func Map[T any](data []T, f func(T) T) []T { res := make([]T, len(data)) for i, v := range data { res[i] = f(v) } return res } 我们可以下面的代码测试这个简易的Map函数
-func TestMap(t *testing.T) { square := func(x int) int { return x * x } nums := []int{1, 2, 3, 4, 5} squareArr := Map(nums, square) for i, num := range nums { if squareArr[i] != num*num { t.Errorf(&amp;#34;Expected %d, got %d&amp;#34;, num*num, squareArr[i]) } } upCase := func(s string) string { return strings.</description>
-    </item>
-    
-    <item>
-      <title>CUDA中怎样选择GRID和BLOCK维度</title>
-      <link>https://fffzlfk.github.io/posts/cuda%E4%B8%AD%E6%80%8E%E6%A0%B7%E9%80%89%E6%8B%A9grid%E5%92%8Cblock%E7%BB%B4%E5%BA%A6/</link>
-      <pubDate>Mon, 07 Mar 2022 16:10:36 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/cuda%E4%B8%AD%E6%80%8E%E6%A0%B7%E9%80%89%E6%8B%A9grid%E5%92%8Cblock%E7%BB%B4%E5%BA%A6/</guid>
-      <description>硬件限制 这是容易量化的方面。目前CUDA编程指南的附录F列出了一些硬件限制，这些限制限制了内核启动时每块可以有多少个线程。如果你超过了这些限制，你的内核将无法运行。这些限制可以粗略地概括为：
-每个区块不能超过 $512$ / $1024$ 个线程（分别是计算能力1.x或2.x及以后的计算能力 每个块的最大尺寸限制在 $[512, 512, 64]$ / $[1024, 1024, 64]$（计算能力1.x/2.x及以后的计算能力 每个块消耗的寄存器总数不能超过 $8k/16k/32k/64k/32k/64k/32k/64k$ （计算能力 $1.0,1.1/1.2,1.3/2.x-3.0/3.2/3.5-5.2/5.3/6-6.1/6.2/7.0$ 每个块不能消耗超过 $16kb/48kb/96kb$ 的共享内存（计算能力 $1.x/2.x-6.2/7.0$ 如果你保持在这些限制之内，任何你能成功编译的内核都会无错误地启动。
-性能调教 这是需要经验的一部分。在上述的硬件约束条件下，你选择的每块线程数可以而且确实影响到硬件上运行的代码性能。每个代码的表现都是不同的，唯一真正的方法是通过仔细的基准测试和剖析来量化它。但还是那句话，非常粗略地总结一下：
-每个区块的线程数应该是wrap大小的整数倍，在目前所有的硬件上都是 $32$ GPU上的每个流式多处理器必须有足够的active wraps来充分隐藏架构的的所有不同内存和指令流水线延迟，以实现最大吞吐量。这里的正确做法是尝试实现最佳的硬件占用率 CUDA内置函数 上述指出了块的大小是如何影响性能的，并提出了一种基于占用率最大化的通用启发式选择方法。在不想提供选择块大小的标准的情况下，值得一提的是，CUDA 6.5+包括几个新的运行时函数来帮助占用率的计算和启动配置1。
-其中一个有用的函数是cudaOccupancyMaxPotentialBlockSize，它启发式地计算了一个能达到最佳占用率的块大小。该函数提供的值可以作为手动优化参数的起点。下面是一个例子：
-/************************/ /* TEST KERNEL FUNCTION */ /************************/ __global__ void MyKernel(int *a, int *b, int *c, int N) { int idx = threadIdx.x + blockIdx.x * blockDim.x; if (idx &amp;lt; N) { c[idx] = a[idx] + b[idx]; } } /********/ /* MAIN */ /********/ void main() { const int N = 1000000; int blockSize; // The launch configurator returned block size int minGridSize; // The minimum grid size needed to achieve the maximum occupancy for a full device launch int gridSize; // The actual grid size needed, based on input size int* h_vec1 = (int*) malloc(N*sizeof(int)); int* h_vec2 = (int*) malloc(N*sizeof(int)); int* h_vec3 = (int*) malloc(N*sizeof(int)); int* h_vec4 = (int*) malloc(N*sizeof(int)); int* d_vec1; cudaMalloc((void**)&amp;amp;d_vec1, N*sizeof(int)); int* d_vec2; cudaMalloc((void**)&amp;amp;d_vec2, N*sizeof(int)); int* d_vec3; cudaMalloc((void**)&amp;amp;d_vec3, N*sizeof(int)); for (int i=0; i&amp;lt;N; i++) { h_vec1[i] = 10; h_vec2[i] = 20; h_vec4[i] = h_vec1[i] + h_vec2[i]; } cudaMemcpy(d_vec1, h_vec1, N*sizeof(int), cudaMemcpyHostToDevice); cudaMemcpy(d_vec2, h_vec2, N*sizeof(int), cudaMemcpyHostToDevice); float time; cudaEvent_t start, stop; cudaEventCreate(&amp;amp;start); cudaEventCreate(&amp;amp;stop); cudaEventRecord(start, 0); cudaOccupancyMaxPotentialBlockSize(&amp;amp;minGridSize, &amp;amp;blockSize, MyKernel, 0, N); // Round up according to array size gridSize = (N + blockSize - 1) / blockSize; cudaEventRecord(stop, 0); cudaEventSynchronize(stop); cudaEventElapsedTime(&amp;amp;time, start, stop); printf(&amp;#34;Occupancy calculator elapsed time: %3.</description>
-    </item>
-    
-    <item>
-      <title>多线程及其性能刻画</title>
-      <link>https://fffzlfk.github.io/posts/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%8F%8A%E5%85%B6%E6%80%A7%E8%83%BD%E5%88%BB%E7%94%BB/</link>
-      <pubDate>Sun, 27 Feb 2022 23:21:12 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%8F%8A%E5%85%B6%E6%80%A7%E8%83%BD%E5%88%BB%E7%94%BB/</guid>
-      <description>使用多线程提高并行性 同步的代价 我们研究对一列整数 $0, &amp;hellip;, n - 1$ 求和，我们将序列划分成 $t$ 个不相交的的区域，给 $t$ 个线程每个分配一个区域。将线程的和放入一个变量中，并且我们使用互斥锁来保护这个变量。
-use std::{ sync::{Arc, Mutex}, thread, time::Instant, }; fn main() { let args = std::env::args().collect::&amp;lt;Vec&amp;lt;String&amp;gt;&amp;gt;(); if args.len() != 3 { panic!(&amp;#34;Usage: {} &amp;lt;nthreads&amp;gt; &amp;lt;log_nelems&amp;gt;&amp;#34;, args[0]); } let nthreads: usize = args[1].parse().unwrap(); let log_nelems: usize = args[2].parse().unwrap(); let nelems = 1_usize &amp;lt;&amp;lt; log_nelems; let nelems_per_thread = nelems / nthreads; let gsum = Arc::new(Mutex::new(0)); let now = Instant::now(); let mut handlers = vec!</description>
-    </item>
-    
-    <item>
-      <title>C&#43;&#43;中容易犯的错误</title>
-      <link>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%AD%E5%AE%B9%E6%98%93%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</link>
-      <pubDate>Wed, 23 Feb 2022 23:31:50 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%AD%E5%AE%B9%E6%98%93%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</guid>
-      <description>不正确地使用new和delete 无论我们如何努力，要释放所有动态分配的内存是非常困难的。即使我们能做到这一点，也往往不能安全地避免出现异常。让我们看一个简单的例子。
-void SomeMethod() { ClassA *a = new ClassA; SomeOtherMethod(); // it can throws an execption delete a; } 如果SomeOtherMethod抛出了异常，那么a对象永远不会被删除。下面的例子展示了一个更加安全同时又更简洁的实现，使用了在C++11提出的std::unique_ptr。
-void SomeMethod() { std::unique_ptr&amp;lt;ClassA&amp;gt; a(new ClassA); SomeOtherMethod(); } 无论发生什么，当a退出作用域的时候，它会被释放。
-然而，这仅仅是C++中这种错误最简单的例子，还有很多例子表明delete应该在其他地方调用，也许是在外层函数或者另一个线程中。这就是为什么应该避免使用new和delete，而应该使用适当的智能指针。
-被忘记的虚析构函数 这是最常见的错误之一，如果派生类中有动态内存分配，将会导致派生类的内存泄漏。这里有一些例子，当一个类不打算用于继承，并且它的大小和性能是至关重要的。虚析构函数或任何其他虚函数在类在类中引入了额外的数据，即指向虚函数表的指针，这使得类的任何实例的大小变大。
-然而，在大多数情况下，类可以被继承，即使它的初衷并非如此。因此，在声明一个类的时候，添加一个虚析构函数是一个非常好的做法。否则，如果一个类由于性能的原因必须不包含虚函数，那么在类的声明文件里面加上一个注释，说明这个类不应该被继承，是一个很好的做法。避免这个问题的最佳选择之一是使用一个支持在创建类时创建虚析构函数的IDE。
-关于这个问题，还有一点是来自标准库的类或模板。它们不是用来继承的，也没有一个虚析构函数。例如，如果我们创建了一个公开继承自std::string的新的增强字符串类，就可能有人错误地使用它与std::string的指针或引用，从而导致内存泄漏。
-class MyString : public std::string { ~MyString() {} }; int main() { std::string *s = new MyString(); delete s; // May not invoke the destructor defined in MyString } 为了避免这样的问题，重用标准库中的类或模板的一个更安全的方法是使用私有继承1或组合。
-用delete或智能指针删除一个数组 创建动态大小的临时数组往往是必要的。当它们不再需要时，释放分配的内存是很重要的。这里的问题是，C++需要带有[]括号的特殊删除操作符，这一点很容易被遗忘。delete[]操作符不仅会删除分配给数组的内存，而且会首先调用数组中所有对象的析构函数。对原始类型使用不带[]括号的删除操作符也是不正确的，尽管这些类型没有析构函数，每个编译器都不能保证一个数组的指针会指向数组的第一个元素，所以使用不带[]括号的delete也会导致未定义的行为。
-在数组中使用智能指针，如unique_ptr&amp;lt;T&amp;gt;, shared_ptr，也是不正确的。当这样的智能指针从作用域中退出时，它将调用不带[]括号的删除操作符，这将导致上面描述的同样问题。如果需要对数组使用智能指针，可以使用unique_ptr&amp;lt;T[]&amp;gt;的特殊化。
-如果不需要引用计数的功能，主要是数组的情况，最优雅的方法是使用STL向量来代替。它们不只是负责释放内存，而且还提供额外的功能。</description>
-    </item>
-    
-    <item>
-      <title>C&#43;&#43; 完美转发</title>
-      <link>https://fffzlfk.github.io/posts/c&#43;&#43;_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</link>
-      <pubDate>Sat, 05 Feb 2022 14:10:47 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/c&#43;&#43;_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</guid>
-      <description>为什么要有完美转发 下面是一个类工厂函数：
-template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 参数对象arg在上面的例子中是传值方式传递，这带来了生成额外临时对象1的代价，所以我们改成引用传递：
-template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg &amp;amp;arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 但这种实现的问题是不能绑定右值实参。如factory&amp;lt;X&amp;gt;(42)将编译报错，进一步的，我们按常量引用来传递：
-template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(const Arg &amp;amp;arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 这种实现的问题是不能支持移动语义，形参使用右值引用可以解决完美转发问题。
-引用折叠 在C++11之前，我们不能对一个引用类型继续引用，但C++由于右值引用的出现而放宽2了这一做法，从而产生了引用折叠规则，允许我们对引用进行引用，既能左引用，又能右引用。但是却遵循如下规则：
-函数形参类型 实参类型 推导后函数形参类型 T&amp;amp; 左引用 T&amp;amp; T&amp;amp; 右引用 T&amp;amp; T&amp;amp;&amp;amp; 左引用 T&amp;amp; T&amp;amp;&amp;amp; 右引用 T&amp;amp;&amp;amp; 模板参数类型推导 对函数模板template&amp;lt;typename T&amp;gt;void foo(T&amp;amp;&amp;amp;);，应用上述引用折叠规则，可总结出以下结论：
-如果实参是类型A的左值，则模板参数T的类型为A&amp;amp;，形参类型为A&amp;amp;； 如果实参是类型A的右值，则模板参数T的类型为A&amp;amp;&amp;amp;，形参类型为A&amp;amp;&amp;amp;。 这同样适用于类模板的成员函数模板的类型推导：</description>
-    </item>
-    
-    <item>
-      <title>Cuda 编程模型</title>
-      <link>https://fffzlfk.github.io/posts/cuda_%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/</link>
-      <pubDate>Wed, 19 Jan 2022 12:55:19 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/cuda_%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/</guid>
-      <description>Kernels CUDA C++对C++进行了扩展，允许程序员定义C++函数，称为内核，当被调用时，由 $N$ 个不同的CUDA线程并行执行 $N$ 次，而不是像普通C++函数那样只执行一次。
-kernel是使用__global__声明定义的，对于特定的内核调用，执行该内核的CUDA线程数量是使用&amp;lt;&amp;lt;&amp;lt;...&amp;gt;&amp;gt;&amp;gt;执行配置语法指定的（C++语言扩展）。每个执行内核的线程都有一个唯一的线程ID，可以在内核内通过内置变量访问。
-作为说明，下面的示例代码，使用内置变量threadIdx，将两个大小为 $N$ 的向量 $A$ 和 $B$ 相加，并将结果存入向量 $C$ 。
-// Kernel definition __global__ void VecAdd(float* A, float* B, float* C) { int i = threadIdx.x; C[i] = A[i] + B[i]; } int main() { ... // Kernel invocation with N threads VecAdd&amp;lt;&amp;lt;&amp;lt;1, N&amp;gt;&amp;gt;&amp;gt;(A, B, C); ... } 在这里，执行VecAdd()的 $N$ 个线程中的每一个都执行了一次加法。
-线程体系 为方便起见，threadIdx是一个 $3$ 分量的向量，因此可以用一维、二维或三维的线程索引来识别线程，形成一个一维、二维或三维的线程块，称为线程块。这提供了一种自然的方式来调用域中的元素进行计算，如矢量、矩阵或体积。
-一个例子，下面的代码将两个大小为 $N\times N$ 的矩阵 $A$ 和 $B$ 相加，并将结果存入矩阵 $C$ 。</description>
-    </item>
-    
-    <item>
-      <title>Cuda 硬件实现</title>
-      <link>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</link>
-      <pubDate>Tue, 18 Jan 2022 15:31:10 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</guid>
-      <description>一组带有 on-chip 共享内存的 SIMD 多处理器 设备可以被看作一组多处理器，如图所示。每个多处理器使用单指令多数据(SIMD)架构：在任何给定的时钟周期内，多处理器的每个处理器执行同一指令，但操作不同的数据。
-每个多处理器使用四个以下类型的on-chip内存：
-每个处理器一组 $32$ 位寄存器 并行数据缓存或共享内存，被所有处理器共享实现内存空间共享 通过设备内存的一个只读区域，一个只读常量缓存器被所有处理器共享 通过设备内存的一个只读区域，一个只读纹理缓存器被所有处理器共享 本地和全局内存空间作为设备内存的读写区域，而不被缓冲。 每个多处理器通过纹理单元访问纹理缓冲器，它执行各种各样的寻址模式和数据过滤。
-执行模式 一个线程块网格是通过多处理器规划执行的。每个多处理器一个接一个的处理块批处理。一个块只被一个多处理器处理，因此可以对驻留在on-chip共享内存的共享内存空间形成非常快速的访问。
-一个批处理中每个多处理器可以处理多少个块，取决于每个线程中分配了多少个寄存器和已知内核中每个时钟需要多少的共享内存，因为多处理器的寄存器和内存在所有的线程中是分开的。如果在至少一个块中，每个多处理器没有足够高的寄存器或共享内存用，那么内核将无法启动。
-线程块在一个批处理中被一个多处理器执行，被称为active，每个active块被划分成SIMD线程组，被称为warps；每一条这样的warp包含数量相同的线程，叫做warp大小，并且在SIMD的方式下通过多处理器执行，执行调度程序周期性地从一条warp切换到另一条warp，以达到多处理器计算资源使用的最大化。
-块被划分成warp的方式总是相同的；每条warp包含连续的线程，线程索引从第一个warp包含着的线程 0 开始递增。
-一个多处理器可以并发地处理几个块，通过划分在它们之中的寄存器和共享内存。更准确地说，每条线程可使用的寄存器数量，等于每个多处理器寄存器总数除以并发的线程数量，并发线程的数量等于并发块的数量乘以每块线程的数量。
-在一个线程块网格内的块次序是未定义的，并且在块之间不存在同步机制，因此来自同一个网格的两个不同块的线程不能通过全局内存彼此安全地通讯。
-计算兼容性 设备的兼容性由两个参数定义，主要版本号和次要版本号。设备拥有的主要版本号代表相同的核心架构。
-次要版本号代表一些改进的核心架构。比如新的特性。
-多设备 为一个应用程序使用多GPU作为CUDA设备，必须保证这些CPU是一样的类型。如果系统工作在SLI 模式下，那么只有一个GPU可以作为CUDA设备，由于所有的GPU在驱动堆栈中被底层的融合了。SLI 模式需要在控制面板中关闭,这样才能使多个GPU作为CUDA设备</description>
-    </item>
-    
-    <item>
-      <title>OpenCV Canny Detector</title>
-      <link>https://fffzlfk.github.io/posts/opencv_canny_detector/</link>
-      <pubDate>Mon, 17 Jan 2022 11:35:18 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/opencv_canny_detector/</guid>
-      <description>理论 Canny边缘检测是由John F. Canny在1986年开发的。许多人也将其称为最佳检测器，Canny算法旨在满足三个主要标准。
-好的检测：算法能够尽可能多地标识出图像中的实际边缘。 好的定位：标识出的边缘要与实际图像中的实际边缘尽可能接近。 最小响应：图像中的边缘只能标识一次，并且可能存在的图像雜訊不应标识为边缘。 步骤 降噪：使用高斯滤波来达到，下面是一个大小为 $5$ 的高斯核的例子： $$ K = \frac{1}{159}\begin{bmatrix} 2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2\\ 4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\\ 5 &amp;amp; 12 &amp;amp; 15 &amp;amp; 12 &amp;amp; 5\\ 4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\\ 2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2 \end{bmatrix} $$
-找到图像的亮度梯度：为此，我们遵循一个类似于Sobel的程序：
-应用一对卷积masks（在 $x$ 和 $y$ 方向上）： $$ G_x = \begin{bmatrix} -1 &amp;amp; 0 &amp;amp; +1\\ -2 &amp;amp; 0 &amp;amp; +2\\ -1 &amp;amp; 0 &amp;amp; +1 \end{bmatrix}, G_y=\begin{bmatrix} -1 &amp;amp; -2 &amp;amp; -1\\ 0 &amp;amp; 0 &amp;amp; 0\\ +1 &amp;amp; +2 &amp;amp; +1 \end{bmatrix} $$ 寻找梯度强度和方向： $$ G=\sqrt{G_x^2+G_y^2}\\ \theta = \arctan(\frac{G_y}{G_x}) $$ 方向被四舍五入为四个可能的角度之一（即 $0\degree$ 、 $45\degree$ 、 $90\degree$ 或 $135\degree$ ）。 过滤非最大值：在高斯滤波过程中，边缘有可能被放大了。这个步骤使用一个规则来过滤不是边缘的点，使边缘的宽度尽可能为1个像素点：如果一个像素点属于边缘，那么这个像素点在梯度方向上的梯度值是最大的。否则不是边缘，将灰度值设为 $0$ 。 $$ M_T(m, n) = \begin{cases} M(m, n)&amp;amp; \text{if } M(m, n) \lt T\\ 0 &amp;amp; \text{otherwise} \end{cases} $$</description>
-    </item>
-    
-    <item>
-      <title>OpenCV Laplace Operator</title>
-      <link>https://fffzlfk.github.io/posts/opencv_laplace_operator/</link>
-      <pubDate>Mon, 17 Jan 2022 08:22:11 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/opencv_laplace_operator/</guid>
-      <description>理论 在之前的教程中，我们学习了如何使用Sobel算子。它是基于这样一个事实，即在边缘区域，像素强度显示了一个 &amp;ldquo;跳跃&amp;quot;或强度的高变化。得到强度的一阶导数，我们观察到边缘的特征是一个最大值，如图所示： 那么，如果我们取二阶导数会怎样？ 你可以观察到，边缘二阶导数是零! 因此，我们也可以用这个标准来尝试检测图像的边缘。然而，请注意，零值不仅会出现在边缘（它们实际上可以出现在其他无意义的位置）；这可以通过在需要时使用过滤来解决。
-拉普拉斯算子 从上面的解释中，我们可以推断出，二阶导数可以用来检测边缘。由于图像是二维的，我们需要在两个维度上取导数。这里，拉普拉斯算子就派上用场了。 拉普拉斯算子的定义是： $$ Laplace(f) = \frac{\partial^2f}{\partial x^2}+\frac{\partial^2f}{\partial y^2} $$ 拉普拉斯算子在OpenCV中是由函数Laplacian()实现的。事实上，由于拉普拉斯算子使用图像的梯度，它在内部调用索贝尔算子来进行计算的。 Code 代码链接
-Explanation 变量声明 // Declare the variables we are going to use Mat src, src_gray, dst; int kernel_size = 3; int scale = 1; int delta = 0; int ddepth = CV_16S; const char* window_name = &amp;#34;Laplace Demo&amp;#34;; 加载图像 const char* imageName = argc &amp;gt;=2 ? argv[1] : &amp;#34;./images/lena.jpg&amp;#34;; src = imread( samples::findFile( imageName ), IMREAD_COLOR ); // Load an image // Check if image is loaded fine if(src.</description>
-    </item>
-    
-    <item>
-      <title>OpenCV Sobel Derivatives</title>
-      <link>https://fffzlfk.github.io/posts/opencv_sobel_derivatives/</link>
-      <pubDate>Sun, 16 Jan 2022 12:18:12 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/opencv_sobel_derivatives/</guid>
-      <description>理论 在之前的两个教程中，我们已经看到了卷积的应用实例。最重要的卷积之一是计算图像中的导数（或对它们的近似值）
-为什么图像中的导数计算可能是重要的？让我们设想一下，我们要检测图像中存在的边缘。比如说： 你可以很容易地注意到，在一个边缘，像素强度的变化是很明显的。一个表达变化的好方法是使用导数。梯度的高变化表示图像中的一个重大变化。
-为了更加形象，让我们假设我们有一个一维图像。在下面的图中，一个边缘由强度的 &amp;ldquo;跳跃 &amp;ldquo;来表示： 如果我们取第一个导数，可以更容易地看到边缘的 &amp;ldquo;跳跃&amp;rdquo;（实际上，这里出现的是一个最大值）： 因此，从上面的解释中，我们可以推断出，检测图像中的边缘的方法可以通过定位梯度高于其邻居的像素位置（或者概括地说，高于一个阈值）来进行。
-更详细的解释，请参考Bradski和Kaehler的《Learning OpenCV》。
-Sobel 算子 Sobel算子是一个离散的微分算子，它计算图像强度函数的梯度的近似值。 Sobel算子结合了Gaussian smoothing和微分。 Formulation 假设要操作的图像为 $I$:
-我们计算两个导数： 水平变化：这是通过用奇数大小的内核 $G_x$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_x$ 将被计算为： $$ G_x=\begin{bmatrix} -1 &amp;amp; 0 &amp;amp; +1\\ -2 &amp;amp; 0 &amp;amp; +2\\ -1 &amp;amp; 0 &amp;amp; +1 \end{bmatrix} * I $$ 垂直变化：这是通过用奇数大小的内核 $G_y$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_y$ 将被计算为： $$ G_y = \begin{bmatrix} -1 &amp;amp; -2 &amp;amp; -1\\ 0 &amp;amp; 0 &amp;amp; 0\\ +1 &amp;amp; +2 &amp;amp; + 1 \end{bmatrix} * I $$ 在图像的每一点上，我们通过结合上述两个结果计算出该点的梯度近似值： $$ G = \sqrt{G_{x}^{2}+G_{y}^{2}} $$ 有时会使用以下更简单的方程式： $$ G = |G_x|+|G_y| $$ 当核的大小为 $3$ 时，上面显示的 Sobel核可能会产生明显的不准确（毕竟， Sobel 只是一个导数的近似值）。OpenCV通过使用 Scharr() 函数来解决这种大小为 $3$ 的核的不精确性。这和标准的 Sobel 函数一样快，但比它更准确。它可以实现以下内核 $$ G_x=\begin{bmatrix} -3 &amp;amp; 0 &amp;amp; +3\\ -10 &amp;amp; 0 &amp;amp; +10\\ -3 &amp;amp; 0 &amp;amp; +3 \end{bmatrix}, G_y=\begin{bmatrix} -3 &amp;amp; -10 &amp;amp; -3\\ 0 &amp;amp; 0 &amp;amp; 0\\ +3 &amp;amp; +10 &amp;amp; +3 \end{bmatrix} $$</description>
-    </item>
-    
-    <item>
-      <title>OpenCV Erosion Dilatation</title>
-      <link>https://fffzlfk.github.io/posts/opencv_erosion_dilatation/</link>
-      <pubDate>Sun, 09 Jan 2022 12:25:24 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/opencv_erosion_dilatation/</guid>
-      <description>形态学操作 简而言之：一套基于形状处理图像的操作。形态学操作将一个结构化元素应用于输入图像，并生成一个输出图像。 最基本的形态学操作是。腐蚀和膨胀。它们有广泛的用途，即 去除噪音 隔离单个元素和连接图像中不同的元素 寻找图像中的强度凹凸点或洞 我们将以下面的图像为例，简要地解释膨胀和侵蚀。 Dilation（膨胀） 这种操作包括将图像A与一些kernel B进行卷积，内核可以有任何形状或大小，通常是一个正方形或圆形。 kernel B有一个定义的锚点(anchor point)，通常是核的中心。 当kernel B在图像上扫描时，我们计算出被B重叠的最大像素值，并用该最大值替换锚点位置的图像像素。正如你可以推断的那样，这种最大化的操作会使图像中的明亮区域 &amp;ldquo;增长&amp;rdquo;（因此被称为膨胀）。 膨胀操作： $dst(x, y)=max(x^{&amp;rsquo;}, y^{&amp;rsquo;})_{:element(x^{&amp;rsquo;}, y^{&amp;rsquo;}) \ne 0} src(x+x^{&amp;rsquo;}, y+y^{&amp;rsquo;})$ 以上面的图像为例。应用膨胀的方法，我们可以得到 腐蚀 它在给定内核的区域内计算局部最小值。当内核B在图像上被扫描时，我们计算出被B重叠的最小像素值，并用该最小值替换锚点下的图像像素。 腐蚀操作为：$dst(x, y)=min(x^{&amp;rsquo;}, y^{&amp;rsquo;})_{:element(x^{&amp;rsquo;}, y^{&amp;rsquo;}) \ne 0} src(x+x^{&amp;rsquo;}, y+y^{&amp;rsquo;})$ 与膨胀的例子类似，我们可以对原始图像应用腐蚀算子（如上图）。你可以在下面的结果中看到，图像的亮区变薄了，而暗区变大了。 Code #include &amp;#34;basic/erosion_dilatation.hpp&amp;#34; namespace basic { namespace erosion_dilatation { namespace impl { Mat src, erosion_dst, dilation_dst; int erosion_elem = 0; int erosion_size = 0; int dilation_elem = 0; int dilation_size = 0; int const max_elem = 2; int const max_kernel_size = 21; int work(int argc, char **argv) { CommandLineParser parser(argc, argv, &amp;#34;{@input | .</description>
-    </item>
-    
-    <item>
-      <title>OpenCV Blurring</title>
-      <link>https://fffzlfk.github.io/posts/opencv_blurring/</link>
-      <pubDate>Sun, 09 Jan 2022 07:37:09 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/opencv_blurring/</guid>
-      <description>理论 Smoothing也叫blurring（模糊化），是一个简单而常用的图像处理操作。
-Smoothing有很多原因。在本教程中，我们将重点讨论平滑操作，以减少噪音。
-为了进行平滑操作，我们将对我们的图像应用一个filter。最常见的filter是线性的，其中输出像素的值（即 $g(i,j)$ ）为输入像素值的加权和（即 $f(i+k,j+l)$ ）。
-$$ g(i, j) = \sum_{k, l}{f(i+k, j+l)h(k, l)} $$
-$h(k,l)$ 被称为kernel，它只不过是filter的系数。这有助于把滤波器想象成一个在图像上滑动的系数窗口。
-滤波器有很多种类，这里我们将提到最常用的几种。
-Normalized Box Filter（归一化块滤波器） 这个滤波器是最简单的，每个输出像素都是其内核邻居的平均值（所有的像素都有相同的权重）。 $$ K = \frac{1}{K_{width} \cdot k_{height}} \begin{bmatrix} 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\\ 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\\ . &amp;amp; . &amp;amp; . &amp;amp; &amp;hellip;&amp;amp; 1\\ 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1 \end{bmatrix} $$
-Gaussian Filter（高斯滤波器） 可能是最有用的滤波器（尽管不是最快的）。高斯滤波是通过用高斯内核对输入阵列中的每个点进行卷积，然后将它们全部相加来产生输出阵列的。
-让我们回顾一下1D Gaussian kernel是什么样子： 假设图像是一维的，你可以注意到，位于中间的像素会有最大的权重。它的邻居的权重随着它们与中心像素之间的空间距离增加而减少。</description>
-    </item>
-    
-    <item>
-      <title>Cuda软件架构</title>
-      <link>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</link>
-      <pubDate>Sat, 08 Jan 2022 06:27:04 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</guid>
-      <description>硬件 SP(Streaming Processor)：流处理器，是GPU最基本的处理单元，在fermi架构开始被叫做CUDA core。
-SM(Streaming MultiProcessor)：一个SM由多个CUDA core组成。
-比如说，如果一个GPU有 $4$ 个SM，并且每个SM有 $768$ 个SP(Aka CUDA core)；那么在某一时刻，真正并行运行的线程数不会超过 $4 \times 768$ 个。
-软件 threads被组织成blocks。一个block的线程可以用1Dimension(x), 2Dimensions(x, y)或者3Dim indexs(x, y, z) 索引，
-显然，如果你需要 $4 \times 768$ 个以上的threads的话你需要 $4$ 个以上的blocks。blocks也可以使用1D, 2D或3D索引，这些blocks被放在等待队列上进入GPU执行。
-Wrap 当一个kernel被执行时，grid中的线程块被分配到SM上。一个CUDA core可以执行一个thread，一个SM的CUDA core会分成几个wrap，由wrap scheduler负责调度。
-一个wrap中的线程在同一个block中，如果block所含线程数不是wrap的大小的整数倍，那么多出来的那些thread所在的wrap中，会剩余一些inactive的thread。
-一个简单的case 处理一张 $512 \times 512$ 的图片。
-假设我们希望一个线程处理一个像素pixel(i, j)。
-我们可以使用每 $64$ 个线程的区块。所以我们需要 $\frac{512 \times 512 }{64} = 4096$ 个区块（为了拥有 $512 \times 512 $ 个线程 ）。
-通常情况下，我们将线程组织在2D区块中（为了更容易索引图像像素）。blockDim= $8 * 8$ ，我更喜欢叫它threadsPerBlock。
-dim3 threadsPerBlock(8, 8); 还有2D的gridDim= $64 \times 64$ （需要 $4096$ 个区块）。我更喜欢叫它numBlocks。</description>
-    </item>
-    
-    <item>
-      <title>CodeForces 762</title>
-      <link>https://fffzlfk.github.io/posts/codeforces-762/</link>
-      <pubDate>Sun, 26 Dec 2021 17:18:09 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/codeforces-762/</guid>
-      <description>Codeforces Round #762 (Div. 3)</description>
-    </item>
-    
-    <item>
-      <title>从模板元编程到constexpr(C&#43;&#43;)</title>
-      <link>https://fffzlfk.github.io/posts/%E4%BB%8E%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E5%88%B0constexprc&#43;&#43;/</link>
-      <pubDate>Sun, 28 Nov 2021 19:43:10 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E4%BB%8E%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E5%88%B0constexprc&#43;&#43;/</guid>
-      <description>C++元编程</description>
-    </item>
-    
-    <item>
-      <title>Go设计模式</title>
-      <link>https://fffzlfk.github.io/posts/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</link>
-      <pubDate>Sun, 18 Jul 2021 22:52:35 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</guid>
-      <description>Go Design Scheme</description>
-    </item>
-    
-    <item>
-      <title>网络应用程序设计</title>
-      <link>https://fffzlfk.github.io/posts/%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</link>
-      <pubDate>Wed, 07 Apr 2021 20:48:12 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</guid>
-      <description>Network Program Design for Application</description>
-    </item>
-    
-    <item>
-      <title>分布式计算</title>
-      <link>https://fffzlfk.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/</link>
-      <pubDate>Sat, 13 Mar 2021 13:57:34 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/</guid>
-      <description>Distributed Computing</description>
-    </item>
-    
-    <item>
-      <title>编译原理</title>
-      <link>https://fffzlfk.github.io/posts/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/</link>
-      <pubDate>Thu, 11 Mar 2021 10:51:32 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/</guid>
-      <description>Compiler Principles</description>
-    </item>
-    
-    <item>
-      <title>牛顿法求平方根</title>
-      <link>https://fffzlfk.github.io/posts/%E7%89%9B%E9%A1%BF%E6%B3%95%E6%B1%82%E5%B9%B3%E6%96%B9%E6%A0%B9/</link>
-      <pubDate>Tue, 23 Feb 2021 17:18:19 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E7%89%9B%E9%A1%BF%E6%B3%95%E6%B1%82%E5%B9%B3%E6%96%B9%E6%A0%B9/</guid>
-      <description>Newton&amp;rsquo;s method for the square root</description>
-    </item>
-    
-    <item>
-      <title>子数组和问题</title>
-      <link>https://fffzlfk.github.io/posts/%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C%E9%97%AE%E9%A2%98/</link>
-      <pubDate>Sun, 21 Feb 2021 22:46:48 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C%E9%97%AE%E9%A2%98/</guid>
-      <description>the Sum of Subsequence</description>
-    </item>
-    
-    <item>
-      <title>Python装饰器</title>
-      <link>https://fffzlfk.github.io/posts/python%E8%A3%85%E9%A5%B0%E5%99%A8/</link>
-      <pubDate>Tue, 02 Feb 2021 14:23:44 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/python%E8%A3%85%E9%A5%B0%E5%99%A8/</guid>
-      <description>Python decorator</description>
-    </item>
-    
-    <item>
-      <title>每日一题</title>
-      <link>https://fffzlfk.github.io/posts/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</link>
-      <pubDate>Sun, 10 Jan 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</guid>
-      <description>Algorithms Problems</description>
-    </item>
-    
-    <item>
-      <title>SQL</title>
-      <link>https://fffzlfk.github.io/posts/sql/</link>
-      <pubDate>Sat, 24 Oct 2020 20:22:42 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/sql/</guid>
-      <description>SQL 语句</description>
-    </item>
-    
-    <item>
-      <title>微机原理</title>
-      <link>https://fffzlfk.github.io/posts/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86/</link>
-      <pubDate>Sat, 17 Oct 2020 21:07:26 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86/</guid>
-      <description>西电微机原理</description>
-    </item>
-    
-    <item>
-      <title>C&#43;&#43;(临时对象的分析)</title>
-      <link>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/</link>
-      <pubDate>Sat, 10 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/</guid>
-      <description>关闭编译器优化</description>
-    </item>
-    
-    <item>
-      <title>算法（第四版）</title>
-      <link>https://fffzlfk.github.io/posts/algorithm4th/</link>
-      <pubDate>Fri, 09 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/algorithm4th/</guid>
-      <description>The solution of algs4&amp;rsquo;s exercise</description>
-    </item>
-    
-    <item>
-      <title>OOP(C&#43;&#43;)</title>
-      <link>https://fffzlfk.github.io/posts/oopc&#43;&#43;/</link>
-      <pubDate>Tue, 06 Oct 2020 12:25:11 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/oopc&#43;&#43;/</guid>
-      <description>Object-Oriented Programming</description>
-    </item>
-    
-    <item>
-      <title>泰勒公式总结</title>
-      <link>https://fffzlfk.github.io/posts/%E6%B3%B0%E5%8B%92%E5%85%AC%E5%BC%8F%E6%80%BB%E7%BB%93/</link>
-      <pubDate>Fri, 31 Jul 2020 22:41:12 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E6%B3%B0%E5%8B%92%E5%85%AC%E5%BC%8F%E6%80%BB%E7%BB%93/</guid>
-      <description>Taylor formula</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on fffzlfk's Blog</title><link>https://fffzlfk.github.io/posts/</link><description>Recent content in Posts on fffzlfk's Blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Thu, 22 May 2025 15:55:17 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>使用自然语言交互Neon数据库</title><link>https://fffzlfk.github.io/posts/%E4%BD%BF%E7%94%A8%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E4%BA%A4%E4%BA%92neon%E6%95%B0%E6%8D%AE%E5%BA%93/</link><pubDate>Thu, 22 May 2025 15:55:17 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E4%BD%BF%E7%94%A8%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E4%BA%A4%E4%BA%92neon%E6%95%B0%E6%8D%AE%E5%BA%93/</guid><description>&lt;h2 id="neon-mcp-服务器">Neon MCP 服务器&lt;/h2>
+&lt;p>Neon MCP Server 是一个开源工具，它让你通过自然语言与 Neon Postgres 数据库进行交互。&lt;/p>
+&lt;p>不再需要使用 Neon 控制台或 API，只需输入类似“创建名为 &amp;lsquo;my-new-database&amp;rsquo; 的数据库”的请求即可。
+如果你想查看你的项目，你可以问：“列出我所有的 Neon 项目”。Neon MCP Server 让这一切成为可能。&lt;/p>
+&lt;p>它的工作原理是作为自然语言请求和 Neon API 之间的桥梁。基于 Model Context Protocol（MCP） 构建，它可以将你的请求转换为必要的 Neon API 调用，使你能够管理从创建项目和分支到运行查询和执行数据库迁移的一切操作。&lt;/p>
+&lt;p>Neon MCP Server 在 MCP 架构中充当服务器角色，专为 Neon 设计。它提供了一组工具，MCP 客户端（如 Claude Desktop、Cursor）可以利用这些工具来管理 Neon 资源。这包括项目管理、分支管理、执行 SQL 查询以及处理数据库迁移等操作，所有这些都是通过自然语言请求驱动的。&lt;/p>
+&lt;h3 id="mcp-和-neon-mcp-server">MCP 和 Neon MCP Server&lt;/h3>
+&lt;p>Model Context Protocol (MCP) 标准化了大语言模型（LLMs）与外部工具之间的通信。它定义了一个客户端-服务器架构，使 LLMs（称为 Hosts）可以连接到提供上下文和工具的专业服务器，从而与外部系统进行交互。MCP 架构的关键组件包括：&lt;/p>
+&lt;ul>
+&lt;li>Host（主机） ：这些是 AI 应用程序，例如 Claude Desktop 或 Cursor 这类 IDE，它们会主动连接到 MCP 服务器。&lt;/li>
+&lt;li>Client（客户端） ：这些客户端位于 Host 应用中，并与各个 MCP 服务器保持一对一连接。&lt;/li>
+&lt;li>Server（服务器） ：这类程序，如 Neon MCP Server，为客户端提供上下文、工具和提示信息，使其可以访问外部数据和功能。&lt;/li>
+&lt;/ul>
+&lt;h3 id="为什么要使用-mcp">为什么要使用 MCP？&lt;/h3>
+&lt;p>传统上，将 AI 模型连接到不同数据源需要开发者为每个集成编写定制代码。这种碎片化的方法增加了开发时间、维护负担，并限制了 AI 模型与工具之间的互操作性。MCP 通过提供一种标准化协议解决了这个问题，简化了集成过程，加速了开发速度，并增强了 AI 助手的功能。&lt;/p></description></item><item><title>数据库索引实现</title><link>https://fffzlfk.github.io/posts/database-index-implementation/</link><pubDate>Tue, 10 Oct 2023 04:38:46 +0800</pubDate><guid>https://fffzlfk.github.io/posts/database-index-implementation/</guid><description>&lt;h2 id="b-树">B 树&lt;/h2>
+&lt;p>B 树（B-tree）是一种自平衡的树，能够保持数据有序。这种数据结构能够让查找数据、顺序访问、插入数据及删除的动作，都在对数时间内完成。&lt;/p>
+&lt;p>在 B 树中，有两种结点:&lt;/p>
+&lt;ol>
+&lt;li>内部结点（internal node）：存储了数据以及指向其子结点的指针。&lt;/li>
+&lt;li>叶子结点（leaf node）：与内部结点不同的是，叶子结点只存储数据，并没有子结点。&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img src="./images/1.png" alt="">&lt;/p>
+&lt;h2 id="b-树-1">B+ 树&lt;/h2>
+&lt;p>B+ 树是 B 树的一个升级。&lt;/p>
+&lt;ul>
+&lt;li>所有的非叶子结点可以看成是索引部分，不存储数据；&lt;/li>
+&lt;li>叶子结点存储数据，并且所有叶子结点形成链表。&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="./images/2.png" alt="">&lt;/p>
+&lt;h3 id="相比-b-树的优点">相比 B 树的优点&lt;/h3>
+&lt;ul>
+&lt;li>B+ 树中数据都存储在叶子结点上并链接在一起，这使得 B+ 树在查询范围内的数据时更加高效，因为它可以在一次遍历中查询出所有符合条件的数据。&lt;/li>
+&lt;li>全表扫描性能好，而B树需要完整遍历整棵树。&lt;/li>
+&lt;/ul>
+&lt;h2 id="b-link-树">B-link 树&lt;/h2>
+&lt;p>B-link 树是在 B+ 树上的一种改进，该结构提升了读写并发度，能够保持高并发下的性能稳定。PostgreSQL 中使用的就是这中索引结构。&lt;/p>
+&lt;ul>
+&lt;li>在中间结点增加字段 link pointer，指向右兄弟结点，B-link Tree 的名字也由此而来；&lt;/li>
+&lt;li>在每个结点内增加一个字段 high key，在查询时如果目标值超过该节点的 high key，就需要循
+着 link pointer 继续往后继结点查找。&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="./images/3.png" alt="">&lt;/p>
+&lt;h3 id="优势">优势&lt;/h3>
+&lt;p>树结构调整时无需对全局或者局部子树加锁，进而有利于高并发下的性能稳定性。&lt;/p>
+&lt;h2 id="哈希索引hash-index">哈希索引（Hash Index）&lt;/h2>
+&lt;p>哈希索引是基于哈希表实现的。对于每行数据，存储引擎都会对所有的索引列计算一个哈希值，哈希值不同键值的行计算出来不同，哈希索引将所有的哈希值存储在索引中，同时在哈希表中保存指向每个数据行的指针。&lt;/p>
+&lt;p>&lt;img src="./images/4.png" alt="">&lt;/p>
+&lt;h2 id="全文索引full-text-index">全文索引（Full-text Index）&lt;/h2>
+&lt;p>全文索引是一种特殊的索引结构，它主要用于快速查询文本数据。全文索引使用的数据结构通常是倒排索引。倒排索引是一种线性结构，它记录了每个单词出现在文本中的位置。使用倒排索引可以快速查询出符合某些文本条件的数据。&lt;/p>
+&lt;h2 id="空间索引spatial-index">空间索引（Spatial Index）&lt;/h2>
+&lt;p>需要存储一些地理数据的位置或需要存储形状相关的数据时，可以使用空间索引。&lt;/p>
+&lt;h3 id="r-tree">R-Tree&lt;/h3>
+&lt;p>R树是用来做空间数据存储的树状数据结构。例如给地理位置，矩形和多边形这类多维数据创建索引。&lt;/p>
+&lt;p>&lt;img src="./images/5.png" alt="">&lt;/p>
+&lt;h3 id="kd-tree">KD-Tree&lt;/h3>
+&lt;p>kd-tree简称k维树，是一种空间划分的数据结构。常被用于高维空间中的搜索。&lt;/p>
+&lt;h3 id="网格索引grid-index">网格索引（Grid Index）&lt;/h3>
+&lt;p>对地理空间进行网格划分，划分成大小相同的网格，每个网格对应着一块存储空间，索引项登记上落入该网格的空间对象。&lt;/p></description></item><item><title>使用Docker部署openwrt软路由</title><link>https://fffzlfk.github.io/posts/how-to-deploy-soft-router-with-docker/</link><pubDate>Thu, 15 Jun 2023 20:59:46 +0800</pubDate><guid>https://fffzlfk.github.io/posts/how-to-deploy-soft-router-with-docker/</guid><description>&lt;h2 id="前期准备">前期准备&lt;/h2>
+&lt;h3 id="拉取-docker-image">拉取 Docker image&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>docker pull registry.cn-shanghai.aliyuncs.com/suling/openwrt:x86_64
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
+&lt;p>注：这里的镜像 tag 为架构，这里是 x86_64，可以根据自己的架构选择镜像。&lt;/p>&lt;/blockquote>
+&lt;h3 id="开启网卡混杂模式">开启网卡混杂模式&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>sudo ip link set eth0 promisc on
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>这里的&lt;code>eth0&lt;/code>修改为自己的网卡名称。&lt;/p>
+&lt;h3 id="创建-docker-网络">创建 Docker 网络&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>docker network create -d macvlan --subnet&lt;span style="color:#f92672">=&lt;/span>192.168.0.0/24 --gateway&lt;span style="color:#f92672">=&lt;/span>192.168.0.1 -o parent&lt;span style="color:#f92672">=&lt;/span>eth0 macnet
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>同样的，这里的&lt;code>subnet&lt;/code>修改为自己的网段，&lt;code>gateway&lt;/code>修改为当前网络内的网关。&lt;/p>
+&lt;h2 id="部署镜像">部署镜像&lt;/h2>
+&lt;h3 id="创建网络配置文件">创建网络配置文件&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>vim /path/to/openwrt/network
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>配置文件如下：&lt;/p>
+&lt;pre tabindex="0">&lt;code>config interface &amp;#39;loopback&amp;#39;
+ option ifname &amp;#39;lo&amp;#39;
+ option proto &amp;#39;static&amp;#39;
+ option ipaddr &amp;#39;127.0.0.1&amp;#39;
+ option netmask &amp;#39;255.0.0.0&amp;#39;
+
+config globals &amp;#39;globals&amp;#39;
+ option packet_steering &amp;#39;1&amp;#39;
+
+config interface &amp;#39;lan&amp;#39;
+ option type &amp;#39;bridge&amp;#39;
+ option ifname &amp;#39;eth0&amp;#39;
+ option proto &amp;#39;static&amp;#39;
+ option ipaddr &amp;#39;192.168.0.140&amp;#39;
+ option netmask &amp;#39;255.255.255.0&amp;#39;
+ option ip6assign &amp;#39;60&amp;#39;
+ option gateway &amp;#39;192.168.0.1&amp;#39;
+ option broadcast &amp;#39;192.168.0.255&amp;#39;
+ option dns &amp;#39;192.168.0.140&amp;#39;
+
+config interface &amp;#39;vpn0&amp;#39;
+ option ifname &amp;#39;tun0&amp;#39;
+ option proto &amp;#39;none&amp;#39;
+&lt;/code>&lt;/pre>&lt;p>按照自己的情况修改 &lt;code>config interface lan&lt;/code> 下的 &lt;code>option ipaddr&lt;/code>、&lt;code>option netmask&lt;/code>、&lt;code>option gateway&lt;/code>、&lt;code>option boardcast&lt;/code>和&lt;code>option dns&lt;/code>。&lt;/p></description></item><item><title>Are You Sure You Want to Use MMAP in Your Database Management System?[部分翻译]</title><link>https://fffzlfk.github.io/posts/are-you-sure-you-want-to-use-mmap-in-your-database-management-system_experimental-%E9%83%A8%E5%88%86%E7%BF%BB%E8%AF%91/</link><pubDate>Thu, 15 Dec 2022 13:18:08 +0800</pubDate><guid>https://fffzlfk.github.io/posts/are-you-sure-you-want-to-use-mmap-in-your-database-management-system_experimental-%E9%83%A8%E5%88%86%E7%BF%BB%E8%AF%91/</guid><description>&lt;h2 id="原文">原文&lt;/h2>
+&lt;p>&lt;a href="https://db.cs.cmu.edu/mmap-cidr2022/">Are You Sure You Want to Use MMAP in Your Database Management System?&lt;/a>&lt;/p>
+&lt;h2 id="4-实验分析">4 实验分析&lt;/h2>
+&lt;p>正如上一节解释的那样，一些&lt;code>mmap&lt;/code>的问题可以通过仔细地实现来克服，但是我们认为，如果不进行重大的操作系统级别的重写，其固有的性能限制就无法解决。在这一节，我们通过实验结果分析展示了这些问题。&lt;/p>
+&lt;p>我们所有的实验在一个单处理器插槽的机器上运行，其配置信息为：AMD EPYC 7713 CPU(64 cores, 128 hardware threads)，512GB RAM，其中100GB可用于Linux（v5.11）的页面缓存，对于持久性存储，该机器有10×3.8TB的 三星PM1733固态硬盘（额定读取速度为7000MB/s，写入速度为3800MB/s），我们将固态硬盘作为块设备来避免潜在的文件系统开销。&lt;/p>
+&lt;p>作为基准线，我们使用了存储基准工具&lt;code>fio&lt;/code>&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>，使用直接I/O(&lt;code>O_DIRECT&lt;/code>)来绕过操作系统页面缓存。我们的分析专门聚焦在只读工作负载上，这代表了基于&lt;code>mmap&lt;/code>的DBMS的最佳情况；否则，他们需要实现复杂的更新保护（3.1节），从而产生大量的额外开销。特别的是，我们评估了两种常见的访问模式：(1) 随机访问 和 (2) 顺序访问。&lt;/p>
+&lt;h3 id="41-随机读取">4.1 随机读取&lt;/h3>
+&lt;p>在第一个实验中，我们在一块2TB SSD 范围内使用随机访问模式来模拟大于内存的OLTP工作负载。由于页面缓存只有100GB的内存，95%的访问都导致了缺页中断（即工作负载是I/O绑定的）。&lt;/p>
+&lt;p>图2a展示了100个线程每秒随机读取的数量。我们的&lt;code>fio&lt;/code>基准线表现出了稳定的性能，达到了接近每秒90万次的读取速度，这符合100次出色的I/O操作和大约100𝜇s的NVMe延迟的预期性能。换句话说，这个结果表明，&lt;code>fio&lt;/code>可以使NVMe SSD的性能完全饱和。&lt;/p>
+&lt;p>&lt;img src="./images/Figure2.png" alt="">&lt;/p>
+&lt;p>另一方面，&lt;code>mmap&lt;/code>表现较差，即使是使用提示来匹配工作负载访问模式。我们在实验中观察到&lt;code>MADV_RANDOM&lt;/code>的三个不同阶段。&lt;code>mmap&lt;/code>在开始的27秒内与&lt;code>fio&lt;/code>表现接近，然后在接下来的5秒钟突然下降到接近0，最后恢复到&lt;code>fio&lt;/code>性能的一半。这个突然的性能下降发生在页面缓存被填满的时候，迫使操作系统开始从内存把页面置换出去。不出意料地是，其他访问模式提示下有更糟的性能表现。&lt;/p>
+&lt;p>在3.4节，我们列举了页面置换开销的三个关键来源。第一个问题是 TLB shootdowns&lt;sup id="fnref:2">&lt;a href="#fn:2" class="footnote-ref" role="doc-noteref">2&lt;/a>&lt;/sup>，我们使用&lt;code>/usr/interrupts&lt;/code>记录的情况如图2b所示。如前所述，TLB shootdowns是十分昂贵的（需要成千上万个时钟周期），因为它涉及到发送处理器间的中断来刷新每个核心的TLB。第二，操作系统使用单个进程（&lt;code>kswapd&lt;/code>）来置换页面，这在我们实验中是受CPU限制的。最后，操作系统必须同步页表，这在许多并发的线程中变得高度有竞争性。&lt;/p>
+&lt;h3 id="42-顺序扫描">4.2 顺序扫描&lt;/h3>
+&lt;p>顺序扫描是DBMS的另一种常见的访问模式，特别是在OLAP工作负载中。因此，我们也在2TB SSD范围内对比了&lt;code>fio&lt;/code>和&lt;code>mmap&lt;/code>的扫描性能。我们首先使用仅仅一块SSD运行了我们的实验，然后我们在10块SSD组成的RAID 0上重新跑了相同的工作负载。&lt;/p>
+&lt;p>图3展示了&lt;code>fio&lt;/code>可以利用一块SSD的全部带宽，同时保持稳定的性能。像之前的实验一样，&lt;code>mmap&lt;/code>的性能开始和&lt;code>fio&lt;/code>相似，但我们再次观察到，一旦页面缓存在大约17秒后被填满，性能就会急剧下降。另外，和这个工作负载预期的一样，&lt;code>MADV_NORMAL&lt;/code>和&lt;code>MADV_SEQUENTIAL&lt;/code>标志位比&lt;code>MADV_RANDOM&lt;/code>性能要好。&lt;/p>
+&lt;p>&lt;img src="./images/Figure3.png" alt="">&lt;/p>
+&lt;p>图4展示了在10块SSD上重复顺序扫描的结果，进一步凸显了现代闪存理论上能够提供的与&lt;code>mmap&lt;/code>能够实现的之间的差距。我们观察到在&lt;code>fio&lt;/code>和&lt;code>mmap&lt;/code>之间大概有20倍的性能差距，与使用一块SSD的结果相比，&lt;code>mmap&lt;/code>几乎没有任何提升。&lt;/p>
+&lt;p>&lt;img src="./images/Figure4.png" alt="">&lt;/p>
+&lt;p>总的来说，我们发现&lt;code>mmap&lt;/code>仅仅在单块SSD上的初始加载阶段表现得好。一旦页面置换开始或者使用多块SSD，&lt;code>mmap&lt;/code>要比&lt;code>fio&lt;/code>差2~20倍。随着PCIe 5.0 NVMe得即将发布，预计每块SSD的带宽将增加一倍，我们的结果展示了&lt;code>mmap&lt;/code>不能够与传统的文件I/O的顺序扫描的性能相媲美。&lt;/p>
+&lt;h2 id="6-结论">6 结论&lt;/h2>
+&lt;p>本论文提出了反对在DBMS中使用&lt;code>mmap&lt;/code>来进行文件I/O。尽管有有限的好处，我们还是介绍了&lt;code>mmap&lt;/code>的主要缺点，我们的实验分析证实了我们在其性能限制的发现。最后，我们向DBMS的开发者提供以下建议。&lt;/p>
+&lt;p>什么时候你&lt;strong>不&lt;/strong>应该在你的DBMS中使用&lt;code>mmap&lt;/code>：&lt;/p>
+&lt;ul>
+&lt;li>你需要以一种事务安全的方式进行更新。&lt;/li>
+&lt;li>你想在不阻塞慢速I/O的情况下处理缺页中断，或者需要对内存中的数据进行明确控制。&lt;/li>
+&lt;li>你关心错误处理，需要返回正确的结果。&lt;/li>
+&lt;li>你需要在高速持久性存储设备上获得高吞吐量。&lt;/li>
+&lt;/ul>
+&lt;p>什么时候你&lt;strong>也许&lt;/strong>应该使用&lt;code>mmap&lt;/code>：&lt;/p>
+&lt;ul>
+&lt;li>你的工作集（或者整个数据库）适合在内存中，并且工作负载是只读的。&lt;/li>
+&lt;li>你需要急于将产品推向市场，而不关心数据的一致性或者长期工程的头痛问题。&lt;/li>
+&lt;li>否则，永远不要使用。&lt;/li>
+&lt;/ul>
+&lt;div class="footnotes" role="doc-endnotes">
+&lt;hr>
+&lt;ol>
+&lt;li id="fn:1">
+&lt;p>&lt;a href="https://github.com/axboe/fio">fio: Flexible I/O Tester.&lt;/a>&amp;#160;&lt;a href="#fnref:1" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p></description></item><item><title>反向传播</title><link>https://fffzlfk.github.io/posts/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/</link><pubDate>Tue, 18 Oct 2022 21:52:39 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/</guid><description>&lt;h2 id="反向传播">反向传播&lt;/h2>
+&lt;p>反向传播（英语：Backpropagation，意为误差反向传播，缩写为BP）是对多层人工神经网络进行梯度下降的算法，也就是用链式法则以网络每层的权重为变数计算损失函数的梯度，以更新权重来最小化损失函数。&lt;/p>
+&lt;h2 id="简单例子计算">简单例子计算&lt;/h2>
+&lt;p>&lt;img src="https://p0.meituan.net/dpplatform/0102258668e345eee83a8459eaa8b95528740.png" alt="">&lt;/p>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>符号&lt;/th>
+ &lt;th>&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>$ w_{ij} $&lt;/td>
+ &lt;td>权重&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>$ z_i $&lt;/td>
+ &lt;td>输入&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>$ y_i $&lt;/td>
+ &lt;td>输出&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>$ E = \frac{1}{2}(y_p-y_a)^2$&lt;/td>
+ &lt;td>损失&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>$ f(x) = \frac{1}{1+e^{-x}}$&lt;/td>
+ &lt;td>激活函数&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;p>例如更新$w_{53}$&lt;/p>
+&lt;p>主要思想就是我们无法找到$E$和$w_{53}$的直接关系，所以使用链式求导法则来间接求梯度：
+$$
+w_{53}(new) = w_{53}(old) - \Delta w_{53}
+$$&lt;/p>
+&lt;p>$$
+\begin{cases}
+E = \frac{1}{2}(y_5-y_a)^2\\
+y_5 = f(z_5)\\
+z_5 = w_{53} * y_3 + w_{54} * y_4
+\end{cases}
+$$&lt;/p>
+&lt;p>$$
+\begin{align}
+\Delta w_{53} &amp;amp;= \frac{\partial E}{\partial w_{53}} \\
+&amp;amp;= \frac{\partial E}{\partial y_{5}} \frac{\partial y_5}{\partial z_5} \frac{\partial z_5}{\partial w_{53}}
+\end{align}
+$$&lt;/p></description></item><item><title>组合数学笔记</title><link>https://fffzlfk.github.io/posts/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%E7%AC%94%E8%AE%B0/</link><pubDate>Sat, 08 Oct 2022 19:50:03 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%E7%AC%94%E8%AE%B0/</guid><description>&lt;h2 id="第一章-组合数学基础">第一章 组合数学基础&lt;/h2>
+&lt;h3 id="排列">排列&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>相异元素不允许重复的排列 $P(n, r)$&lt;/p>
+&lt;ul>
+&lt;li>球盒模型：将$r$ 个有区别的球放入 $n$ 个不同的盒子里，每盒不超过一个。&lt;/li>
+&lt;li>计算公式：$$ P(n, r)=\frac{n!}{(n-r)!} $$&lt;/li>
+&lt;li>集合描述：$$ S=\{1 \cdot e_1, 1 \cdot e_2,&amp;hellip;,1 \cdot e_n\} $$&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>相异元素允许重复的排列 $RP(\infty, r)$&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>球盒模型：将$r$ 个有区别的球放入 $n$ 个不同的盒子里，每个盒子的球数不加限制而且同盒的球不分次序。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>计算公式：$$ RP(\infty, r) = n^r $$&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>集合描述：$$ S=\{\infty \cdot e_1, \infty \cdot e_2,&amp;hellip;,\infty \cdot e_n\} $$&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>不尽相异元素的全排列&lt;/p>
+&lt;ul>
+&lt;li>球盒模型：将$r$个有区别的球放入$t$个不同的盒子，每个盒子的容量是有限的，其中第$i$个盒子最多只能放入$n_i$个球，同盒的球不分次序。&lt;/li>
+&lt;li>集合描述：$$ S=\{ n_1 \cdot e_1, n_2 \cdot e_2,&amp;hellip;,n_t \cdot e_t \}, n_1+n_2+&amp;hellip;+n_t=n $$&lt;/li>
+&lt;li>特例
+&lt;ul>
+&lt;li>$r=1$ $$ RP(n, 1) = t $$&lt;/li>
+&lt;li>$r=n$ $$ RP(n, n) = \frac{n!}{n_1!n_2!&amp;hellip;n_t!} $$&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>相异元素不允许重复的圆排列 $CP(n, r)$
+$$ CP(n, r) = \frac{P(n, r)}{r} = \frac{n!}{r(n-r)!} $$&lt;/p></description></item><item><title>使用Rust实现Helang😅</title><link>https://fffzlfk.github.io/posts/%E4%BD%BF%E7%94%A8rust%E5%AE%9E%E7%8E%B0helangdoge/</link><pubDate>Fri, 19 Aug 2022 21:44:22 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E4%BD%BF%E7%94%A8rust%E5%AE%9E%E7%8E%B0helangdoge/</guid><description>&lt;h2 id="引入">引入&lt;/h2>
+&lt;p>最近b站上很多小伙伴对何同学的错误代码进行了一些很有意思的二创，一度登上了Github Trending：&lt;/p>
+&lt;p>&lt;img src="https://s1.ax1x.com/2022/08/19/vsZ7DO.png" alt="vsZ7DO.png">&lt;/p>
+&lt;hr>
+&lt;p>其中看到有人使用C++中的宏实现了何同学的“&lt;del>或运算&lt;/del>”，于是受到启发，使用Rust中的宏实现了一下。&lt;/p>
+&lt;h2 id="source-code">Source Code&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-rust" data-lang="rust">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fn&lt;/span> &lt;span style="color:#a6e22e">parse_to_vec&lt;/span>(nums: &lt;span style="color:#66d9ef">&amp;amp;&lt;/span>&lt;span style="color:#66d9ef">str&lt;/span>) -&amp;gt; Vec&lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">usize&lt;/span>&lt;span style="color:#f92672">&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> nums &lt;span style="color:#f92672">=&lt;/span> nums.replace(&lt;span style="color:#e6db74">&amp;#39; &amp;#39;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> nums.split(&lt;span style="color:#e6db74">&amp;#39;|&amp;#39;&lt;/span>).map(&lt;span style="color:#f92672">|&lt;/span>x&lt;span style="color:#f92672">|&lt;/span> x.parse().unwrap()).collect()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fn&lt;/span> &lt;span style="color:#a6e22e">power_con&lt;/span>(powers: &lt;span style="color:#66d9ef">&amp;amp;&lt;/span>&lt;span style="color:#a6e22e">mut&lt;/span> [&lt;span style="color:#66d9ef">u8&lt;/span>], nums: &lt;span style="color:#66d9ef">&amp;amp;&lt;/span>[&lt;span style="color:#66d9ef">usize&lt;/span>], power: &lt;span style="color:#66d9ef">u8&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#f92672">&amp;amp;&lt;/span>num &lt;span style="color:#66d9ef">in&lt;/span> nums {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> powers[num] &lt;span style="color:#f92672">=&lt;/span> power;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#[macro_export]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>macro_rules&lt;span style="color:#f92672">!&lt;/span> powerCon {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (&lt;span style="color:#75715e">$powers&lt;/span>: &lt;span style="color:#a6e22e">expr&lt;/span>, &lt;span style="color:#75715e">$nums&lt;/span>: &lt;span style="color:#a6e22e">expr&lt;/span>, &lt;span style="color:#75715e">$force&lt;/span>: &lt;span style="color:#a6e22e">expr&lt;/span>) &lt;span style="color:#f92672">=&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> power_con(&lt;span style="color:#75715e">$powers&lt;/span>, &lt;span style="color:#f92672">&amp;amp;&lt;/span>parse_to_vec(&lt;span style="color:#a6e22e">stringify!&lt;/span>(&lt;span style="color:#75715e">$nums&lt;/span>)), &lt;span style="color:#75715e">$force&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> };
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fn&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> &lt;span style="color:#66d9ef">mut&lt;/span> powers &lt;span style="color:#f92672">=&lt;/span> [&lt;span style="color:#ae81ff">0_&lt;/span>&lt;span style="color:#66d9ef">u8&lt;/span>; &lt;span style="color:#ae81ff">68&lt;/span>];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">powerCon!&lt;/span>(&lt;span style="color:#f92672">&amp;amp;&lt;/span>&lt;span style="color:#66d9ef">mut&lt;/span> powers, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">100&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">powerCon!&lt;/span>(&lt;span style="color:#f92672">&amp;amp;&lt;/span>&lt;span style="color:#66d9ef">mut&lt;/span> powers, &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#f92672">|&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#f92672">|&lt;/span> &lt;span style="color:#ae81ff">6&lt;/span> &lt;span style="color:#f92672">|&lt;/span> &lt;span style="color:#ae81ff">7&lt;/span> &lt;span style="color:#f92672">|&lt;/span> &lt;span style="color:#ae81ff">11&lt;/span> &lt;span style="color:#f92672">|&lt;/span> &lt;span style="color:#ae81ff">52&lt;/span> &lt;span style="color:#f92672">|&lt;/span> &lt;span style="color:#ae81ff">57&lt;/span> &lt;span style="color:#f92672">|&lt;/span> &lt;span style="color:#ae81ff">58&lt;/span> &lt;span style="color:#f92672">|&lt;/span> &lt;span style="color:#ae81ff">65&lt;/span>, &lt;span style="color:#ae81ff">10&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">println!&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#e6db74">{:?}&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>, powers)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="references">References&lt;/h2>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;a href="https://github.com/kifuan/helang/blob/master/helang.cpp">https://github.com/kifuan/helang/blob/master/helang.cpp&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="https://www.bilibili.com/video/BV1zW4y1h7YH?share_source=copy_web&amp;amp;vd_source=083fa967106cc2114fabad75979818b9">https://www.bilibili.com/video/BV1zW4y1h7YH?share_source=copy_web&amp;amp;vd_source=083fa967106cc2114fabad75979818b9&lt;/a>&lt;/p>
+&lt;/li>
+&lt;/ul></description></item><item><title>Java泛型</title><link>https://fffzlfk.github.io/posts/java%E6%B3%9B%E5%9E%8B/</link><pubDate>Thu, 04 Aug 2022 22:33:37 +0800</pubDate><guid>https://fffzlfk.github.io/posts/java%E6%B3%9B%E5%9E%8B/</guid><description>&lt;h2 id="擦拭法">擦拭法&lt;/h2>
+&lt;h3 id="编译器把类型t视为object">编译器把类型&lt;code>&amp;lt;T&amp;gt;&lt;/code>视为Object&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Pair&lt;/span>&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> T first;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> T last;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#a6e22e">Pair&lt;/span>(T first, T last) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">first&lt;/span> &lt;span style="color:#f92672">=&lt;/span> first;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">last&lt;/span> &lt;span style="color:#f92672">=&lt;/span> last;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> T &lt;span style="color:#a6e22e">getFirst&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> first;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> T &lt;span style="color:#a6e22e">getLast&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> last;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Java中泛型是在编译阶段的，编译器将上述代码经过擦除法，JVM实际看到的代码如下所示：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Pair&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> Object first;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> Object last;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#a6e22e">Pair&lt;/span>(Object first, Object last) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">first&lt;/span> &lt;span style="color:#f92672">=&lt;/span> first;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">last&lt;/span> &lt;span style="color:#f92672">=&lt;/span> last;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> Object &lt;span style="color:#a6e22e">getFirst&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> first;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> Object &lt;span style="color:#a6e22e">getLast&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> last;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="编译器根据t实现安全的强制转型">编译器根据&lt;code>&amp;lt;T&amp;gt;&lt;/code>实现安全的强制转型&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>Pair&lt;span style="color:#f92672">&amp;lt;&lt;/span>String&lt;span style="color:#f92672">&amp;gt;&lt;/span> p &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> Pair&lt;span style="color:#f92672">&amp;lt;&amp;gt;&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Hello&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;world&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>String first &lt;span style="color:#f92672">=&lt;/span> p.&lt;span style="color:#a6e22e">getFirst&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>String last &lt;span style="color:#f92672">=&lt;/span> p.&lt;span style="color:#a6e22e">getLast&lt;/span>();
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>编译器根据T的类型安全强转：&lt;/p></description></item><item><title>Cloudflare事故报告(中文翻译)</title><link>https://fffzlfk.github.io/posts/cloudflare_outage_on_june_21_2022chinese/</link><pubDate>Tue, 21 Jun 2022 23:49:57 +0800</pubDate><guid>https://fffzlfk.github.io/posts/cloudflare_outage_on_june_21_2022chinese/</guid><description>Cloudflare outage on June 21, 2022 (Chinese translation)</description></item><item><title>可变参数模板的应用</title><link>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</link><pubDate>Sat, 02 Apr 2022 22:20:04 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</guid><description>&lt;h2 id="引入">引入&lt;/h2>
+&lt;p>在&lt;code>C++&lt;/code>中经常打印变量来调试代码，但无论是&lt;code>printf&lt;/code>还是&lt;code>cout&lt;/code>总是很麻烦：&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>printf&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> a &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">float&lt;/span> b &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">2.0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">char&lt;/span> c &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#39;c&amp;#39;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>printf(&lt;span style="color:#e6db74">&amp;#34;a = %d, b = %f, c = %c&amp;#34;&lt;/span>, a, b, c);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>&lt;code>cout&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> a &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">float&lt;/span> b &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">2.0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">char&lt;/span> c &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#39;c&amp;#39;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>std&lt;span style="color:#f92672">::&lt;/span>cout &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;a = &amp;#34;&lt;/span> &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> a &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;, b = &amp;#34;&lt;/span> &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> b &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;, c = &amp;#34;&lt;/span> &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> c &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;\n&amp;#39;&lt;/span>;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;/ul>
+&lt;h2 id="可变参数宏">可变参数宏&lt;/h2>
+&lt;p>可变参数宏是&lt;code>C99&lt;/code>引入的一个特性，&lt;code>C++11&lt;/code>开始支持。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define def_name(...) def_body(__VA_ARGS__)
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="可变参数模板">可变参数模板&lt;/h2>
+&lt;p>&lt;code>C++11&lt;/code>允许模板定义有任意类型任意数量的模板参数（包括 $0$ 个模板参数）。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span>&lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span>... Values&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">tuple&lt;/span>;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>如果不希望有 $0$ 个模板实参，可以如下声明：&lt;/p>
+&lt;pre tabindex="0">&lt;code>template&amp;lt;typename First, typename... Rest&amp;gt; class tuple;
+&lt;/code>&lt;/pre>&lt;p>可变参数模板适用于函数模板，例如&lt;code>printf&lt;/code>函数的实现：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span>&lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span>... Args&lt;span style="color:#f92672">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> printf(&lt;span style="color:#66d9ef">const&lt;/span> std&lt;span style="color:#f92672">::&lt;/span>string &lt;span style="color:#f92672">&amp;amp;&lt;/span>str_format, Args... args);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="参数包的展开">参数包的展开&lt;/h2>
+&lt;ul>
+&lt;li>对于模板函数
+&lt;ul>
+&lt;li>递归展开&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// 递归终止函数
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">print&lt;/span>() {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span>&lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span> T, &lt;span style="color:#66d9ef">typename&lt;/span>... Args&lt;span style="color:#f92672">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> print(T head, Args... args) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> std&lt;span style="color:#f92672">::&lt;/span>cout &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> head &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> (&lt;span style="color:#66d9ef">sizeof&lt;/span>...(args) &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#e6db74">&amp;#34;, &amp;#34;&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> print(args...);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>逗号表达式展开：这种方式有点繁琐，不太好理解，不推荐&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>对于模板类
+&lt;ul>
+&lt;li>递归展开&lt;/li>
+&lt;li>继承展开&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="宏运算符">宏运算符&lt;/h2>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>#&lt;/code>：将宏参数转换为字符串&lt;/p></description></item><item><title>MapReduce in Go</title><link>https://fffzlfk.github.io/posts/mapreduce_in_go/</link><pubDate>Sun, 27 Mar 2022 21:19:14 +0800</pubDate><guid>https://fffzlfk.github.io/posts/mapreduce_in_go/</guid><description>&lt;h2 id="简单版generic-map">简单版Generic Map&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">Map&lt;/span>[&lt;span style="color:#a6e22e">T&lt;/span> &lt;span style="color:#66d9ef">any&lt;/span>](&lt;span style="color:#a6e22e">data&lt;/span> []&lt;span style="color:#a6e22e">T&lt;/span>, &lt;span style="color:#a6e22e">f&lt;/span> &lt;span style="color:#66d9ef">func&lt;/span>(&lt;span style="color:#a6e22e">T&lt;/span>) &lt;span style="color:#a6e22e">T&lt;/span>) []&lt;span style="color:#a6e22e">T&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">res&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> make([]&lt;span style="color:#a6e22e">T&lt;/span>, len(&lt;span style="color:#a6e22e">data&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">i&lt;/span>, &lt;span style="color:#a6e22e">v&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">data&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">res&lt;/span>[&lt;span style="color:#a6e22e">i&lt;/span>] = &lt;span style="color:#a6e22e">f&lt;/span>(&lt;span style="color:#a6e22e">v&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">res&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>我们可以下面的代码测试这个简易的Map函数&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">TestMap&lt;/span>(&lt;span style="color:#a6e22e">t&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">testing&lt;/span>.&lt;span style="color:#a6e22e">T&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">square&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">func&lt;/span>(&lt;span style="color:#a6e22e">x&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span>) &lt;span style="color:#66d9ef">int&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">x&lt;/span> &lt;span style="color:#f92672">*&lt;/span> &lt;span style="color:#a6e22e">x&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">nums&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> []&lt;span style="color:#66d9ef">int&lt;/span>{&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, &lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>, &lt;span style="color:#ae81ff">5&lt;/span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">squareArr&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">Map&lt;/span>(&lt;span style="color:#a6e22e">nums&lt;/span>, &lt;span style="color:#a6e22e">square&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">i&lt;/span>, &lt;span style="color:#a6e22e">num&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">nums&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">squareArr&lt;/span>[&lt;span style="color:#a6e22e">i&lt;/span>] &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#a6e22e">num&lt;/span>&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">num&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#a6e22e">t&lt;/span>.&lt;span style="color:#a6e22e">Errorf&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Expected %d, got %d&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">num&lt;/span>&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">num&lt;/span>, &lt;span style="color:#a6e22e">squareArr&lt;/span>[&lt;span style="color:#a6e22e">i&lt;/span>])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">upCase&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">func&lt;/span>(&lt;span style="color:#a6e22e">s&lt;/span> &lt;span style="color:#66d9ef">string&lt;/span>) &lt;span style="color:#66d9ef">string&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">strings&lt;/span>.&lt;span style="color:#a6e22e">ToUpper&lt;/span>(&lt;span style="color:#a6e22e">s&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">strs&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> []&lt;span style="color:#66d9ef">string&lt;/span>{&lt;span style="color:#e6db74">&amp;#34;abc&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;def&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;ghi&amp;#34;&lt;/span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">upperStrs&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">Map&lt;/span>(&lt;span style="color:#a6e22e">strs&lt;/span>, &lt;span style="color:#a6e22e">upCase&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">i&lt;/span>, &lt;span style="color:#a6e22e">str&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">strs&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">upperStrs&lt;/span>[&lt;span style="color:#a6e22e">i&lt;/span>] &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#a6e22e">strings&lt;/span>.&lt;span style="color:#a6e22e">ToUpper&lt;/span>(&lt;span style="color:#a6e22e">str&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#a6e22e">t&lt;/span>.&lt;span style="color:#a6e22e">Errorf&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Expected %s, got %s&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">strings&lt;/span>.&lt;span style="color:#a6e22e">ToUpper&lt;/span>(&lt;span style="color:#a6e22e">str&lt;/span>), &lt;span style="color:#a6e22e">upperStrs&lt;/span>[&lt;span style="color:#a6e22e">i&lt;/span>])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="简单版-generic-reduce">简单版 Generic Reduce&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">Reduce&lt;/span>[&lt;span style="color:#a6e22e">T&lt;/span> &lt;span style="color:#66d9ef">any&lt;/span>](&lt;span style="color:#a6e22e">data&lt;/span> []&lt;span style="color:#a6e22e">T&lt;/span>, &lt;span style="color:#a6e22e">f&lt;/span> &lt;span style="color:#66d9ef">func&lt;/span>(&lt;span style="color:#a6e22e">T&lt;/span>, &lt;span style="color:#a6e22e">T&lt;/span>) &lt;span style="color:#a6e22e">T&lt;/span>) &lt;span style="color:#a6e22e">T&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">res&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">data&lt;/span>[&lt;span style="color:#ae81ff">0&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">i&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>; &lt;span style="color:#a6e22e">i&lt;/span> &amp;lt; len(&lt;span style="color:#a6e22e">data&lt;/span>); &lt;span style="color:#a6e22e">i&lt;/span>&lt;span style="color:#f92672">++&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">res&lt;/span> = &lt;span style="color:#a6e22e">f&lt;/span>(&lt;span style="color:#a6e22e">res&lt;/span>, &lt;span style="color:#a6e22e">data&lt;/span>[&lt;span style="color:#a6e22e">i&lt;/span>])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">res&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>我们可以下面的代码测试这个简易的Reduce函数&lt;/p></description></item><item><title>CUDA中怎样选择GRID和BLOCK维度</title><link>https://fffzlfk.github.io/posts/cuda%E4%B8%AD%E6%80%8E%E6%A0%B7%E9%80%89%E6%8B%A9grid%E5%92%8Cblock%E7%BB%B4%E5%BA%A6/</link><pubDate>Mon, 07 Mar 2022 16:10:36 +0800</pubDate><guid>https://fffzlfk.github.io/posts/cuda%E4%B8%AD%E6%80%8E%E6%A0%B7%E9%80%89%E6%8B%A9grid%E5%92%8Cblock%E7%BB%B4%E5%BA%A6/</guid><description>&lt;h2 id="硬件限制">硬件限制&lt;/h2>
+&lt;p>这是容易量化的方面。目前&lt;a href="https://www.nvidia.cn/docs/IO/51635/NVIDIA_CUDA_Programming_Guide_1.1_chs.pdf">CUDA编程指南&lt;/a>的附录F列出了一些硬件限制，这些限制限制了内核启动时每块可以有多少个线程。如果你超过了这些限制，你的内核将无法运行。这些限制可以粗略地概括为：&lt;/p>
+&lt;ul>
+&lt;li>每个区块不能超过 $512$ / $1024$ 个线程（分别是计算能力&lt;code>1.x&lt;/code>或&lt;code>2.x&lt;/code>及以后的计算能力&lt;/li>
+&lt;li>每个块的最大尺寸限制在 $[512, 512, 64]$ / $[1024, 1024, 64]$（计算能力&lt;code>1.x&lt;/code>/&lt;code>2.x&lt;/code>及以后的计算能力&lt;/li>
+&lt;li>每个块消耗的寄存器总数不能超过 $8k/16k/32k/64k/32k/64k/32k/64k$ （计算能力 $1.0,1.1/1.2,1.3/2.x-3.0/3.2/3.5-5.2/5.3/6-6.1/6.2/7.0$&lt;/li>
+&lt;li>每个块不能消耗超过 $16kb/48kb/96kb$ 的共享内存（计算能力 $1.x/2.x-6.2/7.0$&lt;/li>
+&lt;/ul>
+&lt;p>如果你保持在这些限制之内，任何你能成功编译的内核都会无错误地启动。&lt;/p>
+&lt;h2 id="性能调教">性能调教&lt;/h2>
+&lt;p>这是需要经验的一部分。在上述的硬件约束条件下，你选择的每块线程数可以而且确实影响到硬件上运行的代码性能。每个代码的表现都是不同的，唯一真正的方法是通过仔细的基准测试和剖析来量化它。但还是那句话，非常粗略地总结一下：&lt;/p>
+&lt;ul>
+&lt;li>每个区块的线程数应该是&lt;code>wrap&lt;/code>大小的整数倍，在目前所有的硬件上都是 $32$&lt;/li>
+&lt;li>&lt;code>GPU&lt;/code>上的每个流式多处理器必须有足够的&lt;code>active wraps&lt;/code>来充分隐藏架构的的所有不同内存和指令流水线延迟，以实现最大吞吐量。这里的正确做法是尝试实现最佳的硬件占用率&lt;/li>
+&lt;/ul>
+&lt;h2 id="cuda内置函数">CUDA内置函数&lt;/h2>
+&lt;p>上述指出了块的大小是如何影响性能的，并提出了一种基于占用率最大化的通用启发式选择方法。在不想提供选择块大小的标准的情况下，值得一提的是，&lt;code>CUDA 6.5+&lt;/code>包括几个新的运行时函数来帮助占用率的计算和启动配置&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>。&lt;/p>
+&lt;p>其中一个有用的函数是&lt;code>cudaOccupancyMaxPotentialBlockSize&lt;/code>，它启发式地计算了一个能达到最佳占用率的块大小。该函数提供的值可以作为手动优化参数的起点。下面是一个例子：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/************************/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/* TEST KERNEL FUNCTION */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/************************/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>__global__ &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">MyKernel&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#f92672">*&lt;/span>a, &lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#f92672">*&lt;/span>b, &lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#f92672">*&lt;/span>c, &lt;span style="color:#66d9ef">int&lt;/span> N) 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{ 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> idx &lt;span style="color:#f92672">=&lt;/span> threadIdx.x &lt;span style="color:#f92672">+&lt;/span> blockIdx.x &lt;span style="color:#f92672">*&lt;/span> blockDim.x; 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (idx &lt;span style="color:#f92672">&amp;lt;&lt;/span> N) { c[idx] &lt;span style="color:#f92672">=&lt;/span> a[idx] &lt;span style="color:#f92672">+&lt;/span> b[idx]; } 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>} 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/********/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/* MAIN */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/********/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>() 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{ 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> N &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1000000&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> blockSize; &lt;span style="color:#75715e">// The launch configurator returned block size 
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> minGridSize; &lt;span style="color:#75715e">// The minimum grid size needed to achieve the maximum occupancy for a full device launch 
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> gridSize; &lt;span style="color:#75715e">// The actual grid size needed, based on input size 
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> h_vec1 &lt;span style="color:#f92672">=&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span>) malloc(N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> h_vec2 &lt;span style="color:#f92672">=&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span>) malloc(N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> h_vec3 &lt;span style="color:#f92672">=&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span>) malloc(N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> h_vec4 &lt;span style="color:#f92672">=&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span>) malloc(N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> d_vec1; cudaMalloc((&lt;span style="color:#66d9ef">void&lt;/span>&lt;span style="color:#f92672">**&lt;/span>)&lt;span style="color:#f92672">&amp;amp;&lt;/span>d_vec1, N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> d_vec2; cudaMalloc((&lt;span style="color:#66d9ef">void&lt;/span>&lt;span style="color:#f92672">**&lt;/span>)&lt;span style="color:#f92672">&amp;amp;&lt;/span>d_vec2, N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> d_vec3; cudaMalloc((&lt;span style="color:#66d9ef">void&lt;/span>&lt;span style="color:#f92672">**&lt;/span>)&lt;span style="color:#f92672">&amp;amp;&lt;/span>d_vec3, N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span> i&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>; i&lt;span style="color:#f92672">&amp;lt;&lt;/span>N; i&lt;span style="color:#f92672">++&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> h_vec1[i] &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">10&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> h_vec2[i] &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">20&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> h_vec4[i] &lt;span style="color:#f92672">=&lt;/span> h_vec1[i] &lt;span style="color:#f92672">+&lt;/span> h_vec2[i];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaMemcpy(d_vec1, h_vec1, N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>), cudaMemcpyHostToDevice);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaMemcpy(d_vec2, h_vec2, N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>), cudaMemcpyHostToDevice);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">float&lt;/span> time;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEvent_t start, stop;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventCreate(&lt;span style="color:#f92672">&amp;amp;&lt;/span>start);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventCreate(&lt;span style="color:#f92672">&amp;amp;&lt;/span>stop);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventRecord(start, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaOccupancyMaxPotentialBlockSize(&lt;span style="color:#f92672">&amp;amp;&lt;/span>minGridSize, &lt;span style="color:#f92672">&amp;amp;&lt;/span>blockSize, MyKernel, &lt;span style="color:#ae81ff">0&lt;/span>, N); 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// Round up according to array size 
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> gridSize &lt;span style="color:#f92672">=&lt;/span> (N &lt;span style="color:#f92672">+&lt;/span> blockSize &lt;span style="color:#f92672">-&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>) &lt;span style="color:#f92672">/&lt;/span> blockSize; 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventRecord(stop, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventSynchronize(stop);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventElapsedTime(&lt;span style="color:#f92672">&amp;amp;&lt;/span>time, start, stop);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf(&lt;span style="color:#e6db74">&amp;#34;Occupancy calculator elapsed time: %3.3f ms &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>, time);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventRecord(start, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MyKernel&lt;span style="color:#f92672">&amp;lt;&amp;lt;&amp;lt;&lt;/span>gridSize, blockSize&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span>(d_vec1, d_vec2, d_vec3, N); 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventRecord(stop, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventSynchronize(stop);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventElapsedTime(&lt;span style="color:#f92672">&amp;amp;&lt;/span>time, start, stop);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf(&lt;span style="color:#e6db74">&amp;#34;Kernel elapsed time: %3.3f ms &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>, time);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf(&lt;span style="color:#e6db74">&amp;#34;Blocksize %i&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>, blockSize);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaMemcpy(h_vec3, d_vec3, N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>), cudaMemcpyDeviceToHost);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span> i&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>; i&lt;span style="color:#f92672">&amp;lt;&lt;/span>N; i&lt;span style="color:#f92672">++&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (h_vec3[i] &lt;span style="color:#f92672">!=&lt;/span> h_vec4[i]) { printf(&lt;span style="color:#e6db74">&amp;#34;Error at i = %i! Host = %i; Device = %i&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>, i, h_vec4[i], h_vec3[i]); &lt;span style="color:#66d9ef">return&lt;/span>; };
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf(&lt;span style="color:#e6db74">&amp;#34;Test passed&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>cudaOccupancyMaxPotentialBlockSize&lt;/code>定义在&lt;code>cuda_runtime.h&lt;/code>文件中：&lt;/p></description></item><item><title>多线程及其性能刻画</title><link>https://fffzlfk.github.io/posts/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%8F%8A%E5%85%B6%E6%80%A7%E8%83%BD%E5%88%BB%E7%94%BB/</link><pubDate>Sun, 27 Feb 2022 23:21:12 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%8F%8A%E5%85%B6%E6%80%A7%E8%83%BD%E5%88%BB%E7%94%BB/</guid><description>&lt;h2 id="使用多线程提高并行性">使用多线程提高并行性&lt;/h2>
+&lt;h3 id="同步的代价">同步的代价&lt;/h3>
+&lt;p>我们研究对一列整数 $0, &amp;hellip;, n - 1$ 求和，我们将序列划分成 $t$ 个不相交的的区域，给 $t$ 个线程每个分配一个区域。将线程的和放入一个变量中，并且我们使用互斥锁来保护这个变量。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-rust" data-lang="rust">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">use&lt;/span> std::{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> sync::{Arc, Mutex},
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> thread,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> time::Instant,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>};
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fn&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> args &lt;span style="color:#f92672">=&lt;/span> std::env::args().collect::&lt;span style="color:#f92672">&amp;lt;&lt;/span>Vec&lt;span style="color:#f92672">&amp;lt;&lt;/span>String&lt;span style="color:#f92672">&amp;gt;&amp;gt;&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> args.len() &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">panic!&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Usage: &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &amp;lt;nthreads&amp;gt; &amp;lt;log_nelems&amp;gt;&amp;#34;&lt;/span>, args[&lt;span style="color:#ae81ff">0&lt;/span>]);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> nthreads: &lt;span style="color:#66d9ef">usize&lt;/span> &lt;span style="color:#f92672">=&lt;/span> args[&lt;span style="color:#ae81ff">1&lt;/span>].parse().unwrap();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> log_nelems: &lt;span style="color:#66d9ef">usize&lt;/span> &lt;span style="color:#f92672">=&lt;/span> args[&lt;span style="color:#ae81ff">2&lt;/span>].parse().unwrap();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> nelems &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1_&lt;/span>&lt;span style="color:#66d9ef">usize&lt;/span> &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> log_nelems;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> nelems_per_thread &lt;span style="color:#f92672">=&lt;/span> nelems &lt;span style="color:#f92672">/&lt;/span> nthreads;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> gsum &lt;span style="color:#f92672">=&lt;/span> Arc::new(Mutex::new(&lt;span style="color:#ae81ff">0&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> now &lt;span style="color:#f92672">=&lt;/span> Instant::now();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> &lt;span style="color:#66d9ef">mut&lt;/span> handlers &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">vec!&lt;/span>[];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> i &lt;span style="color:#66d9ef">in&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>&lt;span style="color:#f92672">..&lt;/span>nthreads {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> gsum &lt;span style="color:#f92672">=&lt;/span> Arc::clone(&lt;span style="color:#f92672">&amp;amp;&lt;/span>gsum);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> handler &lt;span style="color:#f92672">=&lt;/span> thread::spawn(&lt;span style="color:#66d9ef">move&lt;/span> &lt;span style="color:#f92672">||&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> start &lt;span style="color:#f92672">=&lt;/span> i &lt;span style="color:#f92672">*&lt;/span> nelems_per_thread;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> end &lt;span style="color:#f92672">=&lt;/span> start &lt;span style="color:#f92672">+&lt;/span> nelems_per_thread;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> j &lt;span style="color:#66d9ef">in&lt;/span> start&lt;span style="color:#f92672">..&lt;/span>end {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">let&lt;/span> &lt;span style="color:#66d9ef">mut&lt;/span> sum &lt;span style="color:#f92672">=&lt;/span> gsum.lock().unwrap();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">*&lt;/span>sum &lt;span style="color:#f92672">+=&lt;/span> j;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> handlers.push(handler);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> handle &lt;span style="color:#66d9ef">in&lt;/span> handlers {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> handle.join().unwrap();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">assert_eq!&lt;/span>(nelems &lt;span style="color:#f92672">*&lt;/span> (nelems &lt;span style="color:#f92672">-&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>) &lt;span style="color:#f92672">/&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>, &lt;span style="color:#f92672">*&lt;/span>gsum.lock().unwrap());
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">println!&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Running took &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> s.&amp;#34;&lt;/span>, now.elapsed().as_secs())
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>我们在一个四核系统上，对一个大小为 $n=2^{20}$ 的序列进行测试，运算时间以毫秒为单位，结果如下：&lt;/p></description></item><item><title>C++中容易犯的错误</title><link>https://fffzlfk.github.io/posts/c++%E4%B8%AD%E5%AE%B9%E6%98%93%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</link><pubDate>Wed, 23 Feb 2022 23:31:50 +0800</pubDate><guid>https://fffzlfk.github.io/posts/c++%E4%B8%AD%E5%AE%B9%E6%98%93%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</guid><description>&lt;h2 id="不正确地使用new和delete">不正确地使用&lt;code>new&lt;/code>和&lt;code>delete&lt;/code>&lt;/h2>
+&lt;p>无论我们如何努力，要释放所有动态分配的内存是非常困难的。即使我们能做到这一点，也往往不能安全地避免出现异常。让我们看一个简单的例子。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">SomeMethod&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ClassA &lt;span style="color:#f92672">*&lt;/span>a &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> ClassA;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SomeOtherMethod(); &lt;span style="color:#75715e">// it can throws an execption
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">delete&lt;/span> a;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>如果&lt;code>SomeOtherMethod&lt;/code>抛出了异常，那么&lt;code>a&lt;/code>对象永远不会被删除。下面的例子展示了一个更加安全同时又更简洁的实现，使用了在&lt;code>C++11&lt;/code>提出的&lt;code>std::unique_ptr&lt;/code>。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">SomeMethod&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> std&lt;span style="color:#f92672">::&lt;/span>unique_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>ClassA&lt;span style="color:#f92672">&amp;gt;&lt;/span> a(&lt;span style="color:#66d9ef">new&lt;/span> ClassA);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SomeOtherMethod();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>无论发生什么，当&lt;code>a&lt;/code>退出作用域的时候，它会被释放。&lt;/p>
+&lt;p>然而，这仅仅是&lt;code>C++&lt;/code>中这种错误最简单的例子，还有很多例子表明&lt;code>delete&lt;/code>应该在其他地方调用，也许是在外层函数或者另一个线程中。这就是为什么应该避免使用&lt;code>new&lt;/code>和&lt;code>delete&lt;/code>，而应该使用适当的智能指针。&lt;/p>
+&lt;h2 id="被忘记的虚析构函数">被忘记的虚析构函数&lt;/h2>
+&lt;p>这是最常见的错误之一，如果派生类中有动态内存分配，将会导致派生类的内存泄漏。这里有一些例子，当一个类不打算用于继承，并且它的大小和性能是至关重要的。虚析构函数或任何其他虚函数在类在类中引入了额外的数据，即指向虚函数表的指针，这使得类的任何实例的大小变大。&lt;/p>
+&lt;p>然而，在大多数情况下，类可以被继承，即使它的初衷并非如此。因此，在声明一个类的时候，添加一个虚析构函数是一个非常好的做法。否则，如果一个类由于性能的原因必须不包含虚函数，那么在类的声明文件里面加上一个注释，说明这个类不应该被继承，是一个很好的做法。避免这个问题的最佳选择之一是使用一个支持在创建类时创建虚析构函数的&lt;code>IDE&lt;/code>。&lt;/p>
+&lt;p>关于这个问题，还有一点是来自标准库的类或模板。它们不是用来继承的，也没有一个虚析构函数。例如，如果我们创建了一个公开继承自&lt;code>std::string&lt;/code>的新的增强字符串类，就可能有人错误地使用它与&lt;code>std::string&lt;/code>的指针或引用，从而导致内存泄漏。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">MyString&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#66d9ef">public&lt;/span> std&lt;span style="color:#f92672">::&lt;/span>string {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">~&lt;/span>MyString() {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>};
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> std&lt;span style="color:#f92672">::&lt;/span>string &lt;span style="color:#f92672">*&lt;/span>s &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> MyString();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">delete&lt;/span> s; &lt;span style="color:#75715e">// May not invoke the destructor defined in MyString
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>为了避免这样的问题，重用标准库中的类或模板的一个更安全的方法是使用私有继承&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>或组合。&lt;/p>
+&lt;h2 id="用delete或智能指针删除一个数组">用&lt;code>delete&lt;/code>或智能指针删除一个数组&lt;/h2>
+&lt;p>创建动态大小的临时数组往往是必要的。当它们不再需要时，释放分配的内存是很重要的。这里的问题是，&lt;code>C++&lt;/code>需要带有&lt;code>[]&lt;/code>括号的特殊删除操作符，这一点很容易被遗忘。&lt;code>delete[]&lt;/code>操作符不仅会删除分配给数组的内存，而且会首先调用数组中所有对象的析构函数。对原始类型使用不带&lt;code>[]&lt;/code>括号的删除操作符也是不正确的，尽管这些类型没有析构函数，每个编译器都不能保证一个数组的指针会指向数组的第一个元素，所以使用不带&lt;code>[]&lt;/code>括号的&lt;code>delete&lt;/code>也会导致未定义的行为。&lt;/p>
+&lt;p>在数组中使用智能指针，如&lt;code>unique_ptr&amp;lt;T&amp;gt;&lt;/code>, &lt;code>shared_ptr&lt;/code>，也是不正确的。当这样的智能指针从作用域中退出时，它将调用不带&lt;code>[]&lt;/code>括号的删除操作符，这将导致上面描述的同样问题。如果需要对数组使用智能指针，可以使用&lt;code>unique_ptr&amp;lt;T[]&amp;gt;&lt;/code>的特殊化。&lt;/p>
+&lt;p>如果不需要引用计数的功能，主要是数组的情况，最优雅的方法是使用&lt;code>STL&lt;/code>向量来代替。它们不只是负责释放内存，而且还提供额外的功能。&lt;/p>
+&lt;h2 id="返回一个局部对象的引用">返回一个局部对象的引用&lt;/h2>
+&lt;p>这主要是一个初学者的错误，但它值得一提，因为有很多遗留的代码都存在这个问题。让我们看看下面的代码，一个程序员想通过避免不必要的复制来进行某种优化。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>Complex&lt;span style="color:#f92672">&amp;amp;&lt;/span> SumComplex(&lt;span style="color:#66d9ef">const&lt;/span> Complex&lt;span style="color:#f92672">&amp;amp;&lt;/span> a, &lt;span style="color:#66d9ef">const&lt;/span> Complex&lt;span style="color:#f92672">&amp;amp;&lt;/span> b) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Complex result;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#960050;background-color:#1e0010">…&lt;/span>..
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> result;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Complex&lt;span style="color:#f92672">&amp;amp;&lt;/span> sum &lt;span style="color:#f92672">=&lt;/span> SumComplex(a, b);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>对象 &lt;code>sum&lt;/code>现在将指向局部对象&lt;code>result&lt;/code>。但是，在执行&lt;code>SumComplex&lt;/code>函数后，对象&lt;code>result&lt;/code>位于哪里呢？不知道。它位于堆栈中，但在函数返回后，堆栈被收缩，函数中的所有本地对象都被析构了。这最终会导致一个未定义的行为，即使是原始类型。为了避免性能问题，有时可以使用返回值优化。&lt;/p></description></item><item><title>C++ 完美转发</title><link>https://fffzlfk.github.io/posts/c++_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</link><pubDate>Sat, 05 Feb 2022 14:10:47 +0800</pubDate><guid>https://fffzlfk.github.io/posts/c++_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</guid><description>&lt;h2 id="为什么要有完美转发">为什么要有完美转发&lt;/h2>
+&lt;p>下面是一个类工厂函数：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span> T, &lt;span style="color:#66d9ef">typename&lt;/span> Arg&lt;span style="color:#f92672">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>std&lt;span style="color:#f92672">::&lt;/span>shared_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span> factory(Arg arg) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> std&lt;span style="color:#f92672">::&lt;/span>shared_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span>( &lt;span style="color:#66d9ef">new&lt;/span> T(arg));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>参数对象&lt;code>arg&lt;/code>在上面的例子中是传值方式传递，这带来了生成额外临时对象&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>的代价，所以我们改成引用传递：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span> T, &lt;span style="color:#66d9ef">typename&lt;/span> Arg&lt;span style="color:#f92672">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>std&lt;span style="color:#f92672">::&lt;/span>shared_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span> factory(Arg &lt;span style="color:#f92672">&amp;amp;&lt;/span>arg) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> std&lt;span style="color:#f92672">::&lt;/span>shared_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span>( &lt;span style="color:#66d9ef">new&lt;/span> T(arg));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>但这种实现的问题是不能绑定右值实参。如&lt;code>factory&amp;lt;X&amp;gt;(42)&lt;/code>将编译报错，进一步的，我们按常量引用来传递：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span> T, &lt;span style="color:#66d9ef">typename&lt;/span> Arg&lt;span style="color:#f92672">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>std&lt;span style="color:#f92672">::&lt;/span>shared_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span> factory(&lt;span style="color:#66d9ef">const&lt;/span> Arg &lt;span style="color:#f92672">&amp;amp;&lt;/span>arg) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> std&lt;span style="color:#f92672">::&lt;/span>shared_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span>( &lt;span style="color:#66d9ef">new&lt;/span> T(arg));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>这种实现的问题是不能支持移动语义，形参使用右值引用可以解决完美转发问题。&lt;/p>
+&lt;h2 id="引用折叠">引用折叠&lt;/h2>
+&lt;p>在&lt;code>C++11&lt;/code>之前，我们不能对一个引用类型继续引用，但&lt;code>C++&lt;/code>由于右值引用的出现而&lt;strong>放宽&lt;/strong>&lt;sup id="fnref:2">&lt;a href="#fn:2" class="footnote-ref" role="doc-noteref">2&lt;/a>&lt;/sup>了这一做法，从而产生了引用折叠规则，允许我们对引用进行引用，既能左引用，又能右引用。但是却遵循如下规则：&lt;/p>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>函数形参类型&lt;/th>
+ &lt;th>实参类型&lt;/th>
+ &lt;th>推导后函数形参类型&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>&lt;code>T&amp;amp;&lt;/code>&lt;/td>
+ &lt;td>左引用&lt;/td>
+ &lt;td>&lt;code>T&amp;amp;&lt;/code>&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>T&amp;amp;&lt;/code>&lt;/td>
+ &lt;td>右引用&lt;/td>
+ &lt;td>&lt;code>T&amp;amp;&lt;/code>&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>T&amp;amp;&amp;amp;&lt;/code>&lt;/td>
+ &lt;td>左引用&lt;/td>
+ &lt;td>&lt;code>T&amp;amp;&lt;/code>&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>T&amp;amp;&amp;amp;&lt;/code>&lt;/td>
+ &lt;td>右引用&lt;/td>
+ &lt;td>&lt;code>T&amp;amp;&amp;amp;&lt;/code>&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;h2 id="模板参数类型推导">模板参数类型推导&lt;/h2>
+&lt;p>对函数模板&lt;code>template&amp;lt;typename T&amp;gt;void foo(T&amp;amp;&amp;amp;);&lt;/code>，应用上述引用折叠规则，可总结出以下结论：&lt;/p>
+&lt;ul>
+&lt;li>如果实参是类型A的左值，则模板参数T的类型为&lt;code>A&amp;amp;&lt;/code>，形参类型为&lt;code>A&amp;amp;&lt;/code>；&lt;/li>
+&lt;li>如果实参是类型A的右值，则模板参数T的类型为&lt;code>A&amp;amp;&amp;amp;&lt;/code>，形参类型为&lt;code>A&amp;amp;&amp;amp;&lt;/code>。&lt;/li>
+&lt;/ul>
+&lt;p>这同样适用于类模板的成员函数模板的类型推导：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">T&lt;/span>&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">vector&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span>&lt;span style="color:#f92672">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// T是类模板参数 ⇒ 该成员函数不需要类型推导;这里的函数参数类型就是T的右值引用
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> push_back(T &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span>x); 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// 该成员函数是个函数模板，有自己的模板参数，需要类型推导
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">template&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span> Args&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> emplace_back(Args &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span>args); } 
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>函数模板的形参必须是T&amp;amp;&amp;amp;形式，才需要模板参数类型推导。即使形参声明为const T&amp;amp;&amp;amp;形式，就只能按字面意义使用，不需要模板参数类型推导。&lt;/p></description></item><item><title>Cuda 编程模型</title><link>https://fffzlfk.github.io/posts/cuda_%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/</link><pubDate>Wed, 19 Jan 2022 12:55:19 +0800</pubDate><guid>https://fffzlfk.github.io/posts/cuda_%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/</guid><description>&lt;h2 id="kernels">Kernels&lt;/h2>
+&lt;p>&lt;code>CUDA C++&lt;/code>对&lt;code>C++&lt;/code>进行了扩展，允许程序员定义&lt;code>C++&lt;/code>函数，称为内核，当被调用时，由 $N$ 个不同的&lt;code>CUDA&lt;/code>线程并行执行 $N$ 次，而不是像普通&lt;code>C++&lt;/code>函数那样只执行一次。&lt;/p>
+&lt;p>&lt;code>kernel&lt;/code>是使用&lt;code>__global__&lt;/code>声明定义的，对于特定的内核调用，执行该内核的&lt;code>CUDA&lt;/code>线程数量是使用&lt;code>&amp;lt;&amp;lt;&amp;lt;...&amp;gt;&amp;gt;&amp;gt;&lt;/code>执行配置语法指定的（&lt;a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#c-language-extensions">C++语言扩展&lt;/a>）。每个执行内核的线程都有一个唯一的线程&lt;code>ID&lt;/code>，可以在内核内通过内置变量访问。&lt;/p>
+&lt;p>作为说明，下面的示例代码，使用内置变量&lt;code>threadIdx&lt;/code>，将两个大小为 $N$ 的向量 $A$ 和 $B$ 相加，并将结果存入向量 $C$ 。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Kernel definition
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>__global__ &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">VecAdd&lt;/span>(&lt;span style="color:#66d9ef">float&lt;/span>&lt;span style="color:#f92672">*&lt;/span> A, &lt;span style="color:#66d9ef">float&lt;/span>&lt;span style="color:#f92672">*&lt;/span> B, &lt;span style="color:#66d9ef">float&lt;/span>&lt;span style="color:#f92672">*&lt;/span> C)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> i &lt;span style="color:#f92672">=&lt;/span> threadIdx.x;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> C[i] &lt;span style="color:#f92672">=&lt;/span> A[i] &lt;span style="color:#f92672">+&lt;/span> B[i];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// Kernel invocation with N threads
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> VecAdd&lt;span style="color:#f92672">&amp;lt;&amp;lt;&amp;lt;&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>, N&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span>(A, B, C);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>在这里，执行&lt;code>VecAdd()&lt;/code>的 $N$ 个线程中的每一个都执行了一次加法。&lt;/p>
+&lt;h2 id="线程体系">线程体系&lt;/h2>
+&lt;p>为方便起见，&lt;code>threadIdx&lt;/code>是一个 $3$ 分量的向量，因此可以用一维、二维或三维的线程索引来识别线程，形成一个一维、二维或三维的线程块，称为线程块。这提供了一种自然的方式来调用域中的元素进行计算，如矢量、矩阵或体积。&lt;/p>
+&lt;p>一个例子，下面的代码将两个大小为 $N\times N$ 的矩阵 $A$ 和 $B$ 相加，并将结果存入矩阵 $C$ 。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Kernel definition
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>__global__ &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">MatAdd&lt;/span>(&lt;span style="color:#66d9ef">float&lt;/span> A[N][N], &lt;span style="color:#66d9ef">float&lt;/span> B[N][N],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">float&lt;/span> C[N][N])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> i &lt;span style="color:#f92672">=&lt;/span> threadIdx.x;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> j &lt;span style="color:#f92672">=&lt;/span> threadIdx.y;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> C[i][j] &lt;span style="color:#f92672">=&lt;/span> A[i][j] &lt;span style="color:#f92672">+&lt;/span> B[i][j];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// Kernel invocation with one block of N * N * 1 threads
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> numBlocks &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> dim3 threadsPerBlock(N, N);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MatAdd&lt;span style="color:#f92672">&amp;lt;&amp;lt;&amp;lt;&lt;/span>numBlocks, threadsPerBlock&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span>(A, B, C);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>每个块的线程数量是有限制的，因为一个块的所有线程都要驻留在同一个处理器核心上，并且必须分享该核心的有限内存资源。在目前的&lt;code>GPU&lt;/code>上，一个线程块最多可以包含 $1024$ 个线程。&lt;/p></description></item><item><title>Cuda 硬件实现</title><link>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</link><pubDate>Tue, 18 Jan 2022 15:31:10 +0800</pubDate><guid>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</guid><description>&lt;h2 id="一组带有-on-chip-共享内存的-simd-多处理器">一组带有 on-chip 共享内存的 SIMD 多处理器&lt;/h2>
+&lt;p>设备可以被看作一组多处理器，如图所示。每个多处理器使用单指令多数据&lt;code>(SIMD)&lt;/code>架构：在任何给定的时钟周期内，多处理器的每个处理器执行同一指令，但操作不同的数据。&lt;/p>
+&lt;p>&lt;img src="https://i.imgur.com/zb9GQPd.png" alt="">&lt;/p>
+&lt;p>每个多处理器使用四个以下类型的&lt;code>on-chip&lt;/code>内存：&lt;/p>
+&lt;ul>
+&lt;li>每个处理器一组 $32$ 位寄存器&lt;/li>
+&lt;li>并行数据缓存或共享内存，被所有处理器共享实现内存空间共享&lt;/li>
+&lt;li>通过设备内存的一个只读区域，一个只读常量缓存器被所有处理器共享&lt;/li>
+&lt;li>通过设备内存的一个只读区域，一个只读纹理缓存器被所有处理器共享&lt;/li>
+&lt;/ul>
+&lt;p>本地和全局内存空间作为设备内存的读写区域，而不被缓冲。
+每个多处理器通过纹理单元访问纹理缓冲器，它执行各种各样的寻址模式和数据过滤。&lt;/p>
+&lt;h2 id="执行模式">执行模式&lt;/h2>
+&lt;p>一个线程块网格是通过多处理器规划执行的。每个多处理器一个接一个的处理块批处理。一个块只被一个多处理器处理，因此可以对驻留在&lt;code>on-chip&lt;/code>共享内存的共享内存空间形成非常快速的访问。&lt;/p>
+&lt;p>一个批处理中每个多处理器可以处理多少个块，取决于每个线程中分配了多少个寄存器和已知内核中每个时钟需要多少的共享内存，因为多处理器的寄存器和内存在所有的线程中是分开的。如果在至少一个块中，每个多处理器没有足够高的寄存器或共享内存用，那么内核将无法启动。&lt;/p>
+&lt;p>线程块在一个批处理中被一个多处理器执行，被称为&lt;code>active&lt;/code>，每个&lt;code>active&lt;/code>块被划分成&lt;code>SIMD&lt;/code>线程组，被称为&lt;code>warps&lt;/code>；每一条这样的&lt;code>warp&lt;/code>包含数量相同的线程，叫做&lt;code>warp&lt;/code>大小，并且在&lt;code>SIMD&lt;/code>的方式下通过多处理器执行，执行调度程序周期性地从一条&lt;code>warp&lt;/code>切换到另一条&lt;code>warp&lt;/code>，以达到多处理器计算资源使用的最大化。&lt;/p>
+&lt;p>块被划分成&lt;code>warp&lt;/code>的方式总是相同的；每条&lt;code>warp&lt;/code>包含连续的线程，线程索引从第一个&lt;code>warp&lt;/code>包含着的线程 0 开始递增。&lt;/p>
+&lt;p>一个多处理器可以并发地处理几个块，通过划分在它们之中的寄存器和共享内存。更准确地说，每条线程可使用的寄存器数量，等于每个多处理器寄存器总数除以并发的线程数量，并发线程的数量等于并发块的数量乘以每块线程的数量。&lt;/p>
+&lt;p>在一个线程块网格内的块次序是未定义的，并且在块之间不存在同步机制，因此来自同一个网格的两个不同块的线程不能通过全局内存彼此安全地通讯。&lt;/p>
+&lt;h2 id="计算兼容性">计算兼容性&lt;/h2>
+&lt;p>设备的兼容性由两个参数定义，主要版本号和次要版本号。设备拥有的主要版本号代表相同的核心架构。&lt;/p>
+&lt;p>次要版本号代表一些改进的核心架构。比如新的特性。&lt;/p>
+&lt;h2 id="多设备">多设备&lt;/h2>
+&lt;p>为一个应用程序使用多&lt;code>GPU&lt;/code>作为&lt;code>CUDA&lt;/code>设备，必须保证这些&lt;code>CPU&lt;/code>是一样的类型。如果系统工作在&lt;code>SLI&lt;/code> 模式下，那么只有一个&lt;code>GPU&lt;/code>可以作为&lt;code>CUDA&lt;/code>设备，由于所有的&lt;code>GPU&lt;/code>在驱动堆栈中被底层的融合了。&lt;code>SLI&lt;/code> 模式需要在控制面板中关闭,这样才能使多个&lt;code>GPU&lt;/code>作为&lt;code>CUDA&lt;/code>设备&lt;/p></description></item><item><title>OpenCV Canny Detector</title><link>https://fffzlfk.github.io/posts/opencv_canny_detector/</link><pubDate>Mon, 17 Jan 2022 11:35:18 +0800</pubDate><guid>https://fffzlfk.github.io/posts/opencv_canny_detector/</guid><description>&lt;h2 id="理论">理论&lt;/h2>
+&lt;p>&lt;strong>Canny边缘检测&lt;/strong>是由John F. Canny在1986年开发的。许多人也将其称为最佳检测器，Canny算法旨在满足三个主要标准。&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>好的检测&lt;/strong>：算法能够尽可能多地标识出图像中的实际边缘。&lt;/li>
+&lt;li>&lt;strong>好的定位&lt;/strong>：标识出的边缘要与实际图像中的实际边缘尽可能接近。&lt;/li>
+&lt;li>&lt;strong>最小响应&lt;/strong>：图像中的边缘只能标识一次，并且可能存在的图像雜訊不应标识为边缘。&lt;/li>
+&lt;/ul>
+&lt;h3 id="步骤">步骤&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>降噪&lt;/strong>：使用高斯滤波来达到，下面是一个大小为 $5$ 的高斯核的例子：
+$$
+K = \frac{1}{159}\begin{bmatrix}
+2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2\\
+4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\\
+5 &amp;amp; 12 &amp;amp; 15 &amp;amp; 12 &amp;amp; 5\\
+4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\\
+2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2
+\end{bmatrix}
+$$&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>找到图像的亮度梯度&lt;/strong>：为此，我们遵循一个类似于&lt;code>Sobel&lt;/code>的程序：&lt;/p>
+&lt;ol>
+&lt;li>应用一对卷积&lt;code>masks&lt;/code>（在 $x$ 和 $y$ 方向上）：
+$$
+G_x = \begin{bmatrix}
+-1 &amp;amp; 0 &amp;amp; +1\\
+-2 &amp;amp; 0 &amp;amp; +2\\
+-1 &amp;amp; 0 &amp;amp; +1
+\end{bmatrix}, G_y=\begin{bmatrix}
+-1 &amp;amp; -2 &amp;amp; -1\\
+0 &amp;amp; 0 &amp;amp; 0\\
++1 &amp;amp; +2 &amp;amp; +1
+\end{bmatrix}
+$$&lt;/li>
+&lt;li>寻找梯度强度和方向：
+$$
+G=\sqrt{G_x^2+G_y^2}\\
+\theta = \arctan(\frac{G_y}{G_x})
+$$
+方向被四舍五入为四个可能的角度之一（即 $0\degree$ 、 $45\degree$ 、 $90\degree$ 或 $135\degree$ ）。&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>过滤非最大值&lt;/strong>：在高斯滤波过程中，边缘有可能被放大了。这个步骤使用一个规则来过滤不是边缘的点，使边缘的宽度尽可能为1个像素点：如果一个像素点属于边缘，那么这个像素点在梯度方向上的梯度值是最大的。否则不是边缘，将灰度值设为 $0$ 。
+$$
+M_T(m, n) = \begin{cases}
+M(m, n)&amp;amp; \text{if } M(m, n) \lt T\\
+0 &amp;amp; \text{otherwise}
+\end{cases}
+$$&lt;/p></description></item><item><title>OpenCV Laplace Operator</title><link>https://fffzlfk.github.io/posts/opencv_laplace_operator/</link><pubDate>Mon, 17 Jan 2022 08:22:11 +0800</pubDate><guid>https://fffzlfk.github.io/posts/opencv_laplace_operator/</guid><description>&lt;h2 id="理论">理论&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>在之前的教程中，我们学习了如何使用&lt;code>Sobel&lt;/code>算子。它是基于这样一个事实，即在边缘区域，像素强度显示了一个 &amp;ldquo;跳跃&amp;quot;或强度的高变化。得到强度的一阶导数，我们观察到边缘的特征是一个最大值，如图所示：
+&lt;img src="https://docs.opencv.org/4.5.5/Laplace_Operator_Tutorial_Theory_Previous.jpg" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>那么，如果我们取二阶导数会怎样？
+&lt;img src="https://docs.opencv.org/4.5.5/Laplace_Operator_Tutorial_Theory_ddIntensity.jpg" alt="">
+你可以观察到，边缘二阶导数是零! 因此，我们也可以用这个标准来尝试检测图像的边缘。然而，请注意，零值不仅会出现在边缘（它们实际上可以出现在其他无意义的位置）；这可以通过在需要时使用过滤来解决。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="拉普拉斯算子">拉普拉斯算子&lt;/h3>
+&lt;ol>
+&lt;li>从上面的解释中，我们可以推断出，二阶导数可以用来检测边缘。由于图像是二维的，我们需要在两个维度上取导数。这里，拉普拉斯算子就派上用场了。
+拉普拉斯算子的定义是：
+$$
+Laplace(f) = \frac{\partial^2f}{\partial x^2}+\frac{\partial^2f}{\partial y^2}
+$$&lt;/li>
+&lt;li>拉普拉斯算子在OpenCV中是由函数&lt;code>Laplacian()&lt;/code>实现的。事实上，由于拉普拉斯算子使用图像的梯度，它在内部调用索贝尔算子来进行计算的。&lt;/li>
+&lt;/ol>
+&lt;h2 id="code">Code&lt;/h2>
+&lt;p>&lt;a href="https://github.com/fffzlfk/opencv_learning/blob/main/src/transformations/laplace.cpp">代码链接&lt;/a>&lt;/p>
+&lt;h3 id="explanation">Explanation&lt;/h3>
+&lt;h4 id="变量声明">变量声明&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Declare the variables we are going to use
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>Mat src, src_gray, dst;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> kernel_size &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> scale &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> delta &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> ddepth &lt;span style="color:#f92672">=&lt;/span> CV_16S;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">char&lt;/span>&lt;span style="color:#f92672">*&lt;/span> window_name &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Laplace Demo&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="加载图像">加载图像&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">char&lt;/span>&lt;span style="color:#f92672">*&lt;/span> imageName &lt;span style="color:#f92672">=&lt;/span> argc &lt;span style="color:#f92672">&amp;gt;=&lt;/span>&lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#f92672">?&lt;/span> argv[&lt;span style="color:#ae81ff">1&lt;/span>] &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#e6db74">&amp;#34;./images/lena.jpg&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>src &lt;span style="color:#f92672">=&lt;/span> imread( samples&lt;span style="color:#f92672">::&lt;/span>findFile( imageName ), IMREAD_COLOR ); &lt;span style="color:#75715e">// Load an image
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Check if image is loaded fine
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">if&lt;/span>(src.empty()){
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf(&lt;span style="color:#e6db74">&amp;#34; Error opening image&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf(&lt;span style="color:#e6db74">&amp;#34; Program Arguments: [image_name -- default lena.jpg] &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="消除噪声">消除噪声&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Reduce noise by blurring with a Gaussian filter ( kernel size = 3 )
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>GaussianBlur( src, src, Size(&lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">3&lt;/span>), &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, BORDER_DEFAULT );
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="灰度化">灰度化&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>cvtColor( src, src_gray, COLOR_BGR2GRAY ); &lt;span style="color:#75715e">// Convert the image to grayscale
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="拉普拉斯算子-1">拉普拉斯算子&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>Laplacian( src_gray, dst, ddepth, kernel_size, scale, delta, BORDER_DEFAULT );
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>参数如下。
+&lt;ul>
+&lt;li>&lt;code>src_gray&lt;/code>：输入的图像。&lt;/li>
+&lt;li>&lt;code>dst&lt;/code>：目标图像&lt;/li>
+&lt;li>&lt;code>ddepth&lt;/code>。目的图像的深度。由于我们的输入是CV_8U，我们定义ddepth = CV_16S以避免溢出。&lt;/li>
+&lt;li>&lt;code>kernel_size&lt;/code>。内部应用的Sobel算子的核大小。在这个例子中我们使用3。&lt;/li>
+&lt;li>&lt;code>scale, delta&lt;/code> 和 &lt;code>BORDER_DEFAULT&lt;/code>：我们把它们作为默认值。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h4 id="将输出转换为cv_8u图像">将输出转换为CV_8U图像&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// converting back to CV_8U
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>convertScaleAbs( dst, abs_dst );
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="结果">结果&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>编译完上面的代码后，我们可以运行它，并将图像的路径作为参数。例如，以下图输入为例：
+&lt;img src="https://docs.opencv.org/4.5.5/Laplace_Operator_Tutorial_Original_Image.jpg" alt="">&lt;/p></description></item><item><title>OpenCV Sobel Derivatives</title><link>https://fffzlfk.github.io/posts/opencv_sobel_derivatives/</link><pubDate>Sun, 16 Jan 2022 12:18:12 +0800</pubDate><guid>https://fffzlfk.github.io/posts/opencv_sobel_derivatives/</guid><description>&lt;h2 id="理论">理论&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>在之前的两个教程中，我们已经看到了卷积的应用实例。最重要的卷积之一是计算图像中的导数（或对它们的近似值）&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>为什么图像中的导数计算可能是重要的？让我们设想一下，我们要检测图像中存在的边缘。比如说：
+&lt;img src="https://docs.opencv.org/4.5.5/Sobel_Derivatives_Tutorial_Theory_0.jpg" alt="">
+你可以很容易地注意到，在一个边缘，像素强度的变化是很明显的。一个表达变化的好方法是使用导数。梯度的高变化表示图像中的一个重大变化。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>为了更加形象，让我们假设我们有一个一维图像。在下面的图中，一个边缘由强度的 &amp;ldquo;跳跃 &amp;ldquo;来表示：
+&lt;img src="https://docs.opencv.org/4.5.5/Sobel_Derivatives_Tutorial_Theory_Intensity_Function.jpg" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>如果我们取第一个导数，可以更容易地看到边缘的 &amp;ldquo;跳跃&amp;rdquo;（实际上，这里出现的是一个最大值）：
+&lt;img src="https://docs.opencv.org/4.5.5/Sobel_Derivatives_Tutorial_Theory_dIntensity_Function.jpg" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>因此，从上面的解释中，我们可以推断出，检测图像中的边缘的方法可以通过定位梯度高于其邻居的像素位置（或者概括地说，高于一个阈值）来进行。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>更详细的解释，请参考Bradski和Kaehler的&lt;a href="https://www.amazon.com/Learning-OpenCV-Computer-Vision-Library/dp/0596516134">《Learning OpenCV》&lt;/a>。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="sobel-算子">Sobel 算子&lt;/h3>
+&lt;ol>
+&lt;li>Sobel算子是一个离散的微分算子，它计算图像强度函数的梯度的近似值。&lt;/li>
+&lt;li>Sobel算子结合了&lt;code>Gaussian smoothing&lt;/code>和微分。&lt;/li>
+&lt;/ol>
+&lt;h3 id="formulation">Formulation&lt;/h3>
+&lt;p>假设要操作的图像为 $I$:&lt;/p>
+&lt;ol>
+&lt;li>我们计算两个导数：
+&lt;ol>
+&lt;li>&lt;strong>水平变化&lt;/strong>：这是通过用奇数大小的内核 $G_x$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_x$ 将被计算为：
+$$
+G_x=\begin{bmatrix}
+-1 &amp;amp; 0 &amp;amp; +1\\
+-2 &amp;amp; 0 &amp;amp; +2\\
+-1 &amp;amp; 0 &amp;amp; +1
+\end{bmatrix} * I
+$$&lt;/li>
+&lt;li>&lt;strong>垂直变化&lt;/strong>：这是通过用奇数大小的内核 $G_y$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_y$ 将被计算为：
+$$
+G_y = \begin{bmatrix}
+-1 &amp;amp; -2 &amp;amp; -1\\
+0 &amp;amp; 0 &amp;amp; 0\\
++1 &amp;amp; +2 &amp;amp; + 1
+\end{bmatrix} * I
+$$&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>在图像的每一点上，我们通过结合上述两个结果计算出该点的梯度近似值：
+$$
+G = \sqrt{G_{x}^{2}+G_{y}^{2}}
+$$
+有时会使用以下更简单的方程式：
+$$
+G = |G_x|+|G_y|
+$$&lt;/li>
+&lt;/ol>
+&lt;blockquote>
+&lt;p>当核的大小为 $3$ 时，上面显示的 &lt;code>Sobel&lt;/code>核可能会产生明显的不准确（毕竟， &lt;code>Sobel&lt;/code> 只是一个导数的近似值）。OpenCV通过使用 &lt;code>Scharr()&lt;/code> 函数来解决这种大小为 $3$ 的核的不精确性。这和标准的 &lt;code>Sobel&lt;/code> 函数一样快，但比它更准确。它可以实现以下内核
+$$
+G_x=\begin{bmatrix}
+-3 &amp;amp; 0 &amp;amp; +3\\
+-10 &amp;amp; 0 &amp;amp; +10\\
+-3 &amp;amp; 0 &amp;amp; +3
+\end{bmatrix},
+G_y=\begin{bmatrix}
+-3 &amp;amp; -10 &amp;amp; -3\\
+0 &amp;amp; 0 &amp;amp; 0\\
++3 &amp;amp; +10 &amp;amp; +3
+\end{bmatrix}
+$$&lt;/p></description></item><item><title>OpenCV Erosion Dilatation</title><link>https://fffzlfk.github.io/posts/opencv_erosion_dilatation/</link><pubDate>Sun, 09 Jan 2022 12:25:24 +0800</pubDate><guid>https://fffzlfk.github.io/posts/opencv_erosion_dilatation/</guid><description>&lt;h2 id="形态学操作">形态学操作&lt;/h2>
+&lt;ul>
+&lt;li>简而言之：一套基于形状处理图像的操作。形态学操作将一个结构化元素应用于输入图像，并生成一个输出图像。&lt;/li>
+&lt;li>最基本的形态学操作是。腐蚀和膨胀。它们有广泛的用途，即
+&lt;ul>
+&lt;li>去除噪音&lt;/li>
+&lt;li>隔离单个元素和连接图像中不同的元素&lt;/li>
+&lt;li>寻找图像中的强度凹凸点或洞&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>我们将以下面的图像为例，简要地解释膨胀和侵蚀。
+&lt;img src="https://docs.opencv.org/4.5.5/Morphology_1_Tutorial_Theory_Original_Image.png" alt="">&lt;/li>
+&lt;/ul>
+&lt;h3 id="dilation膨胀">Dilation（膨胀）&lt;/h3>
+&lt;ul>
+&lt;li>这种操作包括将图像A与一些&lt;code>kernel B&lt;/code>进行卷积，内核可以有任何形状或大小，通常是一个正方形或圆形。&lt;/li>
+&lt;li>&lt;code>kernel B&lt;/code>有一个定义的锚点(&lt;code>anchor point&lt;/code>)，通常是核的中心。&lt;/li>
+&lt;li>当&lt;code>kernel B&lt;/code>在图像上扫描时，我们计算出被B重叠的最大像素值，并用该最大值替换锚点位置的图像像素。正如你可以推断的那样，这种最大化的操作会使图像中的明亮区域 &amp;ldquo;增长&amp;rdquo;（因此被称为膨胀）。&lt;/li>
+&lt;li>膨胀操作： $dst(x, y)=max(x^{&amp;rsquo;}, y^{&amp;rsquo;})_{:element(x^{&amp;rsquo;}, y^{&amp;rsquo;}) \ne 0} src(x+x^{&amp;rsquo;}, y+y^{&amp;rsquo;})$&lt;/li>
+&lt;li>以上面的图像为例。应用膨胀的方法，我们可以得到
+&lt;img src="https://docs.opencv.org/4.5.5/Morphology_1_Tutorial_Theory_Dilation.png" alt="">&lt;/li>
+&lt;/ul>
+&lt;h3 id="腐蚀">腐蚀&lt;/h3>
+&lt;ul>
+&lt;li>它在给定内核的区域内计算局部最小值。当内核B在图像上被扫描时，我们计算出被B重叠的最小像素值，并用该最小值替换锚点下的图像像素。&lt;/li>
+&lt;li>腐蚀操作为：$dst(x, y)=min(x^{&amp;rsquo;}, y^{&amp;rsquo;})_{:element(x^{&amp;rsquo;}, y^{&amp;rsquo;}) \ne 0} src(x+x^{&amp;rsquo;}, y+y^{&amp;rsquo;})$&lt;/li>
+&lt;li>与膨胀的例子类似，我们可以对原始图像应用腐蚀算子（如上图）。你可以在下面的结果中看到，图像的亮区变薄了，而暗区变大了。
+&lt;img src="https://docs.opencv.org/4.5.5/Morphology_1_Tutorial_Theory_Erosion.png" alt="">&lt;/li>
+&lt;/ul>
+&lt;h2 id="code">Code&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;#34;basic/erosion_dilatation.hpp&amp;#34;&lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">namespace&lt;/span> basic {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">namespace&lt;/span> erosion_dilatation {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">namespace&lt;/span> impl {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Mat src, erosion_dst, dilation_dst;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> erosion_elem &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> erosion_size &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> dilation_elem &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> dilation_size &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#66d9ef">const&lt;/span> max_elem &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#66d9ef">const&lt;/span> max_kernel_size &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">21&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">work&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> argc, &lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#f92672">**&lt;/span>argv) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> CommandLineParser parser(argc, argv,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;{@input | ./images/LinuxLogo.jpg | input image}&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> src &lt;span style="color:#f92672">=&lt;/span> imread(samples&lt;span style="color:#f92672">::&lt;/span>findFile(parser.get&lt;span style="color:#f92672">&amp;lt;&lt;/span>String&lt;span style="color:#f92672">&amp;gt;&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;@input&amp;#34;&lt;/span>)), IMREAD_COLOR);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (src.empty()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cout &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Could not open or find the image!&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> endl;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cout &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Usage: &amp;#34;&lt;/span> &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> argv[&lt;span style="color:#ae81ff">0&lt;/span>] &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#34; &amp;lt;Input image&amp;gt;&amp;#34;&lt;/span> &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> endl;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> namedWindow(&lt;span style="color:#e6db74">&amp;#34;Erosion Demo&amp;#34;&lt;/span>, WINDOW_AUTOSIZE);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> namedWindow(&lt;span style="color:#e6db74">&amp;#34;Dilation Demo&amp;#34;&lt;/span>, WINDOW_AUTOSIZE);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> moveWindow(&lt;span style="color:#e6db74">&amp;#34;Dilation Demo&amp;#34;&lt;/span>, src.cols, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> createTrackbar(&lt;span style="color:#e6db74">&amp;#34;Element:&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 0: Rect &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 1: Cross &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 2: Ellipse&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Erosion Demo&amp;#34;&lt;/span>, &lt;span style="color:#f92672">&amp;amp;&lt;/span>erosion_elem, max_elem, Erosion);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> createTrackbar(&lt;span style="color:#e6db74">&amp;#34;Kernel size:&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 2n +1&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Erosion Demo&amp;#34;&lt;/span>, &lt;span style="color:#f92672">&amp;amp;&lt;/span>erosion_size,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> max_kernel_size, Erosion);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> createTrackbar(&lt;span style="color:#e6db74">&amp;#34;Element:&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 0: Rect &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 1: Cross &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 2: Ellipse&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Dilation Demo&amp;#34;&lt;/span>, &lt;span style="color:#f92672">&amp;amp;&lt;/span>dilation_elem, max_elem, Dilation);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> createTrackbar(&lt;span style="color:#e6db74">&amp;#34;Kernel size:&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 2n +1&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Dilation Demo&amp;#34;&lt;/span>, &lt;span style="color:#f92672">&amp;amp;&lt;/span>dilation_size,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> max_kernel_size, Dilation);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Erosion(&lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Dilation(&lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> waitKey(&lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">Erosion&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>, &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#f92672">*&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> erosion_type &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (erosion_elem &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> erosion_type &lt;span style="color:#f92672">=&lt;/span> MORPH_RECT;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> (erosion_elem &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> erosion_type &lt;span style="color:#f92672">=&lt;/span> MORPH_CROSS;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> (erosion_elem &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> erosion_type &lt;span style="color:#f92672">=&lt;/span> MORPH_ELLIPSE;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Mat element &lt;span style="color:#f92672">=&lt;/span> getStructuringElement(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> erosion_type, Size(&lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#f92672">*&lt;/span> erosion_size &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#f92672">*&lt;/span> erosion_size &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Point(erosion_size, erosion_size));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> erode(src, erosion_dst, element);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> imshow(&lt;span style="color:#e6db74">&amp;#34;Erosion Demo&amp;#34;&lt;/span>, erosion_dst);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">Dilation&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>, &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#f92672">*&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> dilation_type &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (dilation_elem &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> dilation_type &lt;span style="color:#f92672">=&lt;/span> MORPH_RECT;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> (dilation_elem &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> dilation_type &lt;span style="color:#f92672">=&lt;/span> MORPH_CROSS;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> (dilation_elem &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> dilation_type &lt;span style="color:#f92672">=&lt;/span> MORPH_ELLIPSE;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Mat element &lt;span style="color:#f92672">=&lt;/span> getStructuringElement(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> dilation_type, Size(&lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#f92672">*&lt;/span> dilation_size &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#f92672">*&lt;/span> dilation_size &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Point(dilation_size, dilation_size));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> dilate(src, dilation_dst, element);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> imshow(&lt;span style="color:#e6db74">&amp;#34;Dilation Demo&amp;#34;&lt;/span>, dilation_dst);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>} &lt;span style="color:#75715e">// namespace impl
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>} &lt;span style="color:#75715e">// namespace erosion_dilatation
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>} &lt;span style="color:#75715e">// namespace basic
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="程序功能">程序功能&lt;/h4>
+&lt;ul>
+&lt;li>加载一个图像（可以是BGR或灰度）。&lt;/li>
+&lt;li>创建两个窗口（一个用于膨胀输出，另一个用于侵蚀）&lt;/li>
+&lt;li>为每个操作创建一组两个&lt;code>TraceBar&lt;/code>
+&lt;ul>
+&lt;li>&lt;code>erosion_elem&lt;/code> 或 &lt;code>dilation_elem&lt;/code>（矩形、十字、椭圆）&lt;/li>
+&lt;li>内核大小&lt;code>kernel size&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="结果">结果&lt;/h2>
+&lt;p>&lt;img src="https://i.imgur.com/4ZpgH4P.png" alt="">&lt;/p></description></item><item><title>OpenCV Blurring</title><link>https://fffzlfk.github.io/posts/opencv_blurring/</link><pubDate>Sun, 09 Jan 2022 07:37:09 +0800</pubDate><guid>https://fffzlfk.github.io/posts/opencv_blurring/</guid><description>&lt;h2 id="理论">理论&lt;/h2>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>Smoothing&lt;/code>也叫&lt;code>blurring&lt;/code>（模糊化），是一个简单而常用的图像处理操作。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>Smoothing&lt;/code>有很多原因。在本教程中，我们将重点讨论平滑操作，以减少噪音。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>为了进行平滑操作，我们将对我们的图像应用一个&lt;code>filter&lt;/code>。最常见的&lt;code>filter&lt;/code>是线性的，其中输出像素的值（即 $g(i,j)$ ）为输入像素值的加权和（即 $f(i+k,j+l)$ ）。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>$$
+g(i, j) = \sum_{k, l}{f(i+k, j+l)h(k, l)}
+$$&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>$h(k,l)$ 被称为&lt;code>kernel&lt;/code>，它只不过是&lt;code>filter&lt;/code>的系数。这有助于把滤波器想象成一个在图像上滑动的系数窗口。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>滤波器有很多种类，这里我们将提到最常用的几种。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="normalized-box-filter归一化块滤波器">Normalized Box Filter（归一化块滤波器）&lt;/h2>
+&lt;ul>
+&lt;li>这个滤波器是最简单的，每个输出像素都是其内核邻居的平均值（所有的像素都有相同的权重）。&lt;/li>
+&lt;/ul>
+&lt;p>$$
+K = \frac{1}{K_{width} \cdot k_{height}}
+\begin{bmatrix}
+1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\\
+1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\\
+. &amp;amp; . &amp;amp; . &amp;amp; &amp;hellip;&amp;amp; 1\\
+1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1
+\end{bmatrix}
+$$&lt;/p>
+&lt;h2 id="gaussian-filter高斯滤波器">Gaussian Filter（高斯滤波器）&lt;/h2>
+&lt;ul>
+&lt;li>
+&lt;p>可能是最有用的滤波器（尽管不是最快的）。高斯滤波是通过用高斯内核对输入阵列中的每个点进行卷积，然后将它们全部相加来产生输出阵列的。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>让我们回顾一下&lt;code>1D Gaussian kernel&lt;/code>是什么样子：
+&lt;img src="https://docs.opencv.org/4.5.5/Smoothing_Tutorial_theory_gaussian_0.jpg" alt="">&lt;/p></description></item><item><title>Cuda软件架构</title><link>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</link><pubDate>Sat, 08 Jan 2022 06:27:04 +0800</pubDate><guid>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</guid><description>&lt;h2 id="硬件">硬件&lt;/h2>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>SP(Streaming Processor)&lt;/code>：流处理器，是GPU最基本的处理单元，在&lt;code>fermi&lt;/code>架构开始被叫做&lt;code>CUDA core&lt;/code>。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>SM(Streaming MultiProcessor)&lt;/code>：一个SM由多个&lt;code>CUDA core&lt;/code>组成。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>比如说，如果一个GPU有 $4$ 个&lt;code>SM&lt;/code>，并且每个&lt;code>SM&lt;/code>有 $768$ 个&lt;code>SP&lt;/code>(Aka &lt;code>CUDA core&lt;/code>)；那么在某一时刻，真正并行运行的线程数不会超过 $4 \times 768$ 个。&lt;/p>
+&lt;h2 id="软件">软件&lt;/h2>
+&lt;p>&lt;code>threads&lt;/code>被组织成&lt;code>blocks&lt;/code>。一个&lt;code>block&lt;/code>的线程可以用&lt;code>1Dimension(x)&lt;/code>, &lt;code>2Dimensions(x, y)&lt;/code>或者&lt;code>3Dim indexs(x, y, z)&lt;/code> 索引，&lt;/p>
+&lt;p>显然，如果你需要 $4 \times 768$ 个以上的&lt;code>threads&lt;/code>的话你需要 $4$ 个以上的&lt;code>blocks&lt;/code>。&lt;code>blocks&lt;/code>也可以使用&lt;code>1D&lt;/code>, &lt;code>2D&lt;/code>或&lt;code>3D&lt;/code>索引，这些&lt;code>blocks&lt;/code>被放在等待队列上进入GPU执行。&lt;/p>
+&lt;h2 id="wrap">Wrap&lt;/h2>
+&lt;p>当一个&lt;code>kernel&lt;/code>被执行时，&lt;code>grid&lt;/code>中的线程块被分配到&lt;code>SM&lt;/code>上。一个&lt;code>CUDA core&lt;/code>可以执行一个&lt;code>thread&lt;/code>，一个&lt;code>SM&lt;/code>的&lt;code>CUDA core&lt;/code>会分成几个&lt;code>wrap&lt;/code>，由&lt;code>wrap scheduler&lt;/code>负责调度。&lt;/p>
+&lt;p>一个&lt;code>wrap&lt;/code>中的线程在同一个&lt;code>block&lt;/code>中，如果&lt;code>block&lt;/code>所含线程数不是&lt;code>wrap&lt;/code>的大小的整数倍，那么多出来的那些&lt;code>thread&lt;/code>所在的&lt;code>wrap&lt;/code>中，会剩余一些&lt;code>inactive&lt;/code>的&lt;code>thread&lt;/code>。&lt;/p>
+&lt;h2 id="一个简单的case">一个简单的case&lt;/h2>
+&lt;p>处理一张 $512 \times 512$ 的图片。&lt;/p>
+&lt;p>假设我们希望一个线程处理一个像素&lt;code>pixel(i, j)&lt;/code>。&lt;/p>
+&lt;p>我们可以使用每 $64$ 个线程的区块。所以我们需要 $\frac{512 \times 512 }{64} = 4096$ 个区块（为了拥有 $512 \times 512 $ 个线程 ）。&lt;/p>
+&lt;p>通常情况下，我们将线程组织在&lt;code>2D&lt;/code>区块中（为了更容易索引图像像素）。&lt;code>blockDim&lt;/code>= $8 * 8$ ，我更喜欢叫它&lt;code>threadsPerBlock&lt;/code>。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>dim3 &lt;span style="color:#a6e22e">threadsPerBlock&lt;/span>(&lt;span style="color:#ae81ff">8&lt;/span>, &lt;span style="color:#ae81ff">8&lt;/span>);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>还有&lt;code>2D&lt;/code>的&lt;code>gridDim&lt;/code>= $64 \times 64$ （需要 $4096$ 个区块）。我更喜欢叫它&lt;code>numBlocks&lt;/code>。&lt;/p></description></item><item><title>CodeForces 762</title><link>https://fffzlfk.github.io/posts/codeforces-762/</link><pubDate>Sun, 26 Dec 2021 17:18:09 +0800</pubDate><guid>https://fffzlfk.github.io/posts/codeforces-762/</guid><description>Codeforces Round #762 (Div. 3)</description></item><item><title>从模板元编程到constexpr(C++)</title><link>https://fffzlfk.github.io/posts/%E4%BB%8E%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E5%88%B0constexprc++/</link><pubDate>Sun, 28 Nov 2021 19:43:10 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E4%BB%8E%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E5%88%B0constexprc++/</guid><description>C++元编程</description></item><item><title>Go设计模式</title><link>https://fffzlfk.github.io/posts/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</link><pubDate>Sun, 18 Jul 2021 22:52:35 +0800</pubDate><guid>https://fffzlfk.github.io/posts/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</guid><description>Go Design Scheme</description></item><item><title>网络应用程序设计</title><link>https://fffzlfk.github.io/posts/%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</link><pubDate>Wed, 07 Apr 2021 20:48:12 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</guid><description>Network Program Design for Application</description></item><item><title>分布式计算</title><link>https://fffzlfk.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/</link><pubDate>Sat, 13 Mar 2021 13:57:34 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/</guid><description>Distributed Computing</description></item><item><title>编译原理</title><link>https://fffzlfk.github.io/posts/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/</link><pubDate>Thu, 11 Mar 2021 10:51:32 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/</guid><description>Compiler Principles</description></item><item><title>牛顿法求平方根</title><link>https://fffzlfk.github.io/posts/%E7%89%9B%E9%A1%BF%E6%B3%95%E6%B1%82%E5%B9%B3%E6%96%B9%E6%A0%B9/</link><pubDate>Tue, 23 Feb 2021 17:18:19 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E7%89%9B%E9%A1%BF%E6%B3%95%E6%B1%82%E5%B9%B3%E6%96%B9%E6%A0%B9/</guid><description>Newton&amp;rsquo;s method for the square root</description></item><item><title>子数组和问题</title><link>https://fffzlfk.github.io/posts/%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C%E9%97%AE%E9%A2%98/</link><pubDate>Sun, 21 Feb 2021 22:46:48 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C%E9%97%AE%E9%A2%98/</guid><description>the Sum of Subsequence</description></item><item><title>Python装饰器</title><link>https://fffzlfk.github.io/posts/python%E8%A3%85%E9%A5%B0%E5%99%A8/</link><pubDate>Tue, 02 Feb 2021 14:23:44 +0800</pubDate><guid>https://fffzlfk.github.io/posts/python%E8%A3%85%E9%A5%B0%E5%99%A8/</guid><description>Python decorator</description></item><item><title>每日一题</title><link>https://fffzlfk.github.io/posts/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</link><pubDate>Sun, 10 Jan 2021 00:00:00 +0000</pubDate><guid>https://fffzlfk.github.io/posts/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</guid><description>Algorithms Problems</description></item><item><title>SQL</title><link>https://fffzlfk.github.io/posts/sql/</link><pubDate>Sat, 24 Oct 2020 20:22:42 +0800</pubDate><guid>https://fffzlfk.github.io/posts/sql/</guid><description>SQL 语句</description></item><item><title>微机原理</title><link>https://fffzlfk.github.io/posts/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86/</link><pubDate>Sat, 17 Oct 2020 21:07:26 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86/</guid><description>西电微机原理</description></item><item><title>C++(临时对象的分析)</title><link>https://fffzlfk.github.io/posts/c++%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/</link><pubDate>Sat, 10 Oct 2020 00:00:00 +0000</pubDate><guid>https://fffzlfk.github.io/posts/c++%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/</guid><description>关闭编译器优化</description></item><item><title>算法（第四版）</title><link>https://fffzlfk.github.io/posts/algorithm4th/</link><pubDate>Fri, 09 Oct 2020 00:00:00 +0000</pubDate><guid>https://fffzlfk.github.io/posts/algorithm4th/</guid><description>The solution of algs4&amp;rsquo;s exercise</description></item><item><title>OOP(C++)</title><link>https://fffzlfk.github.io/posts/oopc++/</link><pubDate>Tue, 06 Oct 2020 12:25:11 +0800</pubDate><guid>https://fffzlfk.github.io/posts/oopc++/</guid><description>Object-Oriented Programming</description></item><item><title>泰勒公式总结</title><link>https://fffzlfk.github.io/posts/%E6%B3%B0%E5%8B%92%E5%85%AC%E5%BC%8F%E6%80%BB%E7%BB%93/</link><pubDate>Fri, 31 Jul 2020 22:41:12 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E6%B3%B0%E5%8B%92%E5%85%AC%E5%BC%8F%E6%80%BB%E7%BB%93/</guid><description>Taylor formula</description></item></channel></rss>

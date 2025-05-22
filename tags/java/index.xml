@@ -1,30 +1,42 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>Java on fffzlfk&#39;s Blog</title>
-    <link>https://fffzlfk.github.io/tags/java/</link>
-    <description>Recent content in Java on fffzlfk&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Thu, 04 Aug 2022 22:33:37 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Java泛型</title>
-      <link>https://fffzlfk.github.io/posts/java%E6%B3%9B%E5%9E%8B/</link>
-      <pubDate>Thu, 04 Aug 2022 22:33:37 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/java%E6%B3%9B%E5%9E%8B/</guid>
-      <description>擦拭法 编译器把类型&amp;lt;T&amp;gt;视为Object public class Pair&amp;lt;T&amp;gt; { private final T first; private final T last; public Pair(T first, T last) { this.first = first; this.last = last; } public T getFirst() { return first; } public T getLast() { return last; } } Java中泛型是在编译阶段的，编译器将上述代码经过擦除法，JVM实际看到的代码如下所示：
-public class Pair { private final Object first; private final Object last; public Pair(Object first, Object last) { this.first = first; this.last = last; } public Object getFirst() { return first; } public Object getLast() { return last; } } 编译器根据&amp;lt;T&amp;gt;实现安全的强制转型 Pair&amp;lt;String&amp;gt; p = new Pair&amp;lt;&amp;gt;(&amp;#34;Hello&amp;#34;, &amp;#34;world&amp;#34;); String first = p.</description>
-    </item>
-    
-    <item>
-      <title>算法（第四版）</title>
-      <link>https://fffzlfk.github.io/posts/algorithm4th/</link>
-      <pubDate>Fri, 09 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/algorithm4th/</guid>
-      <description>The solution of algs4&amp;rsquo;s exercise</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Java on fffzlfk's Blog</title><link>https://fffzlfk.github.io/tags/java/</link><description>Recent content in Java on fffzlfk's Blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Thu, 04 Aug 2022 22:33:37 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/java/index.xml" rel="self" type="application/rss+xml"/><item><title>Java泛型</title><link>https://fffzlfk.github.io/posts/java%E6%B3%9B%E5%9E%8B/</link><pubDate>Thu, 04 Aug 2022 22:33:37 +0800</pubDate><guid>https://fffzlfk.github.io/posts/java%E6%B3%9B%E5%9E%8B/</guid><description>&lt;h2 id="擦拭法">擦拭法&lt;/h2>
+&lt;h3 id="编译器把类型t视为object">编译器把类型&lt;code>&amp;lt;T&amp;gt;&lt;/code>视为Object&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Pair&lt;/span>&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> T first;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> T last;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#a6e22e">Pair&lt;/span>(T first, T last) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">first&lt;/span> &lt;span style="color:#f92672">=&lt;/span> first;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">last&lt;/span> &lt;span style="color:#f92672">=&lt;/span> last;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> T &lt;span style="color:#a6e22e">getFirst&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> first;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> T &lt;span style="color:#a6e22e">getLast&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> last;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Java中泛型是在编译阶段的，编译器将上述代码经过擦除法，JVM实际看到的代码如下所示：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Pair&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> Object first;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> Object last;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#a6e22e">Pair&lt;/span>(Object first, Object last) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">first&lt;/span> &lt;span style="color:#f92672">=&lt;/span> first;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">last&lt;/span> &lt;span style="color:#f92672">=&lt;/span> last;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> Object &lt;span style="color:#a6e22e">getFirst&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> first;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> Object &lt;span style="color:#a6e22e">getLast&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> last;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="编译器根据t实现安全的强制转型">编译器根据&lt;code>&amp;lt;T&amp;gt;&lt;/code>实现安全的强制转型&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>Pair&lt;span style="color:#f92672">&amp;lt;&lt;/span>String&lt;span style="color:#f92672">&amp;gt;&lt;/span> p &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> Pair&lt;span style="color:#f92672">&amp;lt;&amp;gt;&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Hello&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;world&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>String first &lt;span style="color:#f92672">=&lt;/span> p.&lt;span style="color:#a6e22e">getFirst&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>String last &lt;span style="color:#f92672">=&lt;/span> p.&lt;span style="color:#a6e22e">getLast&lt;/span>();
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>编译器根据T的类型安全强转：&lt;/p></description></item><item><title>算法（第四版）</title><link>https://fffzlfk.github.io/posts/algorithm4th/</link><pubDate>Fri, 09 Oct 2020 00:00:00 +0000</pubDate><guid>https://fffzlfk.github.io/posts/algorithm4th/</guid><description>The solution of algs4&amp;rsquo;s exercise</description></item></channel></rss>

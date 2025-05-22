@@ -1,74 +1,350 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>OpenCV on fffzlfk&#39;s Blog</title>
-    <link>https://fffzlfk.github.io/tags/opencv/</link>
-    <description>Recent content in OpenCV on fffzlfk&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Mon, 17 Jan 2022 11:35:18 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/opencv/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>OpenCV Canny Detector</title>
-      <link>https://fffzlfk.github.io/posts/opencv_canny_detector/</link>
-      <pubDate>Mon, 17 Jan 2022 11:35:18 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/opencv_canny_detector/</guid>
-      <description>理论 Canny边缘检测是由John F. Canny在1986年开发的。许多人也将其称为最佳检测器，Canny算法旨在满足三个主要标准。
-好的检测：算法能够尽可能多地标识出图像中的实际边缘。 好的定位：标识出的边缘要与实际图像中的实际边缘尽可能接近。 最小响应：图像中的边缘只能标识一次，并且可能存在的图像雜訊不应标识为边缘。 步骤 降噪：使用高斯滤波来达到，下面是一个大小为 $5$ 的高斯核的例子： $$ K = \frac{1}{159}\begin{bmatrix} 2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2\\ 4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\\ 5 &amp;amp; 12 &amp;amp; 15 &amp;amp; 12 &amp;amp; 5\\ 4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\\ 2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2 \end{bmatrix} $$
-找到图像的亮度梯度：为此，我们遵循一个类似于Sobel的程序：
-应用一对卷积masks（在 $x$ 和 $y$ 方向上）： $$ G_x = \begin{bmatrix} -1 &amp;amp; 0 &amp;amp; +1\\ -2 &amp;amp; 0 &amp;amp; +2\\ -1 &amp;amp; 0 &amp;amp; +1 \end{bmatrix}, G_y=\begin{bmatrix} -1 &amp;amp; -2 &amp;amp; -1\\ 0 &amp;amp; 0 &amp;amp; 0\\ +1 &amp;amp; +2 &amp;amp; +1 \end{bmatrix} $$ 寻找梯度强度和方向： $$ G=\sqrt{G_x^2+G_y^2}\\ \theta = \arctan(\frac{G_y}{G_x}) $$ 方向被四舍五入为四个可能的角度之一（即 $0\degree$ 、 $45\degree$ 、 $90\degree$ 或 $135\degree$ ）。 过滤非最大值：在高斯滤波过程中，边缘有可能被放大了。这个步骤使用一个规则来过滤不是边缘的点，使边缘的宽度尽可能为1个像素点：如果一个像素点属于边缘，那么这个像素点在梯度方向上的梯度值是最大的。否则不是边缘，将灰度值设为 $0$ 。 $$ M_T(m, n) = \begin{cases} M(m, n)&amp;amp; \text{if } M(m, n) \lt T\\ 0 &amp;amp; \text{otherwise} \end{cases} $$</description>
-    </item>
-    
-    <item>
-      <title>OpenCV Laplace Operator</title>
-      <link>https://fffzlfk.github.io/posts/opencv_laplace_operator/</link>
-      <pubDate>Mon, 17 Jan 2022 08:22:11 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/opencv_laplace_operator/</guid>
-      <description>理论 在之前的教程中，我们学习了如何使用Sobel算子。它是基于这样一个事实，即在边缘区域，像素强度显示了一个 &amp;ldquo;跳跃&amp;quot;或强度的高变化。得到强度的一阶导数，我们观察到边缘的特征是一个最大值，如图所示： 那么，如果我们取二阶导数会怎样？ 你可以观察到，边缘二阶导数是零! 因此，我们也可以用这个标准来尝试检测图像的边缘。然而，请注意，零值不仅会出现在边缘（它们实际上可以出现在其他无意义的位置）；这可以通过在需要时使用过滤来解决。
-拉普拉斯算子 从上面的解释中，我们可以推断出，二阶导数可以用来检测边缘。由于图像是二维的，我们需要在两个维度上取导数。这里，拉普拉斯算子就派上用场了。 拉普拉斯算子的定义是： $$ Laplace(f) = \frac{\partial^2f}{\partial x^2}+\frac{\partial^2f}{\partial y^2} $$ 拉普拉斯算子在OpenCV中是由函数Laplacian()实现的。事实上，由于拉普拉斯算子使用图像的梯度，它在内部调用索贝尔算子来进行计算的。 Code 代码链接
-Explanation 变量声明 // Declare the variables we are going to use Mat src, src_gray, dst; int kernel_size = 3; int scale = 1; int delta = 0; int ddepth = CV_16S; const char* window_name = &amp;#34;Laplace Demo&amp;#34;; 加载图像 const char* imageName = argc &amp;gt;=2 ? argv[1] : &amp;#34;./images/lena.jpg&amp;#34;; src = imread( samples::findFile( imageName ), IMREAD_COLOR ); // Load an image // Check if image is loaded fine if(src.</description>
-    </item>
-    
-    <item>
-      <title>OpenCV Sobel Derivatives</title>
-      <link>https://fffzlfk.github.io/posts/opencv_sobel_derivatives/</link>
-      <pubDate>Sun, 16 Jan 2022 12:18:12 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/opencv_sobel_derivatives/</guid>
-      <description>理论 在之前的两个教程中，我们已经看到了卷积的应用实例。最重要的卷积之一是计算图像中的导数（或对它们的近似值）
-为什么图像中的导数计算可能是重要的？让我们设想一下，我们要检测图像中存在的边缘。比如说： 你可以很容易地注意到，在一个边缘，像素强度的变化是很明显的。一个表达变化的好方法是使用导数。梯度的高变化表示图像中的一个重大变化。
-为了更加形象，让我们假设我们有一个一维图像。在下面的图中，一个边缘由强度的 &amp;ldquo;跳跃 &amp;ldquo;来表示： 如果我们取第一个导数，可以更容易地看到边缘的 &amp;ldquo;跳跃&amp;rdquo;（实际上，这里出现的是一个最大值）： 因此，从上面的解释中，我们可以推断出，检测图像中的边缘的方法可以通过定位梯度高于其邻居的像素位置（或者概括地说，高于一个阈值）来进行。
-更详细的解释，请参考Bradski和Kaehler的《Learning OpenCV》。
-Sobel 算子 Sobel算子是一个离散的微分算子，它计算图像强度函数的梯度的近似值。 Sobel算子结合了Gaussian smoothing和微分。 Formulation 假设要操作的图像为 $I$:
-我们计算两个导数： 水平变化：这是通过用奇数大小的内核 $G_x$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_x$ 将被计算为： $$ G_x=\begin{bmatrix} -1 &amp;amp; 0 &amp;amp; +1\\ -2 &amp;amp; 0 &amp;amp; +2\\ -1 &amp;amp; 0 &amp;amp; +1 \end{bmatrix} * I $$ 垂直变化：这是通过用奇数大小的内核 $G_y$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_y$ 将被计算为： $$ G_y = \begin{bmatrix} -1 &amp;amp; -2 &amp;amp; -1\\ 0 &amp;amp; 0 &amp;amp; 0\\ +1 &amp;amp; +2 &amp;amp; + 1 \end{bmatrix} * I $$ 在图像的每一点上，我们通过结合上述两个结果计算出该点的梯度近似值： $$ G = \sqrt{G_{x}^{2}+G_{y}^{2}} $$ 有时会使用以下更简单的方程式： $$ G = |G_x|+|G_y| $$ 当核的大小为 $3$ 时，上面显示的 Sobel核可能会产生明显的不准确（毕竟， Sobel 只是一个导数的近似值）。OpenCV通过使用 Scharr() 函数来解决这种大小为 $3$ 的核的不精确性。这和标准的 Sobel 函数一样快，但比它更准确。它可以实现以下内核 $$ G_x=\begin{bmatrix} -3 &amp;amp; 0 &amp;amp; +3\\ -10 &amp;amp; 0 &amp;amp; +10\\ -3 &amp;amp; 0 &amp;amp; +3 \end{bmatrix}, G_y=\begin{bmatrix} -3 &amp;amp; -10 &amp;amp; -3\\ 0 &amp;amp; 0 &amp;amp; 0\\ +3 &amp;amp; +10 &amp;amp; +3 \end{bmatrix} $$</description>
-    </item>
-    
-    <item>
-      <title>OpenCV Erosion Dilatation</title>
-      <link>https://fffzlfk.github.io/posts/opencv_erosion_dilatation/</link>
-      <pubDate>Sun, 09 Jan 2022 12:25:24 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/opencv_erosion_dilatation/</guid>
-      <description>形态学操作 简而言之：一套基于形状处理图像的操作。形态学操作将一个结构化元素应用于输入图像，并生成一个输出图像。 最基本的形态学操作是。腐蚀和膨胀。它们有广泛的用途，即 去除噪音 隔离单个元素和连接图像中不同的元素 寻找图像中的强度凹凸点或洞 我们将以下面的图像为例，简要地解释膨胀和侵蚀。 Dilation（膨胀） 这种操作包括将图像A与一些kernel B进行卷积，内核可以有任何形状或大小，通常是一个正方形或圆形。 kernel B有一个定义的锚点(anchor point)，通常是核的中心。 当kernel B在图像上扫描时，我们计算出被B重叠的最大像素值，并用该最大值替换锚点位置的图像像素。正如你可以推断的那样，这种最大化的操作会使图像中的明亮区域 &amp;ldquo;增长&amp;rdquo;（因此被称为膨胀）。 膨胀操作： $dst(x, y)=max(x^{&amp;rsquo;}, y^{&amp;rsquo;})_{:element(x^{&amp;rsquo;}, y^{&amp;rsquo;}) \ne 0} src(x+x^{&amp;rsquo;}, y+y^{&amp;rsquo;})$ 以上面的图像为例。应用膨胀的方法，我们可以得到 腐蚀 它在给定内核的区域内计算局部最小值。当内核B在图像上被扫描时，我们计算出被B重叠的最小像素值，并用该最小值替换锚点下的图像像素。 腐蚀操作为：$dst(x, y)=min(x^{&amp;rsquo;}, y^{&amp;rsquo;})_{:element(x^{&amp;rsquo;}, y^{&amp;rsquo;}) \ne 0} src(x+x^{&amp;rsquo;}, y+y^{&amp;rsquo;})$ 与膨胀的例子类似，我们可以对原始图像应用腐蚀算子（如上图）。你可以在下面的结果中看到，图像的亮区变薄了，而暗区变大了。 Code #include &amp;#34;basic/erosion_dilatation.hpp&amp;#34; namespace basic { namespace erosion_dilatation { namespace impl { Mat src, erosion_dst, dilation_dst; int erosion_elem = 0; int erosion_size = 0; int dilation_elem = 0; int dilation_size = 0; int const max_elem = 2; int const max_kernel_size = 21; int work(int argc, char **argv) { CommandLineParser parser(argc, argv, &amp;#34;{@input | .</description>
-    </item>
-    
-    <item>
-      <title>OpenCV Blurring</title>
-      <link>https://fffzlfk.github.io/posts/opencv_blurring/</link>
-      <pubDate>Sun, 09 Jan 2022 07:37:09 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/opencv_blurring/</guid>
-      <description>理论 Smoothing也叫blurring（模糊化），是一个简单而常用的图像处理操作。
-Smoothing有很多原因。在本教程中，我们将重点讨论平滑操作，以减少噪音。
-为了进行平滑操作，我们将对我们的图像应用一个filter。最常见的filter是线性的，其中输出像素的值（即 $g(i,j)$ ）为输入像素值的加权和（即 $f(i+k,j+l)$ ）。
-$$ g(i, j) = \sum_{k, l}{f(i+k, j+l)h(k, l)} $$
-$h(k,l)$ 被称为kernel，它只不过是filter的系数。这有助于把滤波器想象成一个在图像上滑动的系数窗口。
-滤波器有很多种类，这里我们将提到最常用的几种。
-Normalized Box Filter（归一化块滤波器） 这个滤波器是最简单的，每个输出像素都是其内核邻居的平均值（所有的像素都有相同的权重）。 $$ K = \frac{1}{K_{width} \cdot k_{height}} \begin{bmatrix} 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\\ 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\\ . &amp;amp; . &amp;amp; . &amp;amp; &amp;hellip;&amp;amp; 1\\ 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1 \end{bmatrix} $$
-Gaussian Filter（高斯滤波器） 可能是最有用的滤波器（尽管不是最快的）。高斯滤波是通过用高斯内核对输入阵列中的每个点进行卷积，然后将它们全部相加来产生输出阵列的。
-让我们回顾一下1D Gaussian kernel是什么样子： 假设图像是一维的，你可以注意到，位于中间的像素会有最大的权重。它的邻居的权重随着它们与中心像素之间的空间距离增加而减少。</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>OpenCV on fffzlfk's Blog</title><link>https://fffzlfk.github.io/tags/opencv/</link><description>Recent content in OpenCV on fffzlfk's Blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Mon, 17 Jan 2022 11:35:18 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/opencv/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenCV Canny Detector</title><link>https://fffzlfk.github.io/posts/opencv_canny_detector/</link><pubDate>Mon, 17 Jan 2022 11:35:18 +0800</pubDate><guid>https://fffzlfk.github.io/posts/opencv_canny_detector/</guid><description>&lt;h2 id="理论">理论&lt;/h2>
+&lt;p>&lt;strong>Canny边缘检测&lt;/strong>是由John F. Canny在1986年开发的。许多人也将其称为最佳检测器，Canny算法旨在满足三个主要标准。&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>好的检测&lt;/strong>：算法能够尽可能多地标识出图像中的实际边缘。&lt;/li>
+&lt;li>&lt;strong>好的定位&lt;/strong>：标识出的边缘要与实际图像中的实际边缘尽可能接近。&lt;/li>
+&lt;li>&lt;strong>最小响应&lt;/strong>：图像中的边缘只能标识一次，并且可能存在的图像雜訊不应标识为边缘。&lt;/li>
+&lt;/ul>
+&lt;h3 id="步骤">步骤&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>降噪&lt;/strong>：使用高斯滤波来达到，下面是一个大小为 $5$ 的高斯核的例子：
+$$
+K = \frac{1}{159}\begin{bmatrix}
+2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2\\
+4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\\
+5 &amp;amp; 12 &amp;amp; 15 &amp;amp; 12 &amp;amp; 5\\
+4 &amp;amp; 9 &amp;amp; 12 &amp;amp; 9 &amp;amp; 4\\
+2 &amp;amp; 4 &amp;amp; 5 &amp;amp; 4 &amp;amp; 2
+\end{bmatrix}
+$$&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>找到图像的亮度梯度&lt;/strong>：为此，我们遵循一个类似于&lt;code>Sobel&lt;/code>的程序：&lt;/p>
+&lt;ol>
+&lt;li>应用一对卷积&lt;code>masks&lt;/code>（在 $x$ 和 $y$ 方向上）：
+$$
+G_x = \begin{bmatrix}
+-1 &amp;amp; 0 &amp;amp; +1\\
+-2 &amp;amp; 0 &amp;amp; +2\\
+-1 &amp;amp; 0 &amp;amp; +1
+\end{bmatrix}, G_y=\begin{bmatrix}
+-1 &amp;amp; -2 &amp;amp; -1\\
+0 &amp;amp; 0 &amp;amp; 0\\
++1 &amp;amp; +2 &amp;amp; +1
+\end{bmatrix}
+$$&lt;/li>
+&lt;li>寻找梯度强度和方向：
+$$
+G=\sqrt{G_x^2+G_y^2}\\
+\theta = \arctan(\frac{G_y}{G_x})
+$$
+方向被四舍五入为四个可能的角度之一（即 $0\degree$ 、 $45\degree$ 、 $90\degree$ 或 $135\degree$ ）。&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>过滤非最大值&lt;/strong>：在高斯滤波过程中，边缘有可能被放大了。这个步骤使用一个规则来过滤不是边缘的点，使边缘的宽度尽可能为1个像素点：如果一个像素点属于边缘，那么这个像素点在梯度方向上的梯度值是最大的。否则不是边缘，将灰度值设为 $0$ 。
+$$
+M_T(m, n) = \begin{cases}
+M(m, n)&amp;amp; \text{if } M(m, n) \lt T\\
+0 &amp;amp; \text{otherwise}
+\end{cases}
+$$&lt;/p></description></item><item><title>OpenCV Laplace Operator</title><link>https://fffzlfk.github.io/posts/opencv_laplace_operator/</link><pubDate>Mon, 17 Jan 2022 08:22:11 +0800</pubDate><guid>https://fffzlfk.github.io/posts/opencv_laplace_operator/</guid><description>&lt;h2 id="理论">理论&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>在之前的教程中，我们学习了如何使用&lt;code>Sobel&lt;/code>算子。它是基于这样一个事实，即在边缘区域，像素强度显示了一个 &amp;ldquo;跳跃&amp;quot;或强度的高变化。得到强度的一阶导数，我们观察到边缘的特征是一个最大值，如图所示：
+&lt;img src="https://docs.opencv.org/4.5.5/Laplace_Operator_Tutorial_Theory_Previous.jpg" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>那么，如果我们取二阶导数会怎样？
+&lt;img src="https://docs.opencv.org/4.5.5/Laplace_Operator_Tutorial_Theory_ddIntensity.jpg" alt="">
+你可以观察到，边缘二阶导数是零! 因此，我们也可以用这个标准来尝试检测图像的边缘。然而，请注意，零值不仅会出现在边缘（它们实际上可以出现在其他无意义的位置）；这可以通过在需要时使用过滤来解决。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="拉普拉斯算子">拉普拉斯算子&lt;/h3>
+&lt;ol>
+&lt;li>从上面的解释中，我们可以推断出，二阶导数可以用来检测边缘。由于图像是二维的，我们需要在两个维度上取导数。这里，拉普拉斯算子就派上用场了。
+拉普拉斯算子的定义是：
+$$
+Laplace(f) = \frac{\partial^2f}{\partial x^2}+\frac{\partial^2f}{\partial y^2}
+$$&lt;/li>
+&lt;li>拉普拉斯算子在OpenCV中是由函数&lt;code>Laplacian()&lt;/code>实现的。事实上，由于拉普拉斯算子使用图像的梯度，它在内部调用索贝尔算子来进行计算的。&lt;/li>
+&lt;/ol>
+&lt;h2 id="code">Code&lt;/h2>
+&lt;p>&lt;a href="https://github.com/fffzlfk/opencv_learning/blob/main/src/transformations/laplace.cpp">代码链接&lt;/a>&lt;/p>
+&lt;h3 id="explanation">Explanation&lt;/h3>
+&lt;h4 id="变量声明">变量声明&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Declare the variables we are going to use
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>Mat src, src_gray, dst;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> kernel_size &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> scale &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> delta &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> ddepth &lt;span style="color:#f92672">=&lt;/span> CV_16S;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">char&lt;/span>&lt;span style="color:#f92672">*&lt;/span> window_name &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Laplace Demo&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="加载图像">加载图像&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">char&lt;/span>&lt;span style="color:#f92672">*&lt;/span> imageName &lt;span style="color:#f92672">=&lt;/span> argc &lt;span style="color:#f92672">&amp;gt;=&lt;/span>&lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#f92672">?&lt;/span> argv[&lt;span style="color:#ae81ff">1&lt;/span>] &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#e6db74">&amp;#34;./images/lena.jpg&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>src &lt;span style="color:#f92672">=&lt;/span> imread( samples&lt;span style="color:#f92672">::&lt;/span>findFile( imageName ), IMREAD_COLOR ); &lt;span style="color:#75715e">// Load an image
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Check if image is loaded fine
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">if&lt;/span>(src.empty()){
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf(&lt;span style="color:#e6db74">&amp;#34; Error opening image&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf(&lt;span style="color:#e6db74">&amp;#34; Program Arguments: [image_name -- default lena.jpg] &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="消除噪声">消除噪声&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Reduce noise by blurring with a Gaussian filter ( kernel size = 3 )
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>GaussianBlur( src, src, Size(&lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">3&lt;/span>), &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, BORDER_DEFAULT );
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="灰度化">灰度化&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>cvtColor( src, src_gray, COLOR_BGR2GRAY ); &lt;span style="color:#75715e">// Convert the image to grayscale
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="拉普拉斯算子-1">拉普拉斯算子&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>Laplacian( src_gray, dst, ddepth, kernel_size, scale, delta, BORDER_DEFAULT );
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>参数如下。
+&lt;ul>
+&lt;li>&lt;code>src_gray&lt;/code>：输入的图像。&lt;/li>
+&lt;li>&lt;code>dst&lt;/code>：目标图像&lt;/li>
+&lt;li>&lt;code>ddepth&lt;/code>。目的图像的深度。由于我们的输入是CV_8U，我们定义ddepth = CV_16S以避免溢出。&lt;/li>
+&lt;li>&lt;code>kernel_size&lt;/code>。内部应用的Sobel算子的核大小。在这个例子中我们使用3。&lt;/li>
+&lt;li>&lt;code>scale, delta&lt;/code> 和 &lt;code>BORDER_DEFAULT&lt;/code>：我们把它们作为默认值。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h4 id="将输出转换为cv_8u图像">将输出转换为CV_8U图像&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// converting back to CV_8U
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>convertScaleAbs( dst, abs_dst );
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="结果">结果&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>编译完上面的代码后，我们可以运行它，并将图像的路径作为参数。例如，以下图输入为例：
+&lt;img src="https://docs.opencv.org/4.5.5/Laplace_Operator_Tutorial_Original_Image.jpg" alt="">&lt;/p></description></item><item><title>OpenCV Sobel Derivatives</title><link>https://fffzlfk.github.io/posts/opencv_sobel_derivatives/</link><pubDate>Sun, 16 Jan 2022 12:18:12 +0800</pubDate><guid>https://fffzlfk.github.io/posts/opencv_sobel_derivatives/</guid><description>&lt;h2 id="理论">理论&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>在之前的两个教程中，我们已经看到了卷积的应用实例。最重要的卷积之一是计算图像中的导数（或对它们的近似值）&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>为什么图像中的导数计算可能是重要的？让我们设想一下，我们要检测图像中存在的边缘。比如说：
+&lt;img src="https://docs.opencv.org/4.5.5/Sobel_Derivatives_Tutorial_Theory_0.jpg" alt="">
+你可以很容易地注意到，在一个边缘，像素强度的变化是很明显的。一个表达变化的好方法是使用导数。梯度的高变化表示图像中的一个重大变化。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>为了更加形象，让我们假设我们有一个一维图像。在下面的图中，一个边缘由强度的 &amp;ldquo;跳跃 &amp;ldquo;来表示：
+&lt;img src="https://docs.opencv.org/4.5.5/Sobel_Derivatives_Tutorial_Theory_Intensity_Function.jpg" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>如果我们取第一个导数，可以更容易地看到边缘的 &amp;ldquo;跳跃&amp;rdquo;（实际上，这里出现的是一个最大值）：
+&lt;img src="https://docs.opencv.org/4.5.5/Sobel_Derivatives_Tutorial_Theory_dIntensity_Function.jpg" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>因此，从上面的解释中，我们可以推断出，检测图像中的边缘的方法可以通过定位梯度高于其邻居的像素位置（或者概括地说，高于一个阈值）来进行。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>更详细的解释，请参考Bradski和Kaehler的&lt;a href="https://www.amazon.com/Learning-OpenCV-Computer-Vision-Library/dp/0596516134">《Learning OpenCV》&lt;/a>。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="sobel-算子">Sobel 算子&lt;/h3>
+&lt;ol>
+&lt;li>Sobel算子是一个离散的微分算子，它计算图像强度函数的梯度的近似值。&lt;/li>
+&lt;li>Sobel算子结合了&lt;code>Gaussian smoothing&lt;/code>和微分。&lt;/li>
+&lt;/ol>
+&lt;h3 id="formulation">Formulation&lt;/h3>
+&lt;p>假设要操作的图像为 $I$:&lt;/p>
+&lt;ol>
+&lt;li>我们计算两个导数：
+&lt;ol>
+&lt;li>&lt;strong>水平变化&lt;/strong>：这是通过用奇数大小的内核 $G_x$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_x$ 将被计算为：
+$$
+G_x=\begin{bmatrix}
+-1 &amp;amp; 0 &amp;amp; +1\\
+-2 &amp;amp; 0 &amp;amp; +2\\
+-1 &amp;amp; 0 &amp;amp; +1
+\end{bmatrix} * I
+$$&lt;/li>
+&lt;li>&lt;strong>垂直变化&lt;/strong>：这是通过用奇数大小的内核 $G_y$ 对 $I$ 进行卷积计算的。例如，对于内核大小为 $3$ ， $G_y$ 将被计算为：
+$$
+G_y = \begin{bmatrix}
+-1 &amp;amp; -2 &amp;amp; -1\\
+0 &amp;amp; 0 &amp;amp; 0\\
++1 &amp;amp; +2 &amp;amp; + 1
+\end{bmatrix} * I
+$$&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>在图像的每一点上，我们通过结合上述两个结果计算出该点的梯度近似值：
+$$
+G = \sqrt{G_{x}^{2}+G_{y}^{2}}
+$$
+有时会使用以下更简单的方程式：
+$$
+G = |G_x|+|G_y|
+$$&lt;/li>
+&lt;/ol>
+&lt;blockquote>
+&lt;p>当核的大小为 $3$ 时，上面显示的 &lt;code>Sobel&lt;/code>核可能会产生明显的不准确（毕竟， &lt;code>Sobel&lt;/code> 只是一个导数的近似值）。OpenCV通过使用 &lt;code>Scharr()&lt;/code> 函数来解决这种大小为 $3$ 的核的不精确性。这和标准的 &lt;code>Sobel&lt;/code> 函数一样快，但比它更准确。它可以实现以下内核
+$$
+G_x=\begin{bmatrix}
+-3 &amp;amp; 0 &amp;amp; +3\\
+-10 &amp;amp; 0 &amp;amp; +10\\
+-3 &amp;amp; 0 &amp;amp; +3
+\end{bmatrix},
+G_y=\begin{bmatrix}
+-3 &amp;amp; -10 &amp;amp; -3\\
+0 &amp;amp; 0 &amp;amp; 0\\
++3 &amp;amp; +10 &amp;amp; +3
+\end{bmatrix}
+$$&lt;/p></description></item><item><title>OpenCV Erosion Dilatation</title><link>https://fffzlfk.github.io/posts/opencv_erosion_dilatation/</link><pubDate>Sun, 09 Jan 2022 12:25:24 +0800</pubDate><guid>https://fffzlfk.github.io/posts/opencv_erosion_dilatation/</guid><description>&lt;h2 id="形态学操作">形态学操作&lt;/h2>
+&lt;ul>
+&lt;li>简而言之：一套基于形状处理图像的操作。形态学操作将一个结构化元素应用于输入图像，并生成一个输出图像。&lt;/li>
+&lt;li>最基本的形态学操作是。腐蚀和膨胀。它们有广泛的用途，即
+&lt;ul>
+&lt;li>去除噪音&lt;/li>
+&lt;li>隔离单个元素和连接图像中不同的元素&lt;/li>
+&lt;li>寻找图像中的强度凹凸点或洞&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>我们将以下面的图像为例，简要地解释膨胀和侵蚀。
+&lt;img src="https://docs.opencv.org/4.5.5/Morphology_1_Tutorial_Theory_Original_Image.png" alt="">&lt;/li>
+&lt;/ul>
+&lt;h3 id="dilation膨胀">Dilation（膨胀）&lt;/h3>
+&lt;ul>
+&lt;li>这种操作包括将图像A与一些&lt;code>kernel B&lt;/code>进行卷积，内核可以有任何形状或大小，通常是一个正方形或圆形。&lt;/li>
+&lt;li>&lt;code>kernel B&lt;/code>有一个定义的锚点(&lt;code>anchor point&lt;/code>)，通常是核的中心。&lt;/li>
+&lt;li>当&lt;code>kernel B&lt;/code>在图像上扫描时，我们计算出被B重叠的最大像素值，并用该最大值替换锚点位置的图像像素。正如你可以推断的那样，这种最大化的操作会使图像中的明亮区域 &amp;ldquo;增长&amp;rdquo;（因此被称为膨胀）。&lt;/li>
+&lt;li>膨胀操作： $dst(x, y)=max(x^{&amp;rsquo;}, y^{&amp;rsquo;})_{:element(x^{&amp;rsquo;}, y^{&amp;rsquo;}) \ne 0} src(x+x^{&amp;rsquo;}, y+y^{&amp;rsquo;})$&lt;/li>
+&lt;li>以上面的图像为例。应用膨胀的方法，我们可以得到
+&lt;img src="https://docs.opencv.org/4.5.5/Morphology_1_Tutorial_Theory_Dilation.png" alt="">&lt;/li>
+&lt;/ul>
+&lt;h3 id="腐蚀">腐蚀&lt;/h3>
+&lt;ul>
+&lt;li>它在给定内核的区域内计算局部最小值。当内核B在图像上被扫描时，我们计算出被B重叠的最小像素值，并用该最小值替换锚点下的图像像素。&lt;/li>
+&lt;li>腐蚀操作为：$dst(x, y)=min(x^{&amp;rsquo;}, y^{&amp;rsquo;})_{:element(x^{&amp;rsquo;}, y^{&amp;rsquo;}) \ne 0} src(x+x^{&amp;rsquo;}, y+y^{&amp;rsquo;})$&lt;/li>
+&lt;li>与膨胀的例子类似，我们可以对原始图像应用腐蚀算子（如上图）。你可以在下面的结果中看到，图像的亮区变薄了，而暗区变大了。
+&lt;img src="https://docs.opencv.org/4.5.5/Morphology_1_Tutorial_Theory_Erosion.png" alt="">&lt;/li>
+&lt;/ul>
+&lt;h2 id="code">Code&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;#34;basic/erosion_dilatation.hpp&amp;#34;&lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">namespace&lt;/span> basic {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">namespace&lt;/span> erosion_dilatation {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">namespace&lt;/span> impl {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Mat src, erosion_dst, dilation_dst;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> erosion_elem &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> erosion_size &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> dilation_elem &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> dilation_size &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#66d9ef">const&lt;/span> max_elem &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#66d9ef">const&lt;/span> max_kernel_size &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">21&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">work&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> argc, &lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#f92672">**&lt;/span>argv) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> CommandLineParser parser(argc, argv,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;{@input | ./images/LinuxLogo.jpg | input image}&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> src &lt;span style="color:#f92672">=&lt;/span> imread(samples&lt;span style="color:#f92672">::&lt;/span>findFile(parser.get&lt;span style="color:#f92672">&amp;lt;&lt;/span>String&lt;span style="color:#f92672">&amp;gt;&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;@input&amp;#34;&lt;/span>)), IMREAD_COLOR);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (src.empty()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cout &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Could not open or find the image!&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> endl;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cout &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Usage: &amp;#34;&lt;/span> &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> argv[&lt;span style="color:#ae81ff">0&lt;/span>] &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#34; &amp;lt;Input image&amp;gt;&amp;#34;&lt;/span> &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> endl;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> namedWindow(&lt;span style="color:#e6db74">&amp;#34;Erosion Demo&amp;#34;&lt;/span>, WINDOW_AUTOSIZE);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> namedWindow(&lt;span style="color:#e6db74">&amp;#34;Dilation Demo&amp;#34;&lt;/span>, WINDOW_AUTOSIZE);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> moveWindow(&lt;span style="color:#e6db74">&amp;#34;Dilation Demo&amp;#34;&lt;/span>, src.cols, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> createTrackbar(&lt;span style="color:#e6db74">&amp;#34;Element:&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 0: Rect &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 1: Cross &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 2: Ellipse&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Erosion Demo&amp;#34;&lt;/span>, &lt;span style="color:#f92672">&amp;amp;&lt;/span>erosion_elem, max_elem, Erosion);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> createTrackbar(&lt;span style="color:#e6db74">&amp;#34;Kernel size:&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 2n +1&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Erosion Demo&amp;#34;&lt;/span>, &lt;span style="color:#f92672">&amp;amp;&lt;/span>erosion_size,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> max_kernel_size, Erosion);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> createTrackbar(&lt;span style="color:#e6db74">&amp;#34;Element:&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 0: Rect &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 1: Cross &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 2: Ellipse&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Dilation Demo&amp;#34;&lt;/span>, &lt;span style="color:#f92672">&amp;amp;&lt;/span>dilation_elem, max_elem, Dilation);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> createTrackbar(&lt;span style="color:#e6db74">&amp;#34;Kernel size:&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74"> 2n +1&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Dilation Demo&amp;#34;&lt;/span>, &lt;span style="color:#f92672">&amp;amp;&lt;/span>dilation_size,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> max_kernel_size, Dilation);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Erosion(&lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Dilation(&lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> waitKey(&lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">Erosion&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>, &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#f92672">*&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> erosion_type &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (erosion_elem &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> erosion_type &lt;span style="color:#f92672">=&lt;/span> MORPH_RECT;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> (erosion_elem &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> erosion_type &lt;span style="color:#f92672">=&lt;/span> MORPH_CROSS;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> (erosion_elem &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> erosion_type &lt;span style="color:#f92672">=&lt;/span> MORPH_ELLIPSE;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Mat element &lt;span style="color:#f92672">=&lt;/span> getStructuringElement(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> erosion_type, Size(&lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#f92672">*&lt;/span> erosion_size &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#f92672">*&lt;/span> erosion_size &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Point(erosion_size, erosion_size));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> erode(src, erosion_dst, element);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> imshow(&lt;span style="color:#e6db74">&amp;#34;Erosion Demo&amp;#34;&lt;/span>, erosion_dst);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">Dilation&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>, &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#f92672">*&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> dilation_type &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (dilation_elem &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> dilation_type &lt;span style="color:#f92672">=&lt;/span> MORPH_RECT;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> (dilation_elem &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> dilation_type &lt;span style="color:#f92672">=&lt;/span> MORPH_CROSS;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> (dilation_elem &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> dilation_type &lt;span style="color:#f92672">=&lt;/span> MORPH_ELLIPSE;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Mat element &lt;span style="color:#f92672">=&lt;/span> getStructuringElement(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> dilation_type, Size(&lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#f92672">*&lt;/span> dilation_size &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#f92672">*&lt;/span> dilation_size &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Point(dilation_size, dilation_size));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> dilate(src, dilation_dst, element);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> imshow(&lt;span style="color:#e6db74">&amp;#34;Dilation Demo&amp;#34;&lt;/span>, dilation_dst);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>} &lt;span style="color:#75715e">// namespace impl
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>} &lt;span style="color:#75715e">// namespace erosion_dilatation
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>} &lt;span style="color:#75715e">// namespace basic
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="程序功能">程序功能&lt;/h4>
+&lt;ul>
+&lt;li>加载一个图像（可以是BGR或灰度）。&lt;/li>
+&lt;li>创建两个窗口（一个用于膨胀输出，另一个用于侵蚀）&lt;/li>
+&lt;li>为每个操作创建一组两个&lt;code>TraceBar&lt;/code>
+&lt;ul>
+&lt;li>&lt;code>erosion_elem&lt;/code> 或 &lt;code>dilation_elem&lt;/code>（矩形、十字、椭圆）&lt;/li>
+&lt;li>内核大小&lt;code>kernel size&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="结果">结果&lt;/h2>
+&lt;p>&lt;img src="https://i.imgur.com/4ZpgH4P.png" alt="">&lt;/p></description></item><item><title>OpenCV Blurring</title><link>https://fffzlfk.github.io/posts/opencv_blurring/</link><pubDate>Sun, 09 Jan 2022 07:37:09 +0800</pubDate><guid>https://fffzlfk.github.io/posts/opencv_blurring/</guid><description>&lt;h2 id="理论">理论&lt;/h2>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>Smoothing&lt;/code>也叫&lt;code>blurring&lt;/code>（模糊化），是一个简单而常用的图像处理操作。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>Smoothing&lt;/code>有很多原因。在本教程中，我们将重点讨论平滑操作，以减少噪音。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>为了进行平滑操作，我们将对我们的图像应用一个&lt;code>filter&lt;/code>。最常见的&lt;code>filter&lt;/code>是线性的，其中输出像素的值（即 $g(i,j)$ ）为输入像素值的加权和（即 $f(i+k,j+l)$ ）。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>$$
+g(i, j) = \sum_{k, l}{f(i+k, j+l)h(k, l)}
+$$&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>$h(k,l)$ 被称为&lt;code>kernel&lt;/code>，它只不过是&lt;code>filter&lt;/code>的系数。这有助于把滤波器想象成一个在图像上滑动的系数窗口。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>滤波器有很多种类，这里我们将提到最常用的几种。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="normalized-box-filter归一化块滤波器">Normalized Box Filter（归一化块滤波器）&lt;/h2>
+&lt;ul>
+&lt;li>这个滤波器是最简单的，每个输出像素都是其内核邻居的平均值（所有的像素都有相同的权重）。&lt;/li>
+&lt;/ul>
+&lt;p>$$
+K = \frac{1}{K_{width} \cdot k_{height}}
+\begin{bmatrix}
+1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\\
+1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1\\
+. &amp;amp; . &amp;amp; . &amp;amp; &amp;hellip;&amp;amp; 1\\
+1 &amp;amp; 1 &amp;amp; 1 &amp;amp; &amp;hellip;&amp;amp; 1
+\end{bmatrix}
+$$&lt;/p>
+&lt;h2 id="gaussian-filter高斯滤波器">Gaussian Filter（高斯滤波器）&lt;/h2>
+&lt;ul>
+&lt;li>
+&lt;p>可能是最有用的滤波器（尽管不是最快的）。高斯滤波是通过用高斯内核对输入阵列中的每个点进行卷积，然后将它们全部相加来产生输出阵列的。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>让我们回顾一下&lt;code>1D Gaussian kernel&lt;/code>是什么样子：
+&lt;img src="https://docs.opencv.org/4.5.5/Smoothing_Tutorial_theory_gaussian_0.jpg" alt="">&lt;/p></description></item></channel></rss>

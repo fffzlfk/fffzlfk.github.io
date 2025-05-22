@@ -1,103 +1,162 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>C&#43;&#43; on fffzlfk&#39;s Blog</title>
-    <link>https://fffzlfk.github.io/tags/c&#43;&#43;/</link>
-    <description>Recent content in C&#43;&#43; on fffzlfk&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Sat, 02 Apr 2022 22:20:04 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/c++/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>可变参数模板的应用</title>
-      <link>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</link>
-      <pubDate>Sat, 02 Apr 2022 22:20:04 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
-      <description>引入 在C++中经常打印变量来调试代码，但无论是printf还是cout总是很麻烦：
-printf
-int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; printf(&amp;#34;a = %d, b = %f, c = %c&amp;#34;, a, b, c); cout
-int a = 1; float b = 2.0; char c = &amp;#39;c&amp;#39;; std::cout &amp;lt;&amp;lt; &amp;#34;a = &amp;#34; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; &amp;#34;, b = &amp;#34; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; &amp;#34;, c = &amp;#34; &amp;lt;&amp;lt; c &amp;lt;&amp;lt; &amp;#39;\n&amp;#39;; 可变参数宏 可变参数宏是C99引入的一个特性，C++11开始支持。
-#define def_name(...) def_body(__VA_ARGS__) 可变参数模板 C++11允许模板定义有任意类型任意数量的模板参数（包括 $0$ 个模板参数）。</description>
-    </item>
-    
-    <item>
-      <title>C&#43;&#43;中容易犯的错误</title>
-      <link>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%AD%E5%AE%B9%E6%98%93%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</link>
-      <pubDate>Wed, 23 Feb 2022 23:31:50 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%AD%E5%AE%B9%E6%98%93%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</guid>
-      <description>不正确地使用new和delete 无论我们如何努力，要释放所有动态分配的内存是非常困难的。即使我们能做到这一点，也往往不能安全地避免出现异常。让我们看一个简单的例子。
-void SomeMethod() { ClassA *a = new ClassA; SomeOtherMethod(); // it can throws an execption delete a; } 如果SomeOtherMethod抛出了异常，那么a对象永远不会被删除。下面的例子展示了一个更加安全同时又更简洁的实现，使用了在C++11提出的std::unique_ptr。
-void SomeMethod() { std::unique_ptr&amp;lt;ClassA&amp;gt; a(new ClassA); SomeOtherMethod(); } 无论发生什么，当a退出作用域的时候，它会被释放。
-然而，这仅仅是C++中这种错误最简单的例子，还有很多例子表明delete应该在其他地方调用，也许是在外层函数或者另一个线程中。这就是为什么应该避免使用new和delete，而应该使用适当的智能指针。
-被忘记的虚析构函数 这是最常见的错误之一，如果派生类中有动态内存分配，将会导致派生类的内存泄漏。这里有一些例子，当一个类不打算用于继承，并且它的大小和性能是至关重要的。虚析构函数或任何其他虚函数在类在类中引入了额外的数据，即指向虚函数表的指针，这使得类的任何实例的大小变大。
-然而，在大多数情况下，类可以被继承，即使它的初衷并非如此。因此，在声明一个类的时候，添加一个虚析构函数是一个非常好的做法。否则，如果一个类由于性能的原因必须不包含虚函数，那么在类的声明文件里面加上一个注释，说明这个类不应该被继承，是一个很好的做法。避免这个问题的最佳选择之一是使用一个支持在创建类时创建虚析构函数的IDE。
-关于这个问题，还有一点是来自标准库的类或模板。它们不是用来继承的，也没有一个虚析构函数。例如，如果我们创建了一个公开继承自std::string的新的增强字符串类，就可能有人错误地使用它与std::string的指针或引用，从而导致内存泄漏。
-class MyString : public std::string { ~MyString() {} }; int main() { std::string *s = new MyString(); delete s; // May not invoke the destructor defined in MyString } 为了避免这样的问题，重用标准库中的类或模板的一个更安全的方法是使用私有继承1或组合。
-用delete或智能指针删除一个数组 创建动态大小的临时数组往往是必要的。当它们不再需要时，释放分配的内存是很重要的。这里的问题是，C++需要带有[]括号的特殊删除操作符，这一点很容易被遗忘。delete[]操作符不仅会删除分配给数组的内存，而且会首先调用数组中所有对象的析构函数。对原始类型使用不带[]括号的删除操作符也是不正确的，尽管这些类型没有析构函数，每个编译器都不能保证一个数组的指针会指向数组的第一个元素，所以使用不带[]括号的delete也会导致未定义的行为。
-在数组中使用智能指针，如unique_ptr&amp;lt;T&amp;gt;, shared_ptr，也是不正确的。当这样的智能指针从作用域中退出时，它将调用不带[]括号的删除操作符，这将导致上面描述的同样问题。如果需要对数组使用智能指针，可以使用unique_ptr&amp;lt;T[]&amp;gt;的特殊化。
-如果不需要引用计数的功能，主要是数组的情况，最优雅的方法是使用STL向量来代替。它们不只是负责释放内存，而且还提供额外的功能。</description>
-    </item>
-    
-    <item>
-      <title>C&#43;&#43; 完美转发</title>
-      <link>https://fffzlfk.github.io/posts/c&#43;&#43;_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</link>
-      <pubDate>Sat, 05 Feb 2022 14:10:47 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/c&#43;&#43;_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</guid>
-      <description>为什么要有完美转发 下面是一个类工厂函数：
-template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 参数对象arg在上面的例子中是传值方式传递，这带来了生成额外临时对象1的代价，所以我们改成引用传递：
-template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(Arg &amp;amp;arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 但这种实现的问题是不能绑定右值实参。如factory&amp;lt;X&amp;gt;(42)将编译报错，进一步的，我们按常量引用来传递：
-template &amp;lt;typename T, typename Arg&amp;gt; std::shared_ptr&amp;lt;T&amp;gt; factory(const Arg &amp;amp;arg) { return std::shared_ptr&amp;lt;T&amp;gt;( new T(arg)); } 这种实现的问题是不能支持移动语义，形参使用右值引用可以解决完美转发问题。
-引用折叠 在C++11之前，我们不能对一个引用类型继续引用，但C++由于右值引用的出现而放宽2了这一做法，从而产生了引用折叠规则，允许我们对引用进行引用，既能左引用，又能右引用。但是却遵循如下规则：
-函数形参类型 实参类型 推导后函数形参类型 T&amp;amp; 左引用 T&amp;amp; T&amp;amp; 右引用 T&amp;amp; T&amp;amp;&amp;amp; 左引用 T&amp;amp; T&amp;amp;&amp;amp; 右引用 T&amp;amp;&amp;amp; 模板参数类型推导 对函数模板template&amp;lt;typename T&amp;gt;void foo(T&amp;amp;&amp;amp;);，应用上述引用折叠规则，可总结出以下结论：
-如果实参是类型A的左值，则模板参数T的类型为A&amp;amp;，形参类型为A&amp;amp;； 如果实参是类型A的右值，则模板参数T的类型为A&amp;amp;&amp;amp;，形参类型为A&amp;amp;&amp;amp;。 这同样适用于类模板的成员函数模板的类型推导：</description>
-    </item>
-    
-    <item>
-      <title>从模板元编程到constexpr(C&#43;&#43;)</title>
-      <link>https://fffzlfk.github.io/posts/%E4%BB%8E%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E5%88%B0constexprc&#43;&#43;/</link>
-      <pubDate>Sun, 28 Nov 2021 19:43:10 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E4%BB%8E%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E5%88%B0constexprc&#43;&#43;/</guid>
-      <description>C++元编程</description>
-    </item>
-    
-    <item>
-      <title>子数组和问题</title>
-      <link>https://fffzlfk.github.io/posts/%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C%E9%97%AE%E9%A2%98/</link>
-      <pubDate>Sun, 21 Feb 2021 22:46:48 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C%E9%97%AE%E9%A2%98/</guid>
-      <description>the Sum of Subsequence</description>
-    </item>
-    
-    <item>
-      <title>每日一题</title>
-      <link>https://fffzlfk.github.io/posts/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</link>
-      <pubDate>Sun, 10 Jan 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</guid>
-      <description>Algorithms Problems</description>
-    </item>
-    
-    <item>
-      <title>C&#43;&#43;(临时对象的分析)</title>
-      <link>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/</link>
-      <pubDate>Sat, 10 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/c&#43;&#43;%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/</guid>
-      <description>关闭编译器优化</description>
-    </item>
-    
-    <item>
-      <title>OOP(C&#43;&#43;)</title>
-      <link>https://fffzlfk.github.io/posts/oopc&#43;&#43;/</link>
-      <pubDate>Tue, 06 Oct 2020 12:25:11 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/oopc&#43;&#43;/</guid>
-      <description>Object-Oriented Programming</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>C++ on fffzlfk's Blog</title><link>https://fffzlfk.github.io/tags/c++/</link><description>Recent content in C++ on fffzlfk's Blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Sat, 02 Apr 2022 22:20:04 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/c++/index.xml" rel="self" type="application/rss+xml"/><item><title>可变参数模板的应用</title><link>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</link><pubDate>Sat, 02 Apr 2022 22:20:04 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%BA%94%E7%94%A8/</guid><description>&lt;h2 id="引入">引入&lt;/h2>
+&lt;p>在&lt;code>C++&lt;/code>中经常打印变量来调试代码，但无论是&lt;code>printf&lt;/code>还是&lt;code>cout&lt;/code>总是很麻烦：&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>printf&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> a &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">float&lt;/span> b &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">2.0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">char&lt;/span> c &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#39;c&amp;#39;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>printf(&lt;span style="color:#e6db74">&amp;#34;a = %d, b = %f, c = %c&amp;#34;&lt;/span>, a, b, c);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>&lt;code>cout&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> a &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">float&lt;/span> b &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">2.0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">char&lt;/span> c &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#39;c&amp;#39;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>std&lt;span style="color:#f92672">::&lt;/span>cout &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;a = &amp;#34;&lt;/span> &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> a &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;, b = &amp;#34;&lt;/span> &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> b &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;, c = &amp;#34;&lt;/span> &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> c &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;\n&amp;#39;&lt;/span>;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;/ul>
+&lt;h2 id="可变参数宏">可变参数宏&lt;/h2>
+&lt;p>可变参数宏是&lt;code>C99&lt;/code>引入的一个特性，&lt;code>C++11&lt;/code>开始支持。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define def_name(...) def_body(__VA_ARGS__)
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="可变参数模板">可变参数模板&lt;/h2>
+&lt;p>&lt;code>C++11&lt;/code>允许模板定义有任意类型任意数量的模板参数（包括 $0$ 个模板参数）。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span>&lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span>... Values&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">tuple&lt;/span>;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>如果不希望有 $0$ 个模板实参，可以如下声明：&lt;/p>
+&lt;pre tabindex="0">&lt;code>template&amp;lt;typename First, typename... Rest&amp;gt; class tuple;
+&lt;/code>&lt;/pre>&lt;p>可变参数模板适用于函数模板，例如&lt;code>printf&lt;/code>函数的实现：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span>&lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span>... Args&lt;span style="color:#f92672">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> printf(&lt;span style="color:#66d9ef">const&lt;/span> std&lt;span style="color:#f92672">::&lt;/span>string &lt;span style="color:#f92672">&amp;amp;&lt;/span>str_format, Args... args);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="参数包的展开">参数包的展开&lt;/h2>
+&lt;ul>
+&lt;li>对于模板函数
+&lt;ul>
+&lt;li>递归展开&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// 递归终止函数
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">print&lt;/span>() {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span>&lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span> T, &lt;span style="color:#66d9ef">typename&lt;/span>... Args&lt;span style="color:#f92672">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> print(T head, Args... args) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> std&lt;span style="color:#f92672">::&lt;/span>cout &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> head &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> (&lt;span style="color:#66d9ef">sizeof&lt;/span>...(args) &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#f92672">?&lt;/span> &lt;span style="color:#e6db74">&amp;#34;, &amp;#34;&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> print(args...);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>逗号表达式展开：这种方式有点繁琐，不太好理解，不推荐&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>对于模板类
+&lt;ul>
+&lt;li>递归展开&lt;/li>
+&lt;li>继承展开&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="宏运算符">宏运算符&lt;/h2>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>#&lt;/code>：将宏参数转换为字符串&lt;/p></description></item><item><title>C++中容易犯的错误</title><link>https://fffzlfk.github.io/posts/c++%E4%B8%AD%E5%AE%B9%E6%98%93%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</link><pubDate>Wed, 23 Feb 2022 23:31:50 +0800</pubDate><guid>https://fffzlfk.github.io/posts/c++%E4%B8%AD%E5%AE%B9%E6%98%93%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</guid><description>&lt;h2 id="不正确地使用new和delete">不正确地使用&lt;code>new&lt;/code>和&lt;code>delete&lt;/code>&lt;/h2>
+&lt;p>无论我们如何努力，要释放所有动态分配的内存是非常困难的。即使我们能做到这一点，也往往不能安全地避免出现异常。让我们看一个简单的例子。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">SomeMethod&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ClassA &lt;span style="color:#f92672">*&lt;/span>a &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> ClassA;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SomeOtherMethod(); &lt;span style="color:#75715e">// it can throws an execption
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">delete&lt;/span> a;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>如果&lt;code>SomeOtherMethod&lt;/code>抛出了异常，那么&lt;code>a&lt;/code>对象永远不会被删除。下面的例子展示了一个更加安全同时又更简洁的实现，使用了在&lt;code>C++11&lt;/code>提出的&lt;code>std::unique_ptr&lt;/code>。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">SomeMethod&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> std&lt;span style="color:#f92672">::&lt;/span>unique_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>ClassA&lt;span style="color:#f92672">&amp;gt;&lt;/span> a(&lt;span style="color:#66d9ef">new&lt;/span> ClassA);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SomeOtherMethod();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>无论发生什么，当&lt;code>a&lt;/code>退出作用域的时候，它会被释放。&lt;/p>
+&lt;p>然而，这仅仅是&lt;code>C++&lt;/code>中这种错误最简单的例子，还有很多例子表明&lt;code>delete&lt;/code>应该在其他地方调用，也许是在外层函数或者另一个线程中。这就是为什么应该避免使用&lt;code>new&lt;/code>和&lt;code>delete&lt;/code>，而应该使用适当的智能指针。&lt;/p>
+&lt;h2 id="被忘记的虚析构函数">被忘记的虚析构函数&lt;/h2>
+&lt;p>这是最常见的错误之一，如果派生类中有动态内存分配，将会导致派生类的内存泄漏。这里有一些例子，当一个类不打算用于继承，并且它的大小和性能是至关重要的。虚析构函数或任何其他虚函数在类在类中引入了额外的数据，即指向虚函数表的指针，这使得类的任何实例的大小变大。&lt;/p>
+&lt;p>然而，在大多数情况下，类可以被继承，即使它的初衷并非如此。因此，在声明一个类的时候，添加一个虚析构函数是一个非常好的做法。否则，如果一个类由于性能的原因必须不包含虚函数，那么在类的声明文件里面加上一个注释，说明这个类不应该被继承，是一个很好的做法。避免这个问题的最佳选择之一是使用一个支持在创建类时创建虚析构函数的&lt;code>IDE&lt;/code>。&lt;/p>
+&lt;p>关于这个问题，还有一点是来自标准库的类或模板。它们不是用来继承的，也没有一个虚析构函数。例如，如果我们创建了一个公开继承自&lt;code>std::string&lt;/code>的新的增强字符串类，就可能有人错误地使用它与&lt;code>std::string&lt;/code>的指针或引用，从而导致内存泄漏。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">MyString&lt;/span> &lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#66d9ef">public&lt;/span> std&lt;span style="color:#f92672">::&lt;/span>string {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">~&lt;/span>MyString() {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>};
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> std&lt;span style="color:#f92672">::&lt;/span>string &lt;span style="color:#f92672">*&lt;/span>s &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> MyString();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">delete&lt;/span> s; &lt;span style="color:#75715e">// May not invoke the destructor defined in MyString
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>为了避免这样的问题，重用标准库中的类或模板的一个更安全的方法是使用私有继承&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>或组合。&lt;/p>
+&lt;h2 id="用delete或智能指针删除一个数组">用&lt;code>delete&lt;/code>或智能指针删除一个数组&lt;/h2>
+&lt;p>创建动态大小的临时数组往往是必要的。当它们不再需要时，释放分配的内存是很重要的。这里的问题是，&lt;code>C++&lt;/code>需要带有&lt;code>[]&lt;/code>括号的特殊删除操作符，这一点很容易被遗忘。&lt;code>delete[]&lt;/code>操作符不仅会删除分配给数组的内存，而且会首先调用数组中所有对象的析构函数。对原始类型使用不带&lt;code>[]&lt;/code>括号的删除操作符也是不正确的，尽管这些类型没有析构函数，每个编译器都不能保证一个数组的指针会指向数组的第一个元素，所以使用不带&lt;code>[]&lt;/code>括号的&lt;code>delete&lt;/code>也会导致未定义的行为。&lt;/p>
+&lt;p>在数组中使用智能指针，如&lt;code>unique_ptr&amp;lt;T&amp;gt;&lt;/code>, &lt;code>shared_ptr&lt;/code>，也是不正确的。当这样的智能指针从作用域中退出时，它将调用不带&lt;code>[]&lt;/code>括号的删除操作符，这将导致上面描述的同样问题。如果需要对数组使用智能指针，可以使用&lt;code>unique_ptr&amp;lt;T[]&amp;gt;&lt;/code>的特殊化。&lt;/p>
+&lt;p>如果不需要引用计数的功能，主要是数组的情况，最优雅的方法是使用&lt;code>STL&lt;/code>向量来代替。它们不只是负责释放内存，而且还提供额外的功能。&lt;/p>
+&lt;h2 id="返回一个局部对象的引用">返回一个局部对象的引用&lt;/h2>
+&lt;p>这主要是一个初学者的错误，但它值得一提，因为有很多遗留的代码都存在这个问题。让我们看看下面的代码，一个程序员想通过避免不必要的复制来进行某种优化。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>Complex&lt;span style="color:#f92672">&amp;amp;&lt;/span> SumComplex(&lt;span style="color:#66d9ef">const&lt;/span> Complex&lt;span style="color:#f92672">&amp;amp;&lt;/span> a, &lt;span style="color:#66d9ef">const&lt;/span> Complex&lt;span style="color:#f92672">&amp;amp;&lt;/span> b) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Complex result;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#960050;background-color:#1e0010">…&lt;/span>..
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> result;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Complex&lt;span style="color:#f92672">&amp;amp;&lt;/span> sum &lt;span style="color:#f92672">=&lt;/span> SumComplex(a, b);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>对象 &lt;code>sum&lt;/code>现在将指向局部对象&lt;code>result&lt;/code>。但是，在执行&lt;code>SumComplex&lt;/code>函数后，对象&lt;code>result&lt;/code>位于哪里呢？不知道。它位于堆栈中，但在函数返回后，堆栈被收缩，函数中的所有本地对象都被析构了。这最终会导致一个未定义的行为，即使是原始类型。为了避免性能问题，有时可以使用返回值优化。&lt;/p></description></item><item><title>C++ 完美转发</title><link>https://fffzlfk.github.io/posts/c++_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</link><pubDate>Sat, 05 Feb 2022 14:10:47 +0800</pubDate><guid>https://fffzlfk.github.io/posts/c++_%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/</guid><description>&lt;h2 id="为什么要有完美转发">为什么要有完美转发&lt;/h2>
+&lt;p>下面是一个类工厂函数：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span> T, &lt;span style="color:#66d9ef">typename&lt;/span> Arg&lt;span style="color:#f92672">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>std&lt;span style="color:#f92672">::&lt;/span>shared_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span> factory(Arg arg) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> std&lt;span style="color:#f92672">::&lt;/span>shared_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span>( &lt;span style="color:#66d9ef">new&lt;/span> T(arg));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>参数对象&lt;code>arg&lt;/code>在上面的例子中是传值方式传递，这带来了生成额外临时对象&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>的代价，所以我们改成引用传递：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span> T, &lt;span style="color:#66d9ef">typename&lt;/span> Arg&lt;span style="color:#f92672">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>std&lt;span style="color:#f92672">::&lt;/span>shared_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span> factory(Arg &lt;span style="color:#f92672">&amp;amp;&lt;/span>arg) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> std&lt;span style="color:#f92672">::&lt;/span>shared_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span>( &lt;span style="color:#66d9ef">new&lt;/span> T(arg));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>但这种实现的问题是不能绑定右值实参。如&lt;code>factory&amp;lt;X&amp;gt;(42)&lt;/code>将编译报错，进一步的，我们按常量引用来传递：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span> T, &lt;span style="color:#66d9ef">typename&lt;/span> Arg&lt;span style="color:#f92672">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>std&lt;span style="color:#f92672">::&lt;/span>shared_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span> factory(&lt;span style="color:#66d9ef">const&lt;/span> Arg &lt;span style="color:#f92672">&amp;amp;&lt;/span>arg) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> std&lt;span style="color:#f92672">::&lt;/span>shared_ptr&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span>( &lt;span style="color:#66d9ef">new&lt;/span> T(arg));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>这种实现的问题是不能支持移动语义，形参使用右值引用可以解决完美转发问题。&lt;/p>
+&lt;h2 id="引用折叠">引用折叠&lt;/h2>
+&lt;p>在&lt;code>C++11&lt;/code>之前，我们不能对一个引用类型继续引用，但&lt;code>C++&lt;/code>由于右值引用的出现而&lt;strong>放宽&lt;/strong>&lt;sup id="fnref:2">&lt;a href="#fn:2" class="footnote-ref" role="doc-noteref">2&lt;/a>&lt;/sup>了这一做法，从而产生了引用折叠规则，允许我们对引用进行引用，既能左引用，又能右引用。但是却遵循如下规则：&lt;/p>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>函数形参类型&lt;/th>
+ &lt;th>实参类型&lt;/th>
+ &lt;th>推导后函数形参类型&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>&lt;code>T&amp;amp;&lt;/code>&lt;/td>
+ &lt;td>左引用&lt;/td>
+ &lt;td>&lt;code>T&amp;amp;&lt;/code>&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>T&amp;amp;&lt;/code>&lt;/td>
+ &lt;td>右引用&lt;/td>
+ &lt;td>&lt;code>T&amp;amp;&lt;/code>&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>T&amp;amp;&amp;amp;&lt;/code>&lt;/td>
+ &lt;td>左引用&lt;/td>
+ &lt;td>&lt;code>T&amp;amp;&lt;/code>&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>T&amp;amp;&amp;amp;&lt;/code>&lt;/td>
+ &lt;td>右引用&lt;/td>
+ &lt;td>&lt;code>T&amp;amp;&amp;amp;&lt;/code>&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;h2 id="模板参数类型推导">模板参数类型推导&lt;/h2>
+&lt;p>对函数模板&lt;code>template&amp;lt;typename T&amp;gt;void foo(T&amp;amp;&amp;amp;);&lt;/code>，应用上述引用折叠规则，可总结出以下结论：&lt;/p>
+&lt;ul>
+&lt;li>如果实参是类型A的左值，则模板参数T的类型为&lt;code>A&amp;amp;&lt;/code>，形参类型为&lt;code>A&amp;amp;&lt;/code>；&lt;/li>
+&lt;li>如果实参是类型A的右值，则模板参数T的类型为&lt;code>A&amp;amp;&amp;amp;&lt;/code>，形参类型为&lt;code>A&amp;amp;&amp;amp;&lt;/code>。&lt;/li>
+&lt;/ul>
+&lt;p>这同样适用于类模板的成员函数模板的类型推导：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">template&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">T&lt;/span>&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">vector&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span>&lt;span style="color:#f92672">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// T是类模板参数 ⇒ 该成员函数不需要类型推导;这里的函数参数类型就是T的右值引用
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> push_back(T &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span>x); 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// 该成员函数是个函数模板，有自己的模板参数，需要类型推导
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">template&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>&lt;span style="color:#66d9ef">typename&lt;/span> Args&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> emplace_back(Args &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span>args); } 
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>函数模板的形参必须是T&amp;amp;&amp;amp;形式，才需要模板参数类型推导。即使形参声明为const T&amp;amp;&amp;amp;形式，就只能按字面意义使用，不需要模板参数类型推导。&lt;/p></description></item><item><title>从模板元编程到constexpr(C++)</title><link>https://fffzlfk.github.io/posts/%E4%BB%8E%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E5%88%B0constexprc++/</link><pubDate>Sun, 28 Nov 2021 19:43:10 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E4%BB%8E%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E5%88%B0constexprc++/</guid><description>C++元编程</description></item><item><title>子数组和问题</title><link>https://fffzlfk.github.io/posts/%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C%E9%97%AE%E9%A2%98/</link><pubDate>Sun, 21 Feb 2021 22:46:48 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C%E9%97%AE%E9%A2%98/</guid><description>the Sum of Subsequence</description></item><item><title>每日一题</title><link>https://fffzlfk.github.io/posts/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</link><pubDate>Sun, 10 Jan 2021 00:00:00 +0000</pubDate><guid>https://fffzlfk.github.io/posts/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</guid><description>Algorithms Problems</description></item><item><title>C++(临时对象的分析)</title><link>https://fffzlfk.github.io/posts/c++%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/</link><pubDate>Sat, 10 Oct 2020 00:00:00 +0000</pubDate><guid>https://fffzlfk.github.io/posts/c++%E4%B8%B4%E6%97%B6%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E6%9E%90/</guid><description>关闭编译器优化</description></item><item><title>OOP(C++)</title><link>https://fffzlfk.github.io/posts/oopc++/</link><pubDate>Tue, 06 Oct 2020 12:25:11 +0800</pubDate><guid>https://fffzlfk.github.io/posts/oopc++/</guid><description>Object-Oriented Programming</description></item></channel></rss>

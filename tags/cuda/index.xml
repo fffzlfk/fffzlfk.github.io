@@ -1,79 +1,178 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>CUDA on fffzlfk&#39;s Blog</title>
-    <link>https://fffzlfk.github.io/tags/cuda/</link>
-    <description>Recent content in CUDA on fffzlfk&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Mon, 07 Mar 2022 16:10:36 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/cuda/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>CUDA中怎样选择GRID和BLOCK维度</title>
-      <link>https://fffzlfk.github.io/posts/cuda%E4%B8%AD%E6%80%8E%E6%A0%B7%E9%80%89%E6%8B%A9grid%E5%92%8Cblock%E7%BB%B4%E5%BA%A6/</link>
-      <pubDate>Mon, 07 Mar 2022 16:10:36 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/cuda%E4%B8%AD%E6%80%8E%E6%A0%B7%E9%80%89%E6%8B%A9grid%E5%92%8Cblock%E7%BB%B4%E5%BA%A6/</guid>
-      <description>硬件限制 这是容易量化的方面。目前CUDA编程指南的附录F列出了一些硬件限制，这些限制限制了内核启动时每块可以有多少个线程。如果你超过了这些限制，你的内核将无法运行。这些限制可以粗略地概括为：
-每个区块不能超过 $512$ / $1024$ 个线程（分别是计算能力1.x或2.x及以后的计算能力 每个块的最大尺寸限制在 $[512, 512, 64]$ / $[1024, 1024, 64]$（计算能力1.x/2.x及以后的计算能力 每个块消耗的寄存器总数不能超过 $8k/16k/32k/64k/32k/64k/32k/64k$ （计算能力 $1.0,1.1/1.2,1.3/2.x-3.0/3.2/3.5-5.2/5.3/6-6.1/6.2/7.0$ 每个块不能消耗超过 $16kb/48kb/96kb$ 的共享内存（计算能力 $1.x/2.x-6.2/7.0$ 如果你保持在这些限制之内，任何你能成功编译的内核都会无错误地启动。
-性能调教 这是需要经验的一部分。在上述的硬件约束条件下，你选择的每块线程数可以而且确实影响到硬件上运行的代码性能。每个代码的表现都是不同的，唯一真正的方法是通过仔细的基准测试和剖析来量化它。但还是那句话，非常粗略地总结一下：
-每个区块的线程数应该是wrap大小的整数倍，在目前所有的硬件上都是 $32$ GPU上的每个流式多处理器必须有足够的active wraps来充分隐藏架构的的所有不同内存和指令流水线延迟，以实现最大吞吐量。这里的正确做法是尝试实现最佳的硬件占用率 CUDA内置函数 上述指出了块的大小是如何影响性能的，并提出了一种基于占用率最大化的通用启发式选择方法。在不想提供选择块大小的标准的情况下，值得一提的是，CUDA 6.5+包括几个新的运行时函数来帮助占用率的计算和启动配置1。
-其中一个有用的函数是cudaOccupancyMaxPotentialBlockSize，它启发式地计算了一个能达到最佳占用率的块大小。该函数提供的值可以作为手动优化参数的起点。下面是一个例子：
-/************************/ /* TEST KERNEL FUNCTION */ /************************/ __global__ void MyKernel(int *a, int *b, int *c, int N) { int idx = threadIdx.x + blockIdx.x * blockDim.x; if (idx &amp;lt; N) { c[idx] = a[idx] + b[idx]; } } /********/ /* MAIN */ /********/ void main() { const int N = 1000000; int blockSize; // The launch configurator returned block size int minGridSize; // The minimum grid size needed to achieve the maximum occupancy for a full device launch int gridSize; // The actual grid size needed, based on input size int* h_vec1 = (int*) malloc(N*sizeof(int)); int* h_vec2 = (int*) malloc(N*sizeof(int)); int* h_vec3 = (int*) malloc(N*sizeof(int)); int* h_vec4 = (int*) malloc(N*sizeof(int)); int* d_vec1; cudaMalloc((void**)&amp;amp;d_vec1, N*sizeof(int)); int* d_vec2; cudaMalloc((void**)&amp;amp;d_vec2, N*sizeof(int)); int* d_vec3; cudaMalloc((void**)&amp;amp;d_vec3, N*sizeof(int)); for (int i=0; i&amp;lt;N; i++) { h_vec1[i] = 10; h_vec2[i] = 20; h_vec4[i] = h_vec1[i] + h_vec2[i]; } cudaMemcpy(d_vec1, h_vec1, N*sizeof(int), cudaMemcpyHostToDevice); cudaMemcpy(d_vec2, h_vec2, N*sizeof(int), cudaMemcpyHostToDevice); float time; cudaEvent_t start, stop; cudaEventCreate(&amp;amp;start); cudaEventCreate(&amp;amp;stop); cudaEventRecord(start, 0); cudaOccupancyMaxPotentialBlockSize(&amp;amp;minGridSize, &amp;amp;blockSize, MyKernel, 0, N); // Round up according to array size gridSize = (N + blockSize - 1) / blockSize; cudaEventRecord(stop, 0); cudaEventSynchronize(stop); cudaEventElapsedTime(&amp;amp;time, start, stop); printf(&amp;#34;Occupancy calculator elapsed time: %3.</description>
-    </item>
-    
-    <item>
-      <title>Cuda 编程模型</title>
-      <link>https://fffzlfk.github.io/posts/cuda_%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/</link>
-      <pubDate>Wed, 19 Jan 2022 12:55:19 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/cuda_%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/</guid>
-      <description>Kernels CUDA C++对C++进行了扩展，允许程序员定义C++函数，称为内核，当被调用时，由 $N$ 个不同的CUDA线程并行执行 $N$ 次，而不是像普通C++函数那样只执行一次。
-kernel是使用__global__声明定义的，对于特定的内核调用，执行该内核的CUDA线程数量是使用&amp;lt;&amp;lt;&amp;lt;...&amp;gt;&amp;gt;&amp;gt;执行配置语法指定的（C++语言扩展）。每个执行内核的线程都有一个唯一的线程ID，可以在内核内通过内置变量访问。
-作为说明，下面的示例代码，使用内置变量threadIdx，将两个大小为 $N$ 的向量 $A$ 和 $B$ 相加，并将结果存入向量 $C$ 。
-// Kernel definition __global__ void VecAdd(float* A, float* B, float* C) { int i = threadIdx.x; C[i] = A[i] + B[i]; } int main() { ... // Kernel invocation with N threads VecAdd&amp;lt;&amp;lt;&amp;lt;1, N&amp;gt;&amp;gt;&amp;gt;(A, B, C); ... } 在这里，执行VecAdd()的 $N$ 个线程中的每一个都执行了一次加法。
-线程体系 为方便起见，threadIdx是一个 $3$ 分量的向量，因此可以用一维、二维或三维的线程索引来识别线程，形成一个一维、二维或三维的线程块，称为线程块。这提供了一种自然的方式来调用域中的元素进行计算，如矢量、矩阵或体积。
-一个例子，下面的代码将两个大小为 $N\times N$ 的矩阵 $A$ 和 $B$ 相加，并将结果存入矩阵 $C$ 。</description>
-    </item>
-    
-    <item>
-      <title>Cuda 硬件实现</title>
-      <link>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</link>
-      <pubDate>Tue, 18 Jan 2022 15:31:10 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</guid>
-      <description>一组带有 on-chip 共享内存的 SIMD 多处理器 设备可以被看作一组多处理器，如图所示。每个多处理器使用单指令多数据(SIMD)架构：在任何给定的时钟周期内，多处理器的每个处理器执行同一指令，但操作不同的数据。
-每个多处理器使用四个以下类型的on-chip内存：
-每个处理器一组 $32$ 位寄存器 并行数据缓存或共享内存，被所有处理器共享实现内存空间共享 通过设备内存的一个只读区域，一个只读常量缓存器被所有处理器共享 通过设备内存的一个只读区域，一个只读纹理缓存器被所有处理器共享 本地和全局内存空间作为设备内存的读写区域，而不被缓冲。 每个多处理器通过纹理单元访问纹理缓冲器，它执行各种各样的寻址模式和数据过滤。
-执行模式 一个线程块网格是通过多处理器规划执行的。每个多处理器一个接一个的处理块批处理。一个块只被一个多处理器处理，因此可以对驻留在on-chip共享内存的共享内存空间形成非常快速的访问。
-一个批处理中每个多处理器可以处理多少个块，取决于每个线程中分配了多少个寄存器和已知内核中每个时钟需要多少的共享内存，因为多处理器的寄存器和内存在所有的线程中是分开的。如果在至少一个块中，每个多处理器没有足够高的寄存器或共享内存用，那么内核将无法启动。
-线程块在一个批处理中被一个多处理器执行，被称为active，每个active块被划分成SIMD线程组，被称为warps；每一条这样的warp包含数量相同的线程，叫做warp大小，并且在SIMD的方式下通过多处理器执行，执行调度程序周期性地从一条warp切换到另一条warp，以达到多处理器计算资源使用的最大化。
-块被划分成warp的方式总是相同的；每条warp包含连续的线程，线程索引从第一个warp包含着的线程 0 开始递增。
-一个多处理器可以并发地处理几个块，通过划分在它们之中的寄存器和共享内存。更准确地说，每条线程可使用的寄存器数量，等于每个多处理器寄存器总数除以并发的线程数量，并发线程的数量等于并发块的数量乘以每块线程的数量。
-在一个线程块网格内的块次序是未定义的，并且在块之间不存在同步机制，因此来自同一个网格的两个不同块的线程不能通过全局内存彼此安全地通讯。
-计算兼容性 设备的兼容性由两个参数定义，主要版本号和次要版本号。设备拥有的主要版本号代表相同的核心架构。
-次要版本号代表一些改进的核心架构。比如新的特性。
-多设备 为一个应用程序使用多GPU作为CUDA设备，必须保证这些CPU是一样的类型。如果系统工作在SLI 模式下，那么只有一个GPU可以作为CUDA设备，由于所有的GPU在驱动堆栈中被底层的融合了。SLI 模式需要在控制面板中关闭,这样才能使多个GPU作为CUDA设备</description>
-    </item>
-    
-    <item>
-      <title>Cuda软件架构</title>
-      <link>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</link>
-      <pubDate>Sat, 08 Jan 2022 06:27:04 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</guid>
-      <description>硬件 SP(Streaming Processor)：流处理器，是GPU最基本的处理单元，在fermi架构开始被叫做CUDA core。
-SM(Streaming MultiProcessor)：一个SM由多个CUDA core组成。
-比如说，如果一个GPU有 $4$ 个SM，并且每个SM有 $768$ 个SP(Aka CUDA core)；那么在某一时刻，真正并行运行的线程数不会超过 $4 \times 768$ 个。
-软件 threads被组织成blocks。一个block的线程可以用1Dimension(x), 2Dimensions(x, y)或者3Dim indexs(x, y, z) 索引，
-显然，如果你需要 $4 \times 768$ 个以上的threads的话你需要 $4$ 个以上的blocks。blocks也可以使用1D, 2D或3D索引，这些blocks被放在等待队列上进入GPU执行。
-Wrap 当一个kernel被执行时，grid中的线程块被分配到SM上。一个CUDA core可以执行一个thread，一个SM的CUDA core会分成几个wrap，由wrap scheduler负责调度。
-一个wrap中的线程在同一个block中，如果block所含线程数不是wrap的大小的整数倍，那么多出来的那些thread所在的wrap中，会剩余一些inactive的thread。
-一个简单的case 处理一张 $512 \times 512$ 的图片。
-假设我们希望一个线程处理一个像素pixel(i, j)。
-我们可以使用每 $64$ 个线程的区块。所以我们需要 $\frac{512 \times 512 }{64} = 4096$ 个区块（为了拥有 $512 \times 512 $ 个线程 ）。
-通常情况下，我们将线程组织在2D区块中（为了更容易索引图像像素）。blockDim= $8 * 8$ ，我更喜欢叫它threadsPerBlock。
-dim3 threadsPerBlock(8, 8); 还有2D的gridDim= $64 \times 64$ （需要 $4096$ 个区块）。我更喜欢叫它numBlocks。</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>CUDA on fffzlfk's Blog</title><link>https://fffzlfk.github.io/tags/cuda/</link><description>Recent content in CUDA on fffzlfk's Blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Mon, 07 Mar 2022 16:10:36 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/cuda/index.xml" rel="self" type="application/rss+xml"/><item><title>CUDA中怎样选择GRID和BLOCK维度</title><link>https://fffzlfk.github.io/posts/cuda%E4%B8%AD%E6%80%8E%E6%A0%B7%E9%80%89%E6%8B%A9grid%E5%92%8Cblock%E7%BB%B4%E5%BA%A6/</link><pubDate>Mon, 07 Mar 2022 16:10:36 +0800</pubDate><guid>https://fffzlfk.github.io/posts/cuda%E4%B8%AD%E6%80%8E%E6%A0%B7%E9%80%89%E6%8B%A9grid%E5%92%8Cblock%E7%BB%B4%E5%BA%A6/</guid><description>&lt;h2 id="硬件限制">硬件限制&lt;/h2>
+&lt;p>这是容易量化的方面。目前&lt;a href="https://www.nvidia.cn/docs/IO/51635/NVIDIA_CUDA_Programming_Guide_1.1_chs.pdf">CUDA编程指南&lt;/a>的附录F列出了一些硬件限制，这些限制限制了内核启动时每块可以有多少个线程。如果你超过了这些限制，你的内核将无法运行。这些限制可以粗略地概括为：&lt;/p>
+&lt;ul>
+&lt;li>每个区块不能超过 $512$ / $1024$ 个线程（分别是计算能力&lt;code>1.x&lt;/code>或&lt;code>2.x&lt;/code>及以后的计算能力&lt;/li>
+&lt;li>每个块的最大尺寸限制在 $[512, 512, 64]$ / $[1024, 1024, 64]$（计算能力&lt;code>1.x&lt;/code>/&lt;code>2.x&lt;/code>及以后的计算能力&lt;/li>
+&lt;li>每个块消耗的寄存器总数不能超过 $8k/16k/32k/64k/32k/64k/32k/64k$ （计算能力 $1.0,1.1/1.2,1.3/2.x-3.0/3.2/3.5-5.2/5.3/6-6.1/6.2/7.0$&lt;/li>
+&lt;li>每个块不能消耗超过 $16kb/48kb/96kb$ 的共享内存（计算能力 $1.x/2.x-6.2/7.0$&lt;/li>
+&lt;/ul>
+&lt;p>如果你保持在这些限制之内，任何你能成功编译的内核都会无错误地启动。&lt;/p>
+&lt;h2 id="性能调教">性能调教&lt;/h2>
+&lt;p>这是需要经验的一部分。在上述的硬件约束条件下，你选择的每块线程数可以而且确实影响到硬件上运行的代码性能。每个代码的表现都是不同的，唯一真正的方法是通过仔细的基准测试和剖析来量化它。但还是那句话，非常粗略地总结一下：&lt;/p>
+&lt;ul>
+&lt;li>每个区块的线程数应该是&lt;code>wrap&lt;/code>大小的整数倍，在目前所有的硬件上都是 $32$&lt;/li>
+&lt;li>&lt;code>GPU&lt;/code>上的每个流式多处理器必须有足够的&lt;code>active wraps&lt;/code>来充分隐藏架构的的所有不同内存和指令流水线延迟，以实现最大吞吐量。这里的正确做法是尝试实现最佳的硬件占用率&lt;/li>
+&lt;/ul>
+&lt;h2 id="cuda内置函数">CUDA内置函数&lt;/h2>
+&lt;p>上述指出了块的大小是如何影响性能的，并提出了一种基于占用率最大化的通用启发式选择方法。在不想提供选择块大小的标准的情况下，值得一提的是，&lt;code>CUDA 6.5+&lt;/code>包括几个新的运行时函数来帮助占用率的计算和启动配置&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>。&lt;/p>
+&lt;p>其中一个有用的函数是&lt;code>cudaOccupancyMaxPotentialBlockSize&lt;/code>，它启发式地计算了一个能达到最佳占用率的块大小。该函数提供的值可以作为手动优化参数的起点。下面是一个例子：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/************************/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/* TEST KERNEL FUNCTION */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/************************/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>__global__ &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">MyKernel&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#f92672">*&lt;/span>a, &lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#f92672">*&lt;/span>b, &lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#f92672">*&lt;/span>c, &lt;span style="color:#66d9ef">int&lt;/span> N) 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{ 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> idx &lt;span style="color:#f92672">=&lt;/span> threadIdx.x &lt;span style="color:#f92672">+&lt;/span> blockIdx.x &lt;span style="color:#f92672">*&lt;/span> blockDim.x; 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (idx &lt;span style="color:#f92672">&amp;lt;&lt;/span> N) { c[idx] &lt;span style="color:#f92672">=&lt;/span> a[idx] &lt;span style="color:#f92672">+&lt;/span> b[idx]; } 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>} 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/********/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/* MAIN */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/********/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>() 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{ 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> N &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1000000&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> blockSize; &lt;span style="color:#75715e">// The launch configurator returned block size 
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> minGridSize; &lt;span style="color:#75715e">// The minimum grid size needed to achieve the maximum occupancy for a full device launch 
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> gridSize; &lt;span style="color:#75715e">// The actual grid size needed, based on input size 
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> h_vec1 &lt;span style="color:#f92672">=&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span>) malloc(N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> h_vec2 &lt;span style="color:#f92672">=&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span>) malloc(N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> h_vec3 &lt;span style="color:#f92672">=&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span>) malloc(N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> h_vec4 &lt;span style="color:#f92672">=&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span>) malloc(N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> d_vec1; cudaMalloc((&lt;span style="color:#66d9ef">void&lt;/span>&lt;span style="color:#f92672">**&lt;/span>)&lt;span style="color:#f92672">&amp;amp;&lt;/span>d_vec1, N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> d_vec2; cudaMalloc((&lt;span style="color:#66d9ef">void&lt;/span>&lt;span style="color:#f92672">**&lt;/span>)&lt;span style="color:#f92672">&amp;amp;&lt;/span>d_vec2, N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span>&lt;span style="color:#f92672">*&lt;/span> d_vec3; cudaMalloc((&lt;span style="color:#66d9ef">void&lt;/span>&lt;span style="color:#f92672">**&lt;/span>)&lt;span style="color:#f92672">&amp;amp;&lt;/span>d_vec3, N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span> i&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>; i&lt;span style="color:#f92672">&amp;lt;&lt;/span>N; i&lt;span style="color:#f92672">++&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> h_vec1[i] &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">10&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> h_vec2[i] &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">20&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> h_vec4[i] &lt;span style="color:#f92672">=&lt;/span> h_vec1[i] &lt;span style="color:#f92672">+&lt;/span> h_vec2[i];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaMemcpy(d_vec1, h_vec1, N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>), cudaMemcpyHostToDevice);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaMemcpy(d_vec2, h_vec2, N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>), cudaMemcpyHostToDevice);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">float&lt;/span> time;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEvent_t start, stop;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventCreate(&lt;span style="color:#f92672">&amp;amp;&lt;/span>start);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventCreate(&lt;span style="color:#f92672">&amp;amp;&lt;/span>stop);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventRecord(start, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaOccupancyMaxPotentialBlockSize(&lt;span style="color:#f92672">&amp;amp;&lt;/span>minGridSize, &lt;span style="color:#f92672">&amp;amp;&lt;/span>blockSize, MyKernel, &lt;span style="color:#ae81ff">0&lt;/span>, N); 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// Round up according to array size 
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> gridSize &lt;span style="color:#f92672">=&lt;/span> (N &lt;span style="color:#f92672">+&lt;/span> blockSize &lt;span style="color:#f92672">-&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>) &lt;span style="color:#f92672">/&lt;/span> blockSize; 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventRecord(stop, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventSynchronize(stop);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventElapsedTime(&lt;span style="color:#f92672">&amp;amp;&lt;/span>time, start, stop);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf(&lt;span style="color:#e6db74">&amp;#34;Occupancy calculator elapsed time: %3.3f ms &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>, time);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventRecord(start, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MyKernel&lt;span style="color:#f92672">&amp;lt;&amp;lt;&amp;lt;&lt;/span>gridSize, blockSize&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span>(d_vec1, d_vec2, d_vec3, N); 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventRecord(stop, &lt;span style="color:#ae81ff">0&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventSynchronize(stop);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaEventElapsedTime(&lt;span style="color:#f92672">&amp;amp;&lt;/span>time, start, stop);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf(&lt;span style="color:#e6db74">&amp;#34;Kernel elapsed time: %3.3f ms &lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>, time);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf(&lt;span style="color:#e6db74">&amp;#34;Blocksize %i&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>, blockSize);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cudaMemcpy(h_vec3, d_vec3, N&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#66d9ef">sizeof&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>), cudaMemcpyDeviceToHost);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span> i&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>; i&lt;span style="color:#f92672">&amp;lt;&lt;/span>N; i&lt;span style="color:#f92672">++&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (h_vec3[i] &lt;span style="color:#f92672">!=&lt;/span> h_vec4[i]) { printf(&lt;span style="color:#e6db74">&amp;#34;Error at i = %i! Host = %i; Device = %i&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>, i, h_vec4[i], h_vec3[i]); &lt;span style="color:#66d9ef">return&lt;/span>; };
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf(&lt;span style="color:#e6db74">&amp;#34;Test passed&lt;/span>&lt;span style="color:#ae81ff">\n&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>cudaOccupancyMaxPotentialBlockSize&lt;/code>定义在&lt;code>cuda_runtime.h&lt;/code>文件中：&lt;/p></description></item><item><title>Cuda 编程模型</title><link>https://fffzlfk.github.io/posts/cuda_%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/</link><pubDate>Wed, 19 Jan 2022 12:55:19 +0800</pubDate><guid>https://fffzlfk.github.io/posts/cuda_%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/</guid><description>&lt;h2 id="kernels">Kernels&lt;/h2>
+&lt;p>&lt;code>CUDA C++&lt;/code>对&lt;code>C++&lt;/code>进行了扩展，允许程序员定义&lt;code>C++&lt;/code>函数，称为内核，当被调用时，由 $N$ 个不同的&lt;code>CUDA&lt;/code>线程并行执行 $N$ 次，而不是像普通&lt;code>C++&lt;/code>函数那样只执行一次。&lt;/p>
+&lt;p>&lt;code>kernel&lt;/code>是使用&lt;code>__global__&lt;/code>声明定义的，对于特定的内核调用，执行该内核的&lt;code>CUDA&lt;/code>线程数量是使用&lt;code>&amp;lt;&amp;lt;&amp;lt;...&amp;gt;&amp;gt;&amp;gt;&lt;/code>执行配置语法指定的（&lt;a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#c-language-extensions">C++语言扩展&lt;/a>）。每个执行内核的线程都有一个唯一的线程&lt;code>ID&lt;/code>，可以在内核内通过内置变量访问。&lt;/p>
+&lt;p>作为说明，下面的示例代码，使用内置变量&lt;code>threadIdx&lt;/code>，将两个大小为 $N$ 的向量 $A$ 和 $B$ 相加，并将结果存入向量 $C$ 。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Kernel definition
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>__global__ &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">VecAdd&lt;/span>(&lt;span style="color:#66d9ef">float&lt;/span>&lt;span style="color:#f92672">*&lt;/span> A, &lt;span style="color:#66d9ef">float&lt;/span>&lt;span style="color:#f92672">*&lt;/span> B, &lt;span style="color:#66d9ef">float&lt;/span>&lt;span style="color:#f92672">*&lt;/span> C)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> i &lt;span style="color:#f92672">=&lt;/span> threadIdx.x;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> C[i] &lt;span style="color:#f92672">=&lt;/span> A[i] &lt;span style="color:#f92672">+&lt;/span> B[i];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// Kernel invocation with N threads
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> VecAdd&lt;span style="color:#f92672">&amp;lt;&amp;lt;&amp;lt;&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>, N&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span>(A, B, C);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>在这里，执行&lt;code>VecAdd()&lt;/code>的 $N$ 个线程中的每一个都执行了一次加法。&lt;/p>
+&lt;h2 id="线程体系">线程体系&lt;/h2>
+&lt;p>为方便起见，&lt;code>threadIdx&lt;/code>是一个 $3$ 分量的向量，因此可以用一维、二维或三维的线程索引来识别线程，形成一个一维、二维或三维的线程块，称为线程块。这提供了一种自然的方式来调用域中的元素进行计算，如矢量、矩阵或体积。&lt;/p>
+&lt;p>一个例子，下面的代码将两个大小为 $N\times N$ 的矩阵 $A$ 和 $B$ 相加，并将结果存入矩阵 $C$ 。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Kernel definition
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>__global__ &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">MatAdd&lt;/span>(&lt;span style="color:#66d9ef">float&lt;/span> A[N][N], &lt;span style="color:#66d9ef">float&lt;/span> B[N][N],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">float&lt;/span> C[N][N])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> i &lt;span style="color:#f92672">=&lt;/span> threadIdx.x;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> j &lt;span style="color:#f92672">=&lt;/span> threadIdx.y;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> C[i][j] &lt;span style="color:#f92672">=&lt;/span> A[i][j] &lt;span style="color:#f92672">+&lt;/span> B[i][j];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// Kernel invocation with one block of N * N * 1 threads
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> numBlocks &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> dim3 threadsPerBlock(N, N);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MatAdd&lt;span style="color:#f92672">&amp;lt;&amp;lt;&amp;lt;&lt;/span>numBlocks, threadsPerBlock&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span>(A, B, C);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>每个块的线程数量是有限制的，因为一个块的所有线程都要驻留在同一个处理器核心上，并且必须分享该核心的有限内存资源。在目前的&lt;code>GPU&lt;/code>上，一个线程块最多可以包含 $1024$ 个线程。&lt;/p></description></item><item><title>Cuda 硬件实现</title><link>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</link><pubDate>Tue, 18 Jan 2022 15:31:10 +0800</pubDate><guid>https://fffzlfk.github.io/posts/cuda_%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0/</guid><description>&lt;h2 id="一组带有-on-chip-共享内存的-simd-多处理器">一组带有 on-chip 共享内存的 SIMD 多处理器&lt;/h2>
+&lt;p>设备可以被看作一组多处理器，如图所示。每个多处理器使用单指令多数据&lt;code>(SIMD)&lt;/code>架构：在任何给定的时钟周期内，多处理器的每个处理器执行同一指令，但操作不同的数据。&lt;/p>
+&lt;p>&lt;img src="https://i.imgur.com/zb9GQPd.png" alt="">&lt;/p>
+&lt;p>每个多处理器使用四个以下类型的&lt;code>on-chip&lt;/code>内存：&lt;/p>
+&lt;ul>
+&lt;li>每个处理器一组 $32$ 位寄存器&lt;/li>
+&lt;li>并行数据缓存或共享内存，被所有处理器共享实现内存空间共享&lt;/li>
+&lt;li>通过设备内存的一个只读区域，一个只读常量缓存器被所有处理器共享&lt;/li>
+&lt;li>通过设备内存的一个只读区域，一个只读纹理缓存器被所有处理器共享&lt;/li>
+&lt;/ul>
+&lt;p>本地和全局内存空间作为设备内存的读写区域，而不被缓冲。
+每个多处理器通过纹理单元访问纹理缓冲器，它执行各种各样的寻址模式和数据过滤。&lt;/p>
+&lt;h2 id="执行模式">执行模式&lt;/h2>
+&lt;p>一个线程块网格是通过多处理器规划执行的。每个多处理器一个接一个的处理块批处理。一个块只被一个多处理器处理，因此可以对驻留在&lt;code>on-chip&lt;/code>共享内存的共享内存空间形成非常快速的访问。&lt;/p>
+&lt;p>一个批处理中每个多处理器可以处理多少个块，取决于每个线程中分配了多少个寄存器和已知内核中每个时钟需要多少的共享内存，因为多处理器的寄存器和内存在所有的线程中是分开的。如果在至少一个块中，每个多处理器没有足够高的寄存器或共享内存用，那么内核将无法启动。&lt;/p>
+&lt;p>线程块在一个批处理中被一个多处理器执行，被称为&lt;code>active&lt;/code>，每个&lt;code>active&lt;/code>块被划分成&lt;code>SIMD&lt;/code>线程组，被称为&lt;code>warps&lt;/code>；每一条这样的&lt;code>warp&lt;/code>包含数量相同的线程，叫做&lt;code>warp&lt;/code>大小，并且在&lt;code>SIMD&lt;/code>的方式下通过多处理器执行，执行调度程序周期性地从一条&lt;code>warp&lt;/code>切换到另一条&lt;code>warp&lt;/code>，以达到多处理器计算资源使用的最大化。&lt;/p>
+&lt;p>块被划分成&lt;code>warp&lt;/code>的方式总是相同的；每条&lt;code>warp&lt;/code>包含连续的线程，线程索引从第一个&lt;code>warp&lt;/code>包含着的线程 0 开始递增。&lt;/p>
+&lt;p>一个多处理器可以并发地处理几个块，通过划分在它们之中的寄存器和共享内存。更准确地说，每条线程可使用的寄存器数量，等于每个多处理器寄存器总数除以并发的线程数量，并发线程的数量等于并发块的数量乘以每块线程的数量。&lt;/p>
+&lt;p>在一个线程块网格内的块次序是未定义的，并且在块之间不存在同步机制，因此来自同一个网格的两个不同块的线程不能通过全局内存彼此安全地通讯。&lt;/p>
+&lt;h2 id="计算兼容性">计算兼容性&lt;/h2>
+&lt;p>设备的兼容性由两个参数定义，主要版本号和次要版本号。设备拥有的主要版本号代表相同的核心架构。&lt;/p>
+&lt;p>次要版本号代表一些改进的核心架构。比如新的特性。&lt;/p>
+&lt;h2 id="多设备">多设备&lt;/h2>
+&lt;p>为一个应用程序使用多&lt;code>GPU&lt;/code>作为&lt;code>CUDA&lt;/code>设备，必须保证这些&lt;code>CPU&lt;/code>是一样的类型。如果系统工作在&lt;code>SLI&lt;/code> 模式下，那么只有一个&lt;code>GPU&lt;/code>可以作为&lt;code>CUDA&lt;/code>设备，由于所有的&lt;code>GPU&lt;/code>在驱动堆栈中被底层的融合了。&lt;code>SLI&lt;/code> 模式需要在控制面板中关闭,这样才能使多个&lt;code>GPU&lt;/code>作为&lt;code>CUDA&lt;/code>设备&lt;/p></description></item><item><title>Cuda软件架构</title><link>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</link><pubDate>Sat, 08 Jan 2022 06:27:04 +0800</pubDate><guid>https://fffzlfk.github.io/posts/cuda%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</guid><description>&lt;h2 id="硬件">硬件&lt;/h2>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>SP(Streaming Processor)&lt;/code>：流处理器，是GPU最基本的处理单元，在&lt;code>fermi&lt;/code>架构开始被叫做&lt;code>CUDA core&lt;/code>。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>SM(Streaming MultiProcessor)&lt;/code>：一个SM由多个&lt;code>CUDA core&lt;/code>组成。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>比如说，如果一个GPU有 $4$ 个&lt;code>SM&lt;/code>，并且每个&lt;code>SM&lt;/code>有 $768$ 个&lt;code>SP&lt;/code>(Aka &lt;code>CUDA core&lt;/code>)；那么在某一时刻，真正并行运行的线程数不会超过 $4 \times 768$ 个。&lt;/p>
+&lt;h2 id="软件">软件&lt;/h2>
+&lt;p>&lt;code>threads&lt;/code>被组织成&lt;code>blocks&lt;/code>。一个&lt;code>block&lt;/code>的线程可以用&lt;code>1Dimension(x)&lt;/code>, &lt;code>2Dimensions(x, y)&lt;/code>或者&lt;code>3Dim indexs(x, y, z)&lt;/code> 索引，&lt;/p>
+&lt;p>显然，如果你需要 $4 \times 768$ 个以上的&lt;code>threads&lt;/code>的话你需要 $4$ 个以上的&lt;code>blocks&lt;/code>。&lt;code>blocks&lt;/code>也可以使用&lt;code>1D&lt;/code>, &lt;code>2D&lt;/code>或&lt;code>3D&lt;/code>索引，这些&lt;code>blocks&lt;/code>被放在等待队列上进入GPU执行。&lt;/p>
+&lt;h2 id="wrap">Wrap&lt;/h2>
+&lt;p>当一个&lt;code>kernel&lt;/code>被执行时，&lt;code>grid&lt;/code>中的线程块被分配到&lt;code>SM&lt;/code>上。一个&lt;code>CUDA core&lt;/code>可以执行一个&lt;code>thread&lt;/code>，一个&lt;code>SM&lt;/code>的&lt;code>CUDA core&lt;/code>会分成几个&lt;code>wrap&lt;/code>，由&lt;code>wrap scheduler&lt;/code>负责调度。&lt;/p>
+&lt;p>一个&lt;code>wrap&lt;/code>中的线程在同一个&lt;code>block&lt;/code>中，如果&lt;code>block&lt;/code>所含线程数不是&lt;code>wrap&lt;/code>的大小的整数倍，那么多出来的那些&lt;code>thread&lt;/code>所在的&lt;code>wrap&lt;/code>中，会剩余一些&lt;code>inactive&lt;/code>的&lt;code>thread&lt;/code>。&lt;/p>
+&lt;h2 id="一个简单的case">一个简单的case&lt;/h2>
+&lt;p>处理一张 $512 \times 512$ 的图片。&lt;/p>
+&lt;p>假设我们希望一个线程处理一个像素&lt;code>pixel(i, j)&lt;/code>。&lt;/p>
+&lt;p>我们可以使用每 $64$ 个线程的区块。所以我们需要 $\frac{512 \times 512 }{64} = 4096$ 个区块（为了拥有 $512 \times 512 $ 个线程 ）。&lt;/p>
+&lt;p>通常情况下，我们将线程组织在&lt;code>2D&lt;/code>区块中（为了更容易索引图像像素）。&lt;code>blockDim&lt;/code>= $8 * 8$ ，我更喜欢叫它&lt;code>threadsPerBlock&lt;/code>。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>dim3 &lt;span style="color:#a6e22e">threadsPerBlock&lt;/span>(&lt;span style="color:#ae81ff">8&lt;/span>, &lt;span style="color:#ae81ff">8&lt;/span>);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>还有&lt;code>2D&lt;/code>的&lt;code>gridDim&lt;/code>= $64 \times 64$ （需要 $4096$ 个区块）。我更喜欢叫它&lt;code>numBlocks&lt;/code>。&lt;/p></description></item></channel></rss>

@@ -1,26 +1,41 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>Math on fffzlfk&#39;s Blog</title>
-    <link>https://fffzlfk.github.io/tags/math/</link>
-    <description>Recent content in Math on fffzlfk&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Sat, 08 Oct 2022 19:50:03 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/math/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>组合数学笔记</title>
-      <link>https://fffzlfk.github.io/posts/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Sat, 08 Oct 2022 19:50:03 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>第一章 组合数学基础 排列 相异元素不允许重复的排列 $P(n, r)$
-球盒模型：将$r$ 个有区别的球放入 $n$ 个不同的盒子里，每盒不超过一个。 计算公式：$$ P(n, r)=\frac{n!}{(n-r)!} $$ 集合描述：$$ S=\{1 \cdot e_1, 1 \cdot e_2,&amp;hellip;,1 \cdot e_n\} $$ 相异元素允许重复的排列 $RP(\infty, r)$
-球盒模型：将$r$ 个有区别的球放入 $n$ 个不同的盒子里，每个盒子的球数不加限制而且同盒的球不分次序。
-计算公式：$$ RP(\infty, r) = n^r $$
-集合描述：$$ S=\{\infty \cdot e_1, \infty \cdot e_2,&amp;hellip;,\infty \cdot e_n\} $$
-不尽相异元素的全排列
-球盒模型：将$r$个有区别的球放入$t$个不同的盒子，每个盒子的容量是有限的，其中第$i$个盒子最多只能放入$n_i$个球，同盒的球不分次序。 集合描述：$$ S=\{ n_1 \cdot e_1, n_2 \cdot e_2,&amp;hellip;,n_t \cdot e_t \}, n_1+n_2+&amp;hellip;+n_t=n $$ 特例 $r=1$ $$ RP(n, 1) = t $$ $r=n$ $$ RP(n, n) = \frac{n!</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Math on fffzlfk's Blog</title><link>https://fffzlfk.github.io/tags/math/</link><description>Recent content in Math on fffzlfk's Blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Sat, 08 Oct 2022 19:50:03 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/math/index.xml" rel="self" type="application/rss+xml"/><item><title>组合数学笔记</title><link>https://fffzlfk.github.io/posts/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%E7%AC%94%E8%AE%B0/</link><pubDate>Sat, 08 Oct 2022 19:50:03 +0800</pubDate><guid>https://fffzlfk.github.io/posts/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%E7%AC%94%E8%AE%B0/</guid><description>&lt;h2 id="第一章-组合数学基础">第一章 组合数学基础&lt;/h2>
+&lt;h3 id="排列">排列&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>相异元素不允许重复的排列 $P(n, r)$&lt;/p>
+&lt;ul>
+&lt;li>球盒模型：将$r$ 个有区别的球放入 $n$ 个不同的盒子里，每盒不超过一个。&lt;/li>
+&lt;li>计算公式：$$ P(n, r)=\frac{n!}{(n-r)!} $$&lt;/li>
+&lt;li>集合描述：$$ S=\{1 \cdot e_1, 1 \cdot e_2,&amp;hellip;,1 \cdot e_n\} $$&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>相异元素允许重复的排列 $RP(\infty, r)$&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>球盒模型：将$r$ 个有区别的球放入 $n$ 个不同的盒子里，每个盒子的球数不加限制而且同盒的球不分次序。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>计算公式：$$ RP(\infty, r) = n^r $$&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>集合描述：$$ S=\{\infty \cdot e_1, \infty \cdot e_2,&amp;hellip;,\infty \cdot e_n\} $$&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>不尽相异元素的全排列&lt;/p>
+&lt;ul>
+&lt;li>球盒模型：将$r$个有区别的球放入$t$个不同的盒子，每个盒子的容量是有限的，其中第$i$个盒子最多只能放入$n_i$个球，同盒的球不分次序。&lt;/li>
+&lt;li>集合描述：$$ S=\{ n_1 \cdot e_1, n_2 \cdot e_2,&amp;hellip;,n_t \cdot e_t \}, n_1+n_2+&amp;hellip;+n_t=n $$&lt;/li>
+&lt;li>特例
+&lt;ul>
+&lt;li>$r=1$ $$ RP(n, 1) = t $$&lt;/li>
+&lt;li>$r=n$ $$ RP(n, n) = \frac{n!}{n_1!n_2!&amp;hellip;n_t!} $$&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>相异元素不允许重复的圆排列 $CP(n, r)$
+$$ CP(n, r) = \frac{P(n, r)}{r} = \frac{n!}{r(n-r)!} $$&lt;/p></description></item></channel></rss>

@@ -1,21 +1,41 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>MapReduce on fffzlfk&#39;s Blog</title>
-    <link>https://fffzlfk.github.io/tags/mapreduce/</link>
-    <description>Recent content in MapReduce on fffzlfk&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Sun, 27 Mar 2022 21:19:14 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/mapreduce/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>MapReduce in Go</title>
-      <link>https://fffzlfk.github.io/posts/mapreduce_in_go/</link>
-      <pubDate>Sun, 27 Mar 2022 21:19:14 +0800</pubDate>
-      
-      <guid>https://fffzlfk.github.io/posts/mapreduce_in_go/</guid>
-      <description>简单版Generic Map func Map[T any](data []T, f func(T) T) []T { res := make([]T, len(data)) for i, v := range data { res[i] = f(v) } return res } 我们可以下面的代码测试这个简易的Map函数
-func TestMap(t *testing.T) { square := func(x int) int { return x * x } nums := []int{1, 2, 3, 4, 5} squareArr := Map(nums, square) for i, num := range nums { if squareArr[i] != num*num { t.Errorf(&amp;#34;Expected %d, got %d&amp;#34;, num*num, squareArr[i]) } } upCase := func(s string) string { return strings.</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>MapReduce on fffzlfk's Blog</title><link>https://fffzlfk.github.io/tags/mapreduce/</link><description>Recent content in MapReduce on fffzlfk's Blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Sun, 27 Mar 2022 21:19:14 +0800</lastBuildDate><atom:link href="https://fffzlfk.github.io/tags/mapreduce/index.xml" rel="self" type="application/rss+xml"/><item><title>MapReduce in Go</title><link>https://fffzlfk.github.io/posts/mapreduce_in_go/</link><pubDate>Sun, 27 Mar 2022 21:19:14 +0800</pubDate><guid>https://fffzlfk.github.io/posts/mapreduce_in_go/</guid><description>&lt;h2 id="简单版generic-map">简单版Generic Map&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">Map&lt;/span>[&lt;span style="color:#a6e22e">T&lt;/span> &lt;span style="color:#66d9ef">any&lt;/span>](&lt;span style="color:#a6e22e">data&lt;/span> []&lt;span style="color:#a6e22e">T&lt;/span>, &lt;span style="color:#a6e22e">f&lt;/span> &lt;span style="color:#66d9ef">func&lt;/span>(&lt;span style="color:#a6e22e">T&lt;/span>) &lt;span style="color:#a6e22e">T&lt;/span>) []&lt;span style="color:#a6e22e">T&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">res&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> make([]&lt;span style="color:#a6e22e">T&lt;/span>, len(&lt;span style="color:#a6e22e">data&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">i&lt;/span>, &lt;span style="color:#a6e22e">v&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">data&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">res&lt;/span>[&lt;span style="color:#a6e22e">i&lt;/span>] = &lt;span style="color:#a6e22e">f&lt;/span>(&lt;span style="color:#a6e22e">v&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">res&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>我们可以下面的代码测试这个简易的Map函数&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">TestMap&lt;/span>(&lt;span style="color:#a6e22e">t&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">testing&lt;/span>.&lt;span style="color:#a6e22e">T&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">square&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">func&lt;/span>(&lt;span style="color:#a6e22e">x&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span>) &lt;span style="color:#66d9ef">int&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">x&lt;/span> &lt;span style="color:#f92672">*&lt;/span> &lt;span style="color:#a6e22e">x&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">nums&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> []&lt;span style="color:#66d9ef">int&lt;/span>{&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, &lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>, &lt;span style="color:#ae81ff">5&lt;/span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">squareArr&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">Map&lt;/span>(&lt;span style="color:#a6e22e">nums&lt;/span>, &lt;span style="color:#a6e22e">square&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">i&lt;/span>, &lt;span style="color:#a6e22e">num&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">nums&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">squareArr&lt;/span>[&lt;span style="color:#a6e22e">i&lt;/span>] &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#a6e22e">num&lt;/span>&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">num&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#a6e22e">t&lt;/span>.&lt;span style="color:#a6e22e">Errorf&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Expected %d, got %d&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">num&lt;/span>&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">num&lt;/span>, &lt;span style="color:#a6e22e">squareArr&lt;/span>[&lt;span style="color:#a6e22e">i&lt;/span>])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">upCase&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">func&lt;/span>(&lt;span style="color:#a6e22e">s&lt;/span> &lt;span style="color:#66d9ef">string&lt;/span>) &lt;span style="color:#66d9ef">string&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">strings&lt;/span>.&lt;span style="color:#a6e22e">ToUpper&lt;/span>(&lt;span style="color:#a6e22e">s&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">strs&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> []&lt;span style="color:#66d9ef">string&lt;/span>{&lt;span style="color:#e6db74">&amp;#34;abc&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;def&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;ghi&amp;#34;&lt;/span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">upperStrs&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">Map&lt;/span>(&lt;span style="color:#a6e22e">strs&lt;/span>, &lt;span style="color:#a6e22e">upCase&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">i&lt;/span>, &lt;span style="color:#a6e22e">str&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">strs&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">upperStrs&lt;/span>[&lt;span style="color:#a6e22e">i&lt;/span>] &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#a6e22e">strings&lt;/span>.&lt;span style="color:#a6e22e">ToUpper&lt;/span>(&lt;span style="color:#a6e22e">str&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#a6e22e">t&lt;/span>.&lt;span style="color:#a6e22e">Errorf&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Expected %s, got %s&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">strings&lt;/span>.&lt;span style="color:#a6e22e">ToUpper&lt;/span>(&lt;span style="color:#a6e22e">str&lt;/span>), &lt;span style="color:#a6e22e">upperStrs&lt;/span>[&lt;span style="color:#a6e22e">i&lt;/span>])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="简单版-generic-reduce">简单版 Generic Reduce&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">Reduce&lt;/span>[&lt;span style="color:#a6e22e">T&lt;/span> &lt;span style="color:#66d9ef">any&lt;/span>](&lt;span style="color:#a6e22e">data&lt;/span> []&lt;span style="color:#a6e22e">T&lt;/span>, &lt;span style="color:#a6e22e">f&lt;/span> &lt;span style="color:#66d9ef">func&lt;/span>(&lt;span style="color:#a6e22e">T&lt;/span>, &lt;span style="color:#a6e22e">T&lt;/span>) &lt;span style="color:#a6e22e">T&lt;/span>) &lt;span style="color:#a6e22e">T&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">res&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">data&lt;/span>[&lt;span style="color:#ae81ff">0&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">i&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>; &lt;span style="color:#a6e22e">i&lt;/span> &amp;lt; len(&lt;span style="color:#a6e22e">data&lt;/span>); &lt;span style="color:#a6e22e">i&lt;/span>&lt;span style="color:#f92672">++&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">res&lt;/span> = &lt;span style="color:#a6e22e">f&lt;/span>(&lt;span style="color:#a6e22e">res&lt;/span>, &lt;span style="color:#a6e22e">data&lt;/span>[&lt;span style="color:#a6e22e">i&lt;/span>])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">res&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>我们可以下面的代码测试这个简易的Reduce函数&lt;/p></description></item></channel></rss>
