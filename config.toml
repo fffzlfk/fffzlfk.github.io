@@ -1,12 +1,20 @@
 baseURL = 'https://fffzlfk.github.io'
 languageCode = 'zh-cn'
 title = "fffzlfk's Blog"
-theme = ["paper", "hugo-notice"]
+theme = ["hugo-paper", "hugo-notice"]
 enableEmoji = true
 
 # [services]
 #   [services.disqus]
 #     shortname = 'https-fffzlfk-github-io"'     # use disqus comments
+
+[pagination]
+  pagerSize = 6
+
+[taxonomies]
+category = "categories"
+tag = "tags"
+series = "series"
 
 [params]
   # color style
