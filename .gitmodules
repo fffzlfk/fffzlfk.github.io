@@ -3,4 +3,4 @@
 	url = https://github.com/martignoni/hugo-notice.git
 [submodule "themes/hugo-paper"]
 	path = themes/paper
-	url = https://github.com/nanxiaobei/hugo-paper
+	url = git@github.com:fffzlfk/hugo-paper.git
